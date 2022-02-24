@@ -191,19 +191,22 @@ public class ExpenseController {
 				BankAccountEntity bankAccountEntity = bankAccountOptional.get();
 				
 				String memo = bankAccountEntity.getMemo();
+				String isBankAccount = bankAccountEntity.getIsBankAccount();
 				
 				if(bankAccountEntity.getBank() != null) {
 					BankEntity bank = bankAccountEntity.getBank();
 					memo = bank.getName() + " - " + memo;
 				};
 				
-				Map<String,Object> map = new HashMap<>();
-				
-				map.put("accountUserId", authorityAccountUserId);
-				map.put("accountId", authorityAccountId);
-				map.put("memo", memo);
-				
-				accountList.add(map);
+				if(isBankAccount == null) {
+					Map<String,Object> map = new HashMap<>();
+					
+					map.put("accountUserId", authorityAccountUserId);
+					map.put("accountId", authorityAccountId);
+					map.put("memo", memo);
+					
+					accountList.add(map);
+				}
 			}
 		});
 		
@@ -275,19 +278,22 @@ public class ExpenseController {
 					BankAccountEntity bankAccountEntity = bankAccountOptional.get();
 					
 					String memo = bankAccountEntity.getMemo();
+					String isBankAccount = bankAccountEntity.getIsBankAccount();
 					
 					if(bankAccountEntity.getBank() != null) {
 						BankEntity bank = bankAccountEntity.getBank();
 						memo = bank.getName() + " - " + memo;
 					};
 					
-					Map<String,Object> map = new HashMap<>();
-					
-					map.put("accountUserId", authorityAccountUserId);
-					map.put("accountId", authorityAccountId);
-					map.put("memo", memo);
-					
-					accountList.add(map);
+					if(isBankAccount == null) {
+						Map<String,Object> map = new HashMap<>();
+						
+						map.put("accountUserId", authorityAccountUserId);
+						map.put("accountId", authorityAccountId);
+						map.put("memo", memo);
+						
+						accountList.add(map);
+					}
 				}
 			});
 			
@@ -356,19 +362,22 @@ public class ExpenseController {
 					BankAccountEntity bankAccountEntity = bankAccountOptional.get();
 					
 					String memo = bankAccountEntity.getMemo();
+					String isBankAccount = bankAccountEntity.getIsBankAccount();
 					
 					if(bankAccountEntity.getBank() != null) {
 						BankEntity bank = bankAccountEntity.getBank();
 						memo = bank.getName() + " - " + memo;
 					};
 					
-					Map<String,Object> map = new HashMap<>();
-					
-					map.put("accountUserId", authorityAccountUserId);
-					map.put("accountId", authorityAccountId);
-					map.put("memo", memo);
-					
-					accountList.add(map);
+					if(isBankAccount == null) {
+						Map<String,Object> map = new HashMap<>();
+						
+						map.put("accountUserId", authorityAccountUserId);
+						map.put("accountId", authorityAccountId);
+						map.put("memo", memo);
+						
+						accountList.add(map);
+					}
 				}
 			});
 			
@@ -441,19 +450,22 @@ public class ExpenseController {
 					BankAccountEntity bankAccountEntity = bankAccountOptional.get();
 					
 					String memo = bankAccountEntity.getMemo();
+					String isBankAccount = bankAccountEntity.getIsBankAccount();
 					
 					if(bankAccountEntity.getBank() != null) {
 						BankEntity bank = bankAccountEntity.getBank();
 						memo = bank.getName() + " - " + memo;
 					};
 					
-					Map<String,Object> map = new HashMap<>();
-					
-					map.put("accountUserId", authorityAccountUserId);
-					map.put("accountId", authorityAccountId);
-					map.put("memo", memo);
-					
-					accountList.add(map);
+					if(isBankAccount == null) {
+						Map<String,Object> map = new HashMap<>();
+						
+						map.put("accountUserId", authorityAccountUserId);
+						map.put("accountId", authorityAccountId);
+						map.put("memo", memo);
+						
+						accountList.add(map);
+					}
 				}
 			});
 			
@@ -539,19 +551,22 @@ public class ExpenseController {
 				BankAccountEntity bankAccountEntity = bankAccountOptional.get();
 				
 				String memo = bankAccountEntity.getMemo();
+				String isBankAccount = bankAccountEntity.getIsBankAccount();
 				
 				if(bankAccountEntity.getBank() != null) {
 					BankEntity bank = bankAccountEntity.getBank();
 					memo = bank.getName() + " - " + memo;
 				};
 				
-				Map<String,Object> map = new HashMap<>();
-				
-				map.put("accountUserId", authorityAccountUserId);
-				map.put("accountId", authorityAccountId);
-				map.put("memo", memo);
-				
-				accountList.add(map);
+				if(isBankAccount == null) {
+					Map<String,Object> map = new HashMap<>();
+					
+					map.put("accountUserId", authorityAccountUserId);
+					map.put("accountId", authorityAccountId);
+					map.put("memo", memo);
+					
+					accountList.add(map);
+				}
 			}
 		});
 		
