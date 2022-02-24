@@ -1,5 +1,6 @@
 package com.hkma.home.mobile.inventory.controller;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,13 +24,20 @@ public class PopupController {
 	@RequestMapping("/purchase")
 	public String purchase(
 		@RequestParam(required=false, value="purchaseId") String purchaseId,
+		Principal principal,
 		Model model) {
+		
+		String userId = "";
+		
+		if (principal != null) {
+			userId = principal.getName();
+		}
 
-		List<Map<String,Object>> list2 = new ArrayList<>();
+		List<Map<String,Object>> list = new ArrayList<>();
 		
-		List<InventoryPurchaseEntity> list = inventoryPurchaseRepository.findInventoryLikeIdName(purchaseId);
+		List<InventoryPurchaseEntity> inventoryPurchaseList = inventoryPurchaseRepository.findByUserIdAndRecordIdOrName(userId, purchaseId);
 		
-		list.forEach(purchase -> {
+		inventoryPurchaseList.forEach(purchase -> {
 			int quantity = (int)((double)inventoryPurchaseRepository.getInventoryQuantityByRecordId(purchase.getRecordId()).get());
 			
 			Map<String,Object> map = new HashMap<>();
@@ -37,10 +45,10 @@ public class PopupController {
 			map.put("name", purchase.getBrand() + purchase.getName());
 			map.put("quantity", quantity);
 			
-			list2.add(map);
+			list.add(map);
 		});
 		
-		model.addAttribute("list", list2);
+		model.addAttribute("list", list);
 		
 		return "mobile/inventory/popup/purchase";
 	}

@@ -40,19 +40,22 @@ public class InventoryPurchaseController {
 	
 	@GetMapping({"/","/index"})
 	public String indexPurchaseGet(
-			@RequestParam(required=false, value="month") String month,
+			Principal principal,
 			Model model){
 		SimpleDateFormat monthFormat = new SimpleDateFormat("yyyyMM");
 		
-		if (month == null) {
-			month = monthFormat.format(new Date());
+		String userId = "";
+		String month = monthFormat.format(new Date());
+		
+		if (principal != null) {
+			userId = principal.getName();
 		}
 		
-		List<Map<String, Object>> list2 = new ArrayList<>();
+		List<Map<String, Object>> list = new ArrayList<>();
 		
-		List<InventoryPurchaseEntity> list = inventoryPurchaseRepository.findByMonthOrderByRecordId(month);
+		List<InventoryPurchaseEntity> inventoryPurchaseList = inventoryPurchaseRepository.findByUserIdAndMonthOrderByRecordId(userId, month);
 		
-		list.forEach(purchase -> {
+		inventoryPurchaseList.forEach(purchase -> {
 			Map<String, Object> map = new HashMap<>();
 			
 			String recordId = purchase.getRecordId();
@@ -70,10 +73,10 @@ public class InventoryPurchaseController {
 			map.put("name", brand + name);
 			map.put("purchaseDate", purchaseDate);
 			
-			list2.add(map);
+			list.add(map);
 		});
 		
-		model.addAttribute("list", list2);
+		model.addAttribute("list", list);
 		
 		return "mobile/inventory/record/purchase/index";
 	}
@@ -82,12 +85,19 @@ public class InventoryPurchaseController {
 	public String indexPurchasePost(
 			@RequestParam(required=false, value="name") String name,
 			@RequestParam(required=false, value="inventoryType") String inventoryType,
+			Principal principal,
 			Model model){
-		List<Map<String, Object>> list2 = new ArrayList<>();
+		String userId = "";
 		
-		List<InventoryPurchaseEntity> list = inventoryPurchaseRepository.findByNameInventoryTypeOrderByRecordId(name, inventoryType);
+		if (principal != null) {
+			userId = principal.getName();
+		}
 		
-		list.forEach(purchase -> {
+		List<Map<String, Object>> list = new ArrayList<>();
+		
+		List<InventoryPurchaseEntity> InventoryPurchaseList = inventoryPurchaseRepository.findByUserIdAndNameAndInventoryTypeOrderByRecordId(userId, name, inventoryType);
+		
+		InventoryPurchaseList.forEach(purchase -> {
 			Map<String, Object> map = new HashMap<>();
 			
 			String recordId = purchase.getRecordId();
@@ -104,10 +114,10 @@ public class InventoryPurchaseController {
 			map.put("recordId", recordId);
 			map.put("name", brand + purchaseName);
 			map.put("purchaseDate", purchaseDate);
-			list2.add(map);
+			list.add(map);
 		});
 		
-		model.addAttribute("list", list2);
+		model.addAttribute("list", list);
 		
 		return "mobile/inventory/record/purchase/index";
 	}
@@ -200,6 +210,7 @@ public class InventoryPurchaseController {
 		purchase.setRecordId(recordId);
 
 		if (principal != null){
+			purchase.setUserId(principal.getName());
 			purchase.setEnterUserId(principal.getName());
 			purchase.setUpdateUserId(principal.getName());
 		}

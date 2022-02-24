@@ -15,24 +15,31 @@ public interface InventoryPurchaseRepository extends JpaRepository<InventoryPurc
 	@Query(value="SELECT inventory_purchase.quantity - IFNULL((SELECT COUNT(1) FROM home.inventory_use WHERE inventory_use.purchaseId = inventory_purchase.recordId AND inventory_use.isRunOut),0) FROM inventory_purchase WHERE recordId = :recordId", nativeQuery=true)
 	Optional<Double> getInventoryQuantityByRecordId(String recordId);
 	
-	@Query(value="SELECT * FROM inventory_purchase WHERE SUBSTRING(recordDate,1,6) = :month ORDER BY recordId DESC", nativeQuery=true)
-	List<InventoryPurchaseEntity> findByMonthOrderByRecordId(String month);
+	@Query(value="SELECT * FROM inventory_purchase "
+			+ "WHERE SUBSTRING(recordDate,1,6) = :month "
+			+ "AND EXISTS (SELECT 1 FROM inventory_authority WHERE inventory_authority.userId = :userId AND inventory_authority.dataUserId = inventory_purchase.userId) "
+			+ "ORDER BY recordId DESC", nativeQuery=true)
+	List<InventoryPurchaseEntity> findByUserIdAndMonthOrderByRecordId(String userId, String month);
 	
 	@Query(value="SELECT * FROM inventory_purchase "
 			+ "WHERE name LIKE CONCAT('%',:name,'%') "
+			+ "AND EXISTS (SELECT 1 FROM inventory_authority WHERE inventory_authority.userId = :userId AND inventory_authority.dataUserId = inventory_purchase.userId) "
 			+ "AND ("
 			+ "(:inventoryType = '1' AND (inventory_purchase.quantity - IFNULL((SELECT COUNT(1) FROM home.inventory_use WHERE inventory_use.purchaseId = inventory_purchase.recordId AND inventory_use.isRunOut),0) > 0)) "
 			+ "OR (:inventoryType = '2' AND (inventory_purchase.quantity - IFNULL((SELECT COUNT(1) FROM home.inventory_use WHERE inventory_use.purchaseId = inventory_purchase.recordId AND inventory_use.isRunOut),0) = 0)) "
 			+ "OR (:inventoryType = '3')"
 			+ ") "
 			+ "ORDER BY recordId DESC", nativeQuery=true)
-	List<InventoryPurchaseEntity> findByNameInventoryTypeOrderByRecordId(String name, String inventoryType);
+	List<InventoryPurchaseEntity> findByUserIdAndNameAndInventoryTypeOrderByRecordId(String userId, String name, String inventoryType);
 	
 	@Query(value="SELECT * FROM inventory_purchase WHERE inventory_purchase.quantity - IFNULL((SELECT COUNT(1) FROM home.inventory_use WHERE inventory_use.purchaseId = inventory_purchase.recordId AND inventory_use.isRunOut),0) > 0 ORDER BY inventory_purchase.class1, inventory_purchase.class2, inventory_purchase.name, inventory_purchase.recordId", nativeQuery=true)
 	List<InventoryPurchaseEntity> findInventory();
 	
-	@Query(value="SELECT * FROM inventory_purchase WHERE inventory_purchase.quantity - IFNULL((SELECT COUNT(1) FROM home.inventory_use WHERE inventory_use.purchaseId = inventory_purchase.recordId),0) > 0 AND (recordId LIKE CONCAT('%',:recordId,'%') OR name LIKE CONCAT('%',:recordId,'%')) ORDER BY recordId", nativeQuery=true)
-	List<InventoryPurchaseEntity> findInventoryLikeIdName(String recordId);
+	@Query(value="SELECT * FROM inventory_purchase "
+			+ "WHERE EXISTS (SELECT 1 FROM inventory_authority WHERE inventory_authority.userId = :userId AND inventory_authority.dataUserId = inventory_purchase.userId) "
+			+ "AND inventory_purchase.quantity - IFNULL((SELECT COUNT(1) FROM home.inventory_use WHERE inventory_use.purchaseId = inventory_purchase.recordId),0) > 0 AND (recordId LIKE CONCAT('%',:recordId,'%') OR name LIKE CONCAT('%',:recordId,'%')) "
+			+ "ORDER BY recordId", nativeQuery=true)
+	List<InventoryPurchaseEntity> findByUserIdAndRecordIdOrName(String userId, String recordId);
 	
 	@Query(value="SELECT inventory_purchase.class1 FROM inventory_purchase WHERE inventory_purchase.quantity - IFNULL((SELECT COUNT(1) FROM home.inventory_use WHERE inventory_use.purchaseId = inventory_purchase.recordId AND inventory_use.isRunOut),0) > 0 GROUP BY inventory_purchase.class1", nativeQuery=true)
 	Optional<List<String>> findClass1();

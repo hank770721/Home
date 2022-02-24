@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.hkma.home.inventory.entity.InventoryPurchaseEntity;
 import com.hkma.home.inventory.entity.InventoryUseEntity;
+import com.hkma.home.inventory.repository.InventoryAuthorityRepository;
 import com.hkma.home.inventory.repository.InventoryPurchaseRepository;
 import com.hkma.home.inventory.repository.InventoryUseRepository;
 
@@ -36,21 +37,27 @@ public class InventoryUseController {
 	@Autowired
 	private InventoryPurchaseRepository inventoryPurchaseRepository;
 	
+	@Autowired
+	private InventoryAuthorityRepository authorityRepository;
+	
 	@GetMapping({"/","/index"})
 	public String indexUseGet(
-			@RequestParam(required=false, value="month") String month,
+			Principal principal,
 			Model model){
 		SimpleDateFormat monthFormat = new SimpleDateFormat("yyyyMM");
 		
-		if (month == null) {
-			month = monthFormat.format(new Date());
+		String userId = "";
+		String month = monthFormat.format(new Date());
+		
+		if (principal != null) {
+			userId = principal.getName();
 		}
 
-		List<Map<String, Object>> list2 = new ArrayList<>();
+		List<Map<String, Object>> list = new ArrayList<>();
 		
-		List<InventoryUseEntity> list = inventoryUseRepository.findByMonthOrderByRecordIdDesc(month);
+		List<InventoryUseEntity> InventoryUseList = inventoryUseRepository.findByUserIdAndMonthOrderByRecordIdDesc(userId, month);
 		
-		list.forEach(use -> {
+		InventoryUseList.forEach(use -> {
 			Map<String, Object> map = new HashMap<>();
 			
 			String recordId = use.getRecordId();
@@ -78,10 +85,10 @@ public class InventoryUseController {
 			map.put("name", name);
 			map.put("beginDate", beginDate);
 			
-			list2.add(map);
+			list.add(map);
 		});
 		
-		model.addAttribute("list", list2);
+		model.addAttribute("list", list);
 		
 		return "mobile/inventory/record/use/index";
 	}
@@ -89,12 +96,19 @@ public class InventoryUseController {
 	@PostMapping("/index")
 	public String indexUsePost(
 			@RequestParam(required=false, value="name") String name,
+			Principal principal,
 			Model model){
-		List<Map<String, Object>> list2 = new ArrayList<>();
+		String userId = "";
 		
-		List<InventoryUseEntity> list = inventoryUseRepository.findByNameOrderByRecordIdDesc(name);
+		if (principal != null) {
+			userId = principal.getName();
+		}
 		
-		list.forEach(use -> {
+		List<Map<String, Object>> list = new ArrayList<>();
+		
+		List<InventoryUseEntity> inventoryUseList = inventoryUseRepository.findByUserIdAndNameOrderByRecordIdDesc(userId, name);
+		
+		inventoryUseList.forEach(use -> {
 			Map<String, Object> map = new HashMap<>();
 			
 			String recordId = use.getRecordId();
@@ -122,10 +136,10 @@ public class InventoryUseController {
 			map.put("name", purchaseName);
 			map.put("beginDate", beginDate);
 			
-			list2.add(map);
+			list.add(map);
 		});
 		
-		model.addAttribute("list", list2);
+		model.addAttribute("list", list);
 		
 		return "mobile/inventory/record/use/index";
 	}
@@ -147,7 +161,12 @@ public class InventoryUseController {
 			@ModelAttribute("use") InventoryUseEntity use,
 			Principal principal,
     		Model model){
+		String userId = "";
 		String purchaseIdError;
+		
+		if (principal != null) {
+			userId = principal.getName();
+		}
 		
 		String recordDate = use.getRecordDate();
 		String purchaseId = use.getPurchaseId();
@@ -157,7 +176,15 @@ public class InventoryUseController {
 		
 		Optional<InventoryPurchaseEntity> purchaseOptional = inventoryPurchaseRepository.findById(purchaseId);
 		
-		if (!purchaseOptional.isPresent()) {
+		if (purchaseOptional.isPresent()) {
+			InventoryPurchaseEntity purchase = purchaseOptional.get();
+			
+			if(!authorityRepository.existsByUserIdAndDataUserId(userId, purchase.getUserId())) {
+				purchaseIdError = "無此購買單號";
+				
+				model.addAttribute("purchaseIdError", purchaseIdError);
+			}
+		}else {
 			purchaseIdError = "無此購買單號";
 			
 			model.addAttribute("purchaseIdError", purchaseIdError);
@@ -220,7 +247,14 @@ public class InventoryUseController {
 	@GetMapping("/view/{recordId}")
 	public String viewUseGet(
 			@PathVariable("recordId") String recordId,
+			Principal principal,
 			Model model){
+		String userId = "";
+		
+		if (principal != null) {
+			userId = principal.getName();
+		}
+		
 		Optional<InventoryUseEntity> optional = inventoryUseRepository.findById(recordId);
 		
 		if(optional.isPresent()) {
@@ -233,36 +267,40 @@ public class InventoryUseController {
 			String isRunOut = use.getIsRunOut();
 			String name;
 			
-			if(!(recordDate == null)) {
-				use.setRecordDate(recordDate.substring(0,4) + "-" + recordDate.substring(4,6) + "-" + recordDate.substring(6,8));
-			}
-			
 			Optional<InventoryPurchaseEntity> purchaseOptional = inventoryPurchaseRepository.findById(purchaseId);
-			
+				
 			if (purchaseOptional.isPresent()) {
 				InventoryPurchaseEntity purchase = purchaseOptional.get();
 				
-				name = purchase.getBrand() + purchase.getName();
+				if(authorityRepository.existsByUserIdAndDataUserId(userId, purchase.getUserId())) {
+					name = purchase.getBrand() + purchase.getName();
+					
+					if(!(recordDate == null)) {
+						use.setRecordDate(recordDate.substring(0,4) + "-" + recordDate.substring(4,6) + "-" + recordDate.substring(6,8));
+					}
+					
+					if(!(beginDate == null)) {
+						use.setBeginDate(beginDate.substring(0,4) + "-" + beginDate.substring(4,6) + "-" + beginDate.substring(6,8));
+					}
+					
+					if(!(endDate == null)) {
+						use.setEndDate(endDate.substring(0,4) + "-" + endDate.substring(4,6) + "-" + endDate.substring(6,8));
+					}
+					
+					if(isRunOut.equals("1")) {
+						isRunOut = "on";
+					}
+		
+					model.addAttribute("use", use);
+					model.addAttribute("name", name);
+		
+					return "mobile/inventory/record/use/view";
+				}else {
+					return "redirect:/m/inventory/record/use/index";
+				}
 			}else {
-				name = "";
+				return "redirect:/m/inventory/record/use/index";
 			}
-			
-			if(!(beginDate == null)) {
-				use.setBeginDate(beginDate.substring(0,4) + "-" + beginDate.substring(4,6) + "-" + beginDate.substring(6,8));
-			}
-			
-			if(!(endDate == null)) {
-				use.setEndDate(endDate.substring(0,4) + "-" + endDate.substring(4,6) + "-" + endDate.substring(6,8));
-			}
-			
-			if(isRunOut.equals("1")) {
-				isRunOut = "on";
-			}
-
-			model.addAttribute("use", use);
-			model.addAttribute("name", name);
-
-			return "mobile/inventory/record/use/view";
 		}else {
 			return "redirect:/m/inventory/record/use/index";
 		}
@@ -272,7 +310,14 @@ public class InventoryUseController {
 	public String viewUsePost(
 			@PathVariable("recordId") String recordId,
 			@RequestParam(required=false, value="url") String url,
+			Principal principal,
 			Model model){
+		String userId = "";
+		
+		if (principal != null) {
+			userId = principal.getName();
+		}
+		
 		Optional<InventoryUseEntity> optional = inventoryUseRepository.findById(recordId);
 		
 		if(optional.isPresent()) {
@@ -294,30 +339,46 @@ public class InventoryUseController {
 			if (purchaseOptional.isPresent()) {
 				InventoryPurchaseEntity purchase = purchaseOptional.get();
 				
-				name = purchase.getBrand() + purchase.getName();
-			}else {
-				name = "";
-			}
-			
-			if(!(beginDate == null)) {
-				use.setBeginDate(beginDate.substring(0,4) + "-" + beginDate.substring(4,6) + "-" + beginDate.substring(6,8));
-			}
-			
-			if(!(endDate == null)) {
-				use.setEndDate(endDate.substring(0,4) + "-" + endDate.substring(4,6) + "-" + endDate.substring(6,8));
-			}
-			
-			if(isRunOut.equals("1")) {
-				isRunOut = "on";
-			}
-			
-			model.addAttribute("use", use);
-			model.addAttribute("url", url);
-			model.addAttribute("name", name);
+				if(authorityRepository.existsByUserIdAndDataUserId(userId, purchase.getUserId())) {
+					name = purchase.getBrand() + purchase.getName();
+					
+					if(!(beginDate == null)) {
+						use.setBeginDate(beginDate.substring(0,4) + "-" + beginDate.substring(4,6) + "-" + beginDate.substring(6,8));
+					}
+					
+					if(!(endDate == null)) {
+						use.setEndDate(endDate.substring(0,4) + "-" + endDate.substring(4,6) + "-" + endDate.substring(6,8));
+					}
+					
+					if(isRunOut.equals("1")) {
+						isRunOut = "on";
+					}
+					
+					model.addAttribute("use", use);
+					model.addAttribute("url", url);
+					model.addAttribute("name", name);
 
-			return "mobile/inventory/record/use/view";
+					return "mobile/inventory/record/use/view";
+				}else {
+					if (!url.equals("")) {
+						return "redirect:" + url;
+					}else {
+						return "redirect:/m/inventory/record/use/index";
+					}
+				}
+			}else{
+				if (!url.equals("")) {
+					return "redirect:" + url;
+				}else {
+					return "redirect:/m/inventory/record/use/index";
+				}
+			}
 		}else {
-			return "redirect:/m/inventory/record/use/index";
+			if (!url.equals("")) {
+				return "redirect:" + url;
+			}else {
+				return "redirect:/m/inventory/record/use/index";
+			}
 		}
 	}
 
@@ -329,7 +390,13 @@ public class InventoryUseController {
     		BindingResult bindingResult,
 			Principal principal,
     		Model model){
+		
+		String userId = "";
 		String purchaseIdError;
+		
+		if (principal != null) {
+			userId = principal.getName();
+		}
 		
 		String recordDate = use.getRecordDate();
 		String purchaseId = use.getPurchaseId();
@@ -339,7 +406,15 @@ public class InventoryUseController {
 		
 		Optional<InventoryPurchaseEntity> purchaseOptional = inventoryPurchaseRepository.findById(purchaseId);
 		
-		if (!purchaseOptional.isPresent()) {
+		if (purchaseOptional.isPresent()) {
+			InventoryPurchaseEntity purchase = purchaseOptional.get();
+			
+			if(!authorityRepository.existsByUserIdAndDataUserId(userId, purchase.getUserId())) {
+				purchaseIdError = "無此購買單號";
+				
+				model.addAttribute("purchaseIdError", purchaseIdError);
+			}
+		}else {
 			purchaseIdError = "無此購買單號";
 			
 			model.addAttribute("purchaseIdError", purchaseIdError);
@@ -388,7 +463,6 @@ public class InventoryUseController {
 		}else {
 			return "redirect:/m/inventory/record/use/index";
 		}
-		
     }
 	
 	@DeleteMapping("/view/{recordId}")
