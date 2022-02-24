@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Insert title here</title>
+	</head>
+	<body>
+		<div th:fragment="menu" data-role="panel" id="memuPanel" data-position="left" data-display="reveal" data-theme="a">
+		    <ul data-role="listview">
+		    	<li sec:authorize="!isAuthenticated()"><a th:href="@{'/login'}" data-ajax="false"><h3>登入</h3></a></li>
+	            <li sec:authorize="isAuthenticated()"><a th:href="@{'/logout'}" data-ajax="false"><h3>登出</h3></a></li>
+		    	<li data-role="collapsible" data-inset="false" data-iconpos="right" data-expanded-icon="carat-u" data-collapsed-icon="carat-d">
+		            <h3>生活</h3>
+		            <ul data-role="listview">
+		            	<li><a th:href="@{/m/life/record/expense/index}" data-ajax="false"><div style="margin-left: 20px">生活開銷</div></a></li>
+		            	<li><a th:href="@{/m/life/record/temperature/index}" data-ajax="false"><div style="margin-left: 20px">體溫紀錄</div></a></li>
+		            	<li><a th:href="@{/m/life/dashboard/expense/search}" data-ajax="false"><div style="margin-left: 20px">開銷儀錶板</div></a></li>
+		            	<li><a th:href="@{/m/life/dashboard/temperature/search}" data-ajax="false"><div style="margin-left: 20px">體溫儀錶板</div></a></li>
+		            </ul>
+		        </li>
+		        <li data-role="collapsible" data-inset="false" data-iconpos="right" data-expanded-icon="carat-u" data-collapsed-icon="carat-d">
+		            <h3>庫存</h3>
+		            <ul data-role="listview">
+		            	<li><a th:href="@{/m/inventory/record/purchase/index}" data-ajax="false"><div style="margin-left: 20px">購買紀錄</div></a></li>
+		            	<li><a th:href="@{/m/inventory/record/use/index}" data-ajax="false"><div style="margin-left: 20px">使用紀錄</div></a></li>
+		            	<li><a th:href="@{/m/inventory/list/inventory/view}" data-ajax="false"><div style="margin-left: 20px">庫存清單</div></a></li>
+		            </ul>
+		        </li>
+		        <li data-role="collapsible" data-inset="false" data-iconpos="right" data-expanded-icon="carat-u" data-collapsed-icon="carat-d">
+		            <h3>銀行</h3>
+		            <ul data-role="listview">
+		            	<li><a th:href="@{/m/bank/record/record/index}" data-ajax="false"><div style="margin-left: 20px">提存紀錄</div></a></li>
+		                <li><a th:href="@{/m/bank/table/record/search}" data-ajax="false"><div style="margin-left: 20px">提存明細表</div></a></li>
+		            	<li><a th:href="@{/m/bank/table/credit/search}" data-ajax="false"><div style="margin-left: 20px">信用明細表</div></a></li>
+		            </ul>
+		        </li>
+		        <li data-role="collapsible" data-inset="false" data-iconpos="right" data-expanded-icon="carat-u" data-collapsed-icon="carat-d">
+		            <h3>股票</h3>
+		            <ul data-role="listview">
+		                <li><a th:href="@{/m/stock/dashboard/income/search}" data-ajax="false"><div style="margin-left: 20px">持股損益儀表板</div></a></li>
+		                <li><a th:href="@{/m/stock/table/income/search}" data-ajax="false"><div style="margin-left: 20px">股票損益表</div></a></li>
+		                <li><a th:href="@{/m/stock/table/draw/search}" data-ajax="false"><div style="margin-left: 20px">抽籤損益表</div></a></li>
+		            </ul>
+		        </li>
+		        <li data-role="collapsible" data-inset="false" data-iconpos="right" data-expanded-icon="carat-u" data-collapsed-icon="carat-d">
+		            <h3>資產</h3>
+		            <ul data-role="listview">
+		            	<li><a th:href="@{/m/asset/set/goal/index}" data-ajax="false"><div style="margin-left: 20px">目標設定</div></a></li>
+		            	<li><a th:href="@{/m/asset/dashboard/investment/search}" data-ajax="false"><div style="margin-left: 20px">投資儀表板</div></a></li>
+		                <li><a th:href="@{/m/asset/dashboard/investment2/search}" data-ajax="false"><div style="margin-left: 20px">投資儀表板2</div></a></li>
+		            </ul>
+		        </li>
+		    </ul>
+		</div>
+	</body>
+</html>

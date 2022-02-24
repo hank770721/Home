@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>HKMA - 持股損益儀表板</title>
+        <link rel="icon" href="/home/icon/favicon.png">
+        <!-- android -->
+        <link rel="shortcut icon" href="/home/icon/favicon.png">
+        <!-- ios -->
+        <link rel="apple-touch-icon" href="/home/icon/favicon_ios.png">
+        <link rel="apple-touch-icon" href="/home/icon/favicon_ios_180.png" sizes="180x180">
+        <link rel="apple-touch-icon" href="/home/icon/favicon_ios_120.png" sizes="120x120">
+        <link rel="apple-touch-icon" href="/home/icon/favicon_ios_114.png" sizes="114x114">
+        
+        <!-- jQuery -->
+		<script src="http://code.jquery.com/jquery-1.12.4.min.js"></script>
+		<!-- jQuery Mobile --> 
+		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+		<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+		
+		<!-- HKMA -->
+		<link rel="stylesheet" href="/home/css/hkma.css"></link>
+		
+		<meta th:name="_csrf" th:content="${_csrf.token}"/>
+		<meta th:name="_csrf_header" th:content="${_csrf.headerName}"/>
+		
+		<style>
+            .highcharts-figure{
+                margin: 0px;
+            }
+            .highcharts-figure .box{
+                padding: 5px;
+            }
+            @media (min-width:768px){
+                .highcharts-figure>div>.box2{
+                    width: 50%;
+                    float: left;
+                }
+            }
+        </style>
+	</head>
+	<body>
+		<!--Highcharts-->
+        <script src="/home/js/Highcharts-8.0.0/highcharts.js"></script>
+        <!--<script src="../code/modules/exporting.js"></script>-->    <!--選項-->
+        <!--<script src="../code/modules/export-data.js"></script>-->  <!--匯出資料-->
+        <script src="/home/js/Highcharts-8.0.0/modules/accessibility.js"></script>
+        
+		<div data-role="page" class="ui-page-theme-a">
+            <div th:replace="mobile/include/header :: header"/>
+            <div class="ui-panel-wrapper">
+                <div id ="data"></div>
+                <figure id="highcharts" class="highcharts-figure"></figure>
+            </div>
+            <div th:replace="mobile/include/menu :: menu"/>
+        </div>
+        
+        <script th:inline="javascript">
+            setTimeout('showLoader()', 100);
+            function showLoader() {
+                $.mobile.loading("show",{
+                    text: '', //載入器中顯示的文字  
+                    textVisible: false, //是否顯示文字  
+                    theme: 'b',        //載入器主題樣式a-e  
+                    textonly: false,   //是否只顯示文字  
+                    html: ""           //要顯示的html內容，如圖片等  
+                });
+            };
+            
+            $(window).load(function() {
+            	var accountUserId = /*[[${accountUserId}]]*/ "";
+            	var accountId = /*[[${accountId}]]*/ "";
+		   		var token = $("meta[name='_csrf']").attr("content");
+                $("#data").load("/home/stock/dashboard/income/data", {"accountUserId":accountUserId, "accountId":accountId, "_csrf":token}, function(){
+                    var highcharts = document.getElementById('highcharts');
+                    
+                    Highcharts.setOptions({
+                        lang: {
+                            thousandsSep: ','   //千分位符號
+                        }
+                    });
+                    
+                    stockDailys.forEach(function(row,index){
+
+                        var div;
+                        var div2 = document.createElement('div');
+                        var div3 = document.createElement('div');
+                        
+                        if( (index + 1) % 2){
+                            div = document.createElement('div');
+                            div.id = 'div_' + parseInt(index / 2) ;
+                            highcharts.appendChild(div);
+                        }else{
+                            div = document.getElementById('div_' + parseInt(index / 2) );
+                        }
+                        
+                        div2.classList.add("box2");
+                        div3.classList.add("box");
+                        div3.id = 'container_' + row.assetType + '_' + row.stockId;
+                        
+                        div2.appendChild(div3);
+                        div.appendChild(div2);
+                        
+                        Highcharts.chart(div3.id, {
+                            title: {
+                                text: row.stockName
+                            },
+                            xAxis: {
+                                allowDecimals: false,
+                                title: {
+                                    text: '月份'
+                                },
+                                labels: {
+                                    formatter: function () {
+                                        return this.value;
+                                    }
+                                },
+                                categories: dates
+                            },
+                            yAxis: {
+                                title: {
+                                    text: '金額(萬)'
+                                },
+                                labels: {
+                                    formatter: function () {
+                                        return this.value / 10000;
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                shared: true    //合併顯示
+                            },
+                            series: [
+                                {
+                                    name: '股票',
+                                    data: row.stock
+                                },
+                                {
+                                    name: '成本',
+                                    data: row.cost
+                                }
+                            ],
+                            responsive: {
+                                rules: [{
+                                    condition: {
+                                        maxWidth: 500
+                                    },
+                                    chartOptions: {
+                                        legend: {
+                                            layout: 'horizontal',
+                                            align: 'center',
+                                            verticalAlign: 'bottom'
+                                        }
+                                    }
+                                }]
+                            }
+                        });
+                    });
+                    
+                    $.mobile.loading('hide');
+                });
+            });
+        </script>
+	</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>HKMA - 信用明細表</title>
+        <link rel="icon" href="/home/icon/favicon.png">
+        <!--android-->
+        <link rel="shortcut icon" href="/home/icon/favicon.png">
+        <!--ios-->
+        <link rel="apple-touch-icon" href="/home/icon/favicon_ios.png">
+        <link rel="apple-touch-icon" href="/home/icon/favicon_ios_180.png" sizes="180x180">
+        <link rel="apple-touch-icon" href="/home/icon/favicon_ios_120.png" sizes="120x120">
+        <link rel="apple-touch-icon" href="/home/icon/favicon_ios_114.png" sizes="114x114">
+        
+        <!-- jQuery -->
+		<script src="http://code.jquery.com/jquery-1.12.4.min.js"></script>
+		<!-- jQuery Mobile --> 
+		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+		<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+		
+		<!-- HKMA -->
+		<link rel="stylesheet" href="/home/css/hkma.css"></link>
+		
+        <style>
+            @media (max-width:767px){
+                td {
+                    font-size: 15px;
+                }
+                td:nth-child(2) {
+                    font-size: 13px;
+                }
+            }
+        </style>
+	</head>
+	<body>
+		<div data-role="page">
+            <div th:replace="mobile/include/header :: header"/>
+            <div class="ui-panel-wrapper">                
+                <table data-role="table" data-mode="" class="ui-shadow table-stripe">
+                    <thead>
+                        <tr>
+                          <th>日期</th>
+                          <th>摘要</th>
+                          <th style="text-align:right">收入</th>
+                          <th style="text-align:right">支出</th>
+                          <th style="text-align:right">結餘</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+	                    <tr th:each="row : ${list}">
+	                        <td th:text="${row.recordDate}"/>
+	                        <td th:text="${row.memo}"/>
+	                        <td style="text-align:right; color:red;" th:text="${row.plus}"></td>
+	                        <td style="text-align:right; color:green;" th:text="${row.minus}"/>
+	                        <td th:style="'text-align:right; color:' + (${#strings.indexOf(row.blance,'-')} >= 0 ? 'green' : 'red')" th:text="${row.blance}"/>
+	                    </tr>
+                    </tbody>
+                  </table>
+            </div>
+            <div th:replace="mobile/include/menu :: menu"/>
+        </div>
+	</body>
+</html>

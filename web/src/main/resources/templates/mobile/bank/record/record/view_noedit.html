@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>HKMA - 提存紀錄</title>
+        <link rel="icon" href="/home/icon/favicon.png">
+        <!--android-->
+        <link rel="shortcut icon" href="/home/icon/favicon.png">
+        <!--ios-->
+        <link rel="apple-touch-icon" href="/home/icon/asset_ios.png">
+        <link rel="apple-touch-icon" href="/home/icon/asset_ios_180.png" sizes="180x180">
+        <link rel="apple-touch-icon" href="/home/icon/asset_ios_120.png" sizes="120x120">
+        <link rel="apple-touch-icon" href="/home/icon/asset_ios_114.png" sizes="114x114">
+        
+        <!-- jQuery -->
+		<script src="http://code.jquery.com/jquery-1.12.4.min.js"></script>
+		<!-- jQuery Mobile --> 
+		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+		<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+		
+		<!-- HKMA -->
+		<link rel="stylesheet" href="/home/css/hkma.css"></link>
+		
+		<style>
+			.action-button .ui-btn-icon-notext.ui-corner-all {
+				height: 37px;
+				background-color: transparent;
+				border: 0px;
+				margin: 0px;
+			}
+			
+			.action-button .ui-btn-icon-notext:after {
+				top: 0px;
+				margin: 0px;
+			}
+			
+			.action-button .ui-btn-icon-notext.left-button:after {
+				left: 0px;
+			}
+			
+			.action-button .ui-btn-icon-notext.right-button:after {
+				left: unset;
+				right: 0px;
+			}
+		</style>
+	</head>
+	<body>
+		<div data-role="page" class="ui-page-theme-a">
+            <div th:replace="mobile/include/header :: header"/>
+            <div>
+                <div class="ui-panel-wrapper">
+					<div class="ui-nodisc-icon ui-alt-icon action-button">
+						<a id="back" href="#" class="ui-btn ui-corner-all ui-icon-back ui-btn-icon-notext ui-btn-inline left-button"></a>
+					</div>
+	                <form id="form" data-ajax="false" th:object="${record}" method="post">
+	                	<label for="recordDate">日期</label>
+	                	<input type="date" data-clear-btn="true" th:field="*{recordDate}"/>
+	                	<label for="transMode">類別</label>
+	                	<select id="transMode" name="transMode">
+	                        <option th:value="${record.transMode}" selected="selected" th:text="${transModeName}"></option>
+	                    </select>
+	                    <div id="fromAccount">
+		                	<label for="fromAccountUserId">轉出帳戶</label>
+			                <input id="fromAccountUserId" type="text" th:field="*{fromAccountUserId}"/>
+		                	<label for="fromAccountId">轉出帳號</label>
+		                	<input type="text" th:field="*{fromAccountId}"/>
+		                </div>
+		                <div id="toAccount">
+		                	<label for="toAccountUserId">轉入帳戶</label>
+			                <input id="toAccountUserId" type="text" th:field="*{toAccountUserId}"/>
+		                	<label for="toAccountId">轉入帳號</label>
+		                	<input type="text" th:field="*{toAccountId}"/>
+		                </div>
+	                	<label for="amount">金額</label>
+	                	<input type="number" name="amount" step="1" th:value="${#numbers.formatInteger(record.amount,0)}"/>
+	                	<label for="memo">備註</label>
+		                <input type="text" th:field="*{memo}"/>
+	                	<label>
+	                		<input type="checkbox" name="isDividend" th:checked="${record.isDividend=='1'}">股利
+	                	 </label>
+	                </form>
+                </div>
+            <div th:replace="mobile/include/menu :: menu"/>
+        </div>
+        
+        <script>
+        	function transModeCheck(){
+                switch($('#transMode').val()){
+	                case '1':
+	                	$('#fromAccount').hide();
+	                	$('#toAccount').show();
+	                    break;
+	                case '2':
+	                	$('#fromAccount').show();
+	                	$('#toAccount').hide();
+	                    break;
+	                case '3':
+	                	$('#fromAccount').show();
+	                	$('#toAccount').show();
+	                    break;
+                }
+            }
+        	
+        	$(document).ready(function() { 
+        		transModeCheck();
+        		
+        		$("#back").click(function() {
+        			location.href = "index";
+                });
+        	});
+        </script>
+	</body>
+</html>

@@ -1,0 +1,15 @@
+<div id="popupPurchase" data-role="popup" data-theme="a">
+	<ul id="listPurchase" data-role="listview" data-inset="true" style="min-width:210px;">
+		<li><a style="height:55.969px;"></a></li>
+		<li th:each="row : ${list}" th:inline="text">
+			<a><h2>
+				[[${row.recordId}]]
+				<br/>
+				[[${row.name}]]
+				<span class="ui-li-count">[[${row.quantity}]]</span>
+				<div style="display:none;">[[${row.recordId}]]</div>
+				<div style="display:none;">[[${row.name}]]</div>
+			</h2></a>
+		</li>
+	</ul>
+</div>

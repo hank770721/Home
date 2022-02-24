@@ -1,0 +1,21 @@
+CREATE TABLE `stock_record` (
+  `recordId` varchar(14) NOT NULL,
+  `recordDate` varchar(8) DEFAULT NULL,
+  `transMode` char(1) DEFAULT NULL,
+  `accountUserId` varchar(20) DEFAULT NULL,
+  `accountId` varchar(4) DEFAULT NULL,
+  `stockId` varchar(5) DEFAULT NULL,
+  `quantity` decimal(4,0) DEFAULT NULL,
+  `price` decimal(5,2) DEFAULT NULL,
+  `fee` decimal(3,0) DEFAULT NULL,
+  `tax` decimal(3,0) DEFAULT NULL,
+  `amount` decimal(6,0) DEFAULT NULL,
+  `assetType` char(1) DEFAULT NULL,
+  `memo` varchar(10) DEFAULT NULL,
+  `cost` decimal(7,1) DEFAULT NULL,
+  `enterUserID` varchar(12) DEFAULT NULL,
+  `enterDatetime` datetime DEFAULT NULL,
+  `updateUserID` varchar(12) DEFAULT NULL,
+  `updateDatetime` datetime DEFAULT NULL,
+  PRIMARY KEY (`recordId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

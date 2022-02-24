@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>HKMA - 消費儀表板</title>
+        <link rel="icon" href="/home/icon/favicon.png">
+        <!-- android -->
+        <link rel="shortcut icon" href="/home/icon/favicon.png">
+        <!-- ios -->
+        <link rel="apple-touch-icon" href="/home/icon/asset_ios.png">
+        <link rel="apple-touch-icon" href="/home/icon/asset_ios_180.png" sizes="180x180">
+        <link rel="apple-touch-icon" href="/home/icon/asset_ios_120.png" sizes="120x120">
+        <link rel="apple-touch-icon" href="/home/icon/asset_ios_114.png" sizes="114x114">
+        
+        <!-- jQuery -->
+		<script src="http://code.jquery.com/jquery-1.12.4.min.js"></script>
+		<!-- jQuery Mobile --> 
+		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+		<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+		
+		<!-- HKMA -->
+		<link rel="stylesheet" href="/home/css/hkma.css"></link>
+		
+		<meta th:name="_csrf" th:content="${_csrf.token}"/>
+		<meta th:name="_csrf_header" th:content="${_csrf.headerName}"/>
+        
+        <style>
+            /*改掉jQuery自動產生--*/
+            /*
+            .ui-page-theme-a.ui-page.ui-page-active{
+                min-height: 0px !important;
+            }
+            */
+            .highcharts-figure{
+                margin: 0px;
+            }
+            .ui-panel-wrapper{
+              padding: 5px;
+            }
+            .ui-panel-wrapper .box{
+                padding: 5px;
+            }
+            .ui-panel-wrapper .box .box-head{
+                padding: 5px;
+                font-size: 21px;
+                height: 30px;
+            }
+            .ui-panel-wrapper .box>.box-inside{
+                background-color: white;
+            }
+            
+            .ui-panel-wrapper .box .text{
+                text-align: center;
+            }
+            .ui-panel-wrapper .box .table{
+                padding: 10px;
+            }
+            .ui-panel-wrapper .box .table>.table-inside{
+                overflow: hidden;
+                -webkit-box-shadow: 0px 1px 3px rgb(0 0 0 / 15%);
+            }
+            .ui-panel-wrapper .box .table>.table-inside>.table-body{
+                overflow: auto;
+            }
+            .ui-panel-wrapper .box .table>.table-inside>.table-body::-webkit-scrollbar{
+                display: none;
+            }
+            .ui-panel-wrapper .box .table .decimal{
+                text-align: right;
+            }
+            .ui-panel-wrapper .box .table .plus{
+                color: red;
+            }
+            .ui-panel-wrapper .box .table .minus{
+                color: green;
+            }
+            
+            @media (max-width:767px){
+                .ui-panel-wrapper #assetRecord{
+                     font-size: 13px;
+                }
+                .ui-panel-wrapper .box3 .box-inside{
+                    height: 370px;
+                }
+                .ui-panel-wrapper .box3 .table-body{
+                    height: 310px;
+                }
+            }
+            
+            @media (min-width:768px){
+                .ui-panel-wrapper .box1{
+                    width: 100%;
+                    float: left;
+                }
+                .ui-panel-wrapper .box2{
+                    width: 50%;
+                    float: left;
+                }
+                .ui-panel-wrapper .box3{
+                    width: 33.33%;
+                    float: left;
+                }
+                .ui-panel-wrapper .box3 .box-inside{
+                    height: 370px;
+                }
+                .ui-panel-wrapper .box3 .table-body{
+                    height: 310px;
+                }
+            }
+        </style>
+	</head>
+	<body>
+		<!--Highcharts-->
+        <script src="/home/js/Highcharts-8.0.0/highcharts.js"></script>
+        <!--<script src="../code/modules/exporting.js"></script>-->    <!--選項-->
+        <!--<script src="../code/modules/export-data.js"></script>-->  <!--匯出資料-->
+        <script src="/home/js/Highcharts-8.0.0/modules/accessibility.js"></script>
+        
+        <div data-role="page" class="ui-page-theme-a">
+            <div th:replace="mobile/include/header :: header"/>
+            <div class="ui-panel-wrapper">
+                <div id ="data"></div>
+                <div class="row">
+                    <div class="box3">
+                        <div class="box">
+                            <div class="box-inside" style="height: 110px;">
+                                <div class="box-head"><text>本月開銷</text></div>
+                                <div class="box-body">
+                                    <div class="text" id="thisMonthBlance" style="font-size: 50px"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box3">
+                        <div class="box">
+                            <div class="box-inside" style="height: 110px;">
+                                <div class="box-head"><text>前月開銷</text></div>
+                                <div class="box-body">
+                                    <div class="text" id="lastMonthBlance" style="font-size: 50px"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box3">
+                        <div class="box">
+                            <div class="box-inside" style="height: 110px;">
+                                <div class="box-head"><text>去年開銷</text></div>
+                                <div class="box-body">
+                                    <div class="text" id="lastYearBlance" style="font-size: 50px"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="box3" >
+                        <div class="box">
+                            <div class="box-inside">
+                                <div class="box-head"><text>本月明細</text></div>
+                                <div class="box-body">
+                                    <div class="table">
+                                        <div class="table-inside">
+                                            <div class="table-body">
+                                                <table data-role="table" data-mode="" class="ui-shadow table-stripe" id="thisMonthExpenseTable">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>日期</th>
+                                                            <th>摘要</th>
+                                                            <th class="decimal">收入</th>
+                                                            <th class="decimal">支出</th>
+                                                            <th class="decimal">結餘</th>
+                                                        </tr>
+                                                    </thead>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box3" >
+                        <div class="box">
+                            <div class="box-inside">
+                                <div class="box-head"><text>前月明細</text></div>
+                                <div class="box-body">
+                                    <div class="table">
+                                        <div class="table-inside">
+                                            <div class="table-body">
+                                                <table data-role="table" data-mode="" class="ui-shadow table-stripe" id="lastMonthExpenseTable">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>日期</th>
+                                                            <th>摘要</th>
+                                                            <th class="decimal">收入</th>
+                                                            <th class="decimal">支出</th>
+                                                            <th class="decimal">結餘</th>
+                                                        </tr>
+                                                    </thead>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box3" >
+                        <div class="box">
+                            <div class="box-inside">
+                                <div class="box-head"><text>去年明細</text></div>
+                                <div class="box-body">
+                                    <div class="table">
+                                        <div class="table-inside">
+                                            <div class="table-body">
+                                                <table data-role="table" data-mode="" class="ui-shadow table-stripe" id="lastYearExpenseTable">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>日期</th>
+                                                            <th>摘要</th>
+                                                            <th class="decimal">收入</th>
+                                                            <th class="decimal">支出</th>
+                                                            <th class="decimal">結餘</th>
+                                                        </tr>
+                                                    </thead>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="box1">
+                        <div class="box">
+                            <div class="box-inside" style="height: 370px;">
+                                <div class="box-head"><text>存股損益</text></div>
+                                <div class="box-body">
+                                    <figure class="highcharts-figure">
+                                        <div id="container" style="height: 330px;"></div>
+                                    </figure>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        	</div>
+	       	<div th:replace="mobile/include/menu :: menu"/>
+	   	</div>
+	   	
+	   	<script th:inline="javascript">
+		   	setTimeout('showLoader()', 100);
+	        function showLoader() {
+	            $.mobile.loading("show",{
+	                text: '', //載入器中顯示的文字  
+	                textVisible: false, //是否顯示文字  
+	                theme: 'a',        //載入器主題樣式a-e  
+	                textonly: false,   //是否只顯示文字  
+	                html: ""           //要顯示的html內容，如圖片等  
+	            });
+	        };
+	        
+		   	$(window).load(function() {
+		   		var userId = /*[[${userId}]]*/ "";
+		   		var groupId = /*[[${groupId}]]*/ "";
+		   		var token = $("meta[name='_csrf']").attr("content");
+	            $("#data").load("/home/life/dashboard/expense/data", {"userId":userId, "groupId":groupId, "_csrf":token}, function(){
+	                {
+	                    var div = document.getElementById('thisMonthBlance');
+	                    var text = document.createElement('text');
+	                    
+	                    text.textContent = thisMonthBlance;
+	                    div.appendChild(text);
+	                }
+	                
+	                {
+                        var div = document.getElementById('lastMonthBlance');
+                        var text = document.createElement('text');
+                        
+                        text.textContent = lastMonthBlance;
+                        div.appendChild(text);
+                    }
+	                
+	                {
+                        var div = document.getElementById('lastYearBlance');
+                        var text = document.createElement('text');
+                        
+                        text.textContent = lastYearBlance;
+                        div.appendChild(text);
+                    }
+                    
+                    {
+                        var table = document.getElementById('thisMonthExpenseTable');
+                        var tbody = document.createElement('tbody');
+
+                        thisMonthExpenseList.forEach(row => {
+                            var tr = document.createElement('tr');
+                            var td;
+
+                            td = document.createElement('td');
+                            td.textContent = row["recordDate"];
+                            tr.appendChild(td);
+
+                            td = document.createElement('td');
+                            td.textContent = row["memo"];
+                            tr.appendChild(td);
+
+                            td = document.createElement('td');
+                            td.textContent = row["plus"];
+                            td.className += "decimal plus";
+                            tr.appendChild(td);
+                            
+                            td = document.createElement('td');
+                            td.textContent = row["minus"];
+                            td.className += "decimal minus";
+                            tr.appendChild(td);
+                            
+                            td = document.createElement('td');
+                            td.textContent = row["blance"];
+                            td.className += "decimal";
+                            tr.appendChild(td);
+
+                            tbody.appendChild(tr);
+                        });
+
+                        table.appendChild(tbody);
+                    }
+                    
+                    {
+                        var table = document.getElementById('lastMonthExpenseTable');
+                        var tbody = document.createElement('tbody');
+
+                        lastMonthExpenseList.forEach(row => {
+                            var tr = document.createElement('tr');
+                            var td;
+
+                            td = document.createElement('td');
+                            td.textContent = row["recordDate"];
+                            tr.appendChild(td);
+
+                            td = document.createElement('td');
+                            td.textContent = row["memo"];
+                            tr.appendChild(td);
+
+                            td = document.createElement('td');
+                            td.textContent = row["plus"];
+                            td.className += "decimal plus";
+                            tr.appendChild(td);
+                            
+                            td = document.createElement('td');
+                            td.textContent = row["minus"];
+                            td.className += "decimal minus";
+                            tr.appendChild(td);
+                            
+                            td = document.createElement('td');
+                            td.textContent = row["blance"];
+                            td.className += "decimal";
+                            tr.appendChild(td);
+
+                            tbody.appendChild(tr);
+                        });
+
+                        table.appendChild(tbody);
+                    }
+                    
+                    {
+                        var table = document.getElementById('lastYearExpenseTable');
+                        var tbody = document.createElement('tbody');
+
+                        lastYearExpenseList.forEach(row => {
+                            var tr = document.createElement('tr');
+                            var td;
+
+                            td = document.createElement('td');
+                            td.textContent = row["recordDate"];
+                            tr.appendChild(td);
+
+                            td = document.createElement('td');
+                            td.textContent = row["memo"];
+                            tr.appendChild(td);
+
+                            td = document.createElement('td');
+                            td.textContent = row["plus"];
+                            td.className += "decimal plus";
+                            tr.appendChild(td);
+                            
+                            td = document.createElement('td');
+                            td.textContent = row["minus"];
+                            td.className += "decimal minus";
+                            tr.appendChild(td);
+                            
+                            td = document.createElement('td');
+                            td.textContent = row["blance"];
+                            td.className += "decimal";
+                            tr.appendChild(td);
+
+                            tbody.appendChild(tr);
+                        });
+
+                        table.appendChild(tbody);
+                    }
+                    
+                    Highcharts.setOptions({
+                        lang: {
+                            thousandsSep: ','   //千分位符號
+                        }
+                    });
+                    
+                    Highcharts.chart('container', {
+                        chart: {
+                            type: 'column'
+                        },
+                        title: {
+                            text: ''
+                        },
+                        xAxis: {
+                            categories: [
+                                '1月',
+                                '2月',
+                                '3月',
+                                '4月',
+                                '5月',
+                                '6月',
+                                '7月',
+                                '8月',
+                                '9月',
+                                '10月',
+                                '11月',
+                                '12月'
+                            ],
+                            crosshair: true
+                        },
+                        yAxis: {
+                            min: 0,
+                            title: {
+                                text: '金額'
+                            }
+                        },
+                        tooltip: {
+                        	/*
+                            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                                '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+                            footerFormat: '</table>',
+                            shared: true,
+                            useHTML: true
+                            */
+                        	shared: true
+                        },
+                        plotOptions: {
+                            column: {
+                                pointPadding: 0.2,
+                                borderWidth: 0
+                            }
+                        },
+                        series: expenseYearList
+                    });
+                    
+                    $.mobile.loading('hide');
+	            });
+		   	});
+	   	</script>
+	</body>
+</html>

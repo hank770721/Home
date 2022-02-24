@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>HKMA - 信用明細表</title>
+        <link rel="icon" href="/home/icon/favicon.png">
+        <!--android-->
+        <link rel="shortcut icon" href="/home/icon/favicon.png">
+        <!--ios-->
+        <link rel="apple-touch-icon" href="/home/icon/asset_ios.png">
+        <link rel="apple-touch-icon" href="/home/icon/asset_ios_180.png" sizes="180x180">
+        <link rel="apple-touch-icon" href="/home/icon/asset_ios_120.png" sizes="120x120">
+        <link rel="apple-touch-icon" href="/home/icon/asset_ios_114.png" sizes="114x114">
+        
+        <!-- jQuery -->
+		<script src="http://code.jquery.com/jquery-1.12.4.min.js"></script>
+		<!-- jQuery Mobile --> 
+		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+		<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+		
+		<!-- HKMA -->
+		<link rel="stylesheet" href="/home/css/hkma.css"></link>
+		
+		<style>
+			.action-button .ui-btn-icon-notext.ui-corner-all {
+				height: 37px;
+				background-color: transparent;
+				border: 0px;
+				margin: 0px;
+			}
+			
+			.action-button .ui-btn-icon-notext:after {
+				top: 0px;
+				margin: 0px;
+			}
+			
+			.action-button .ui-btn-icon-notext.left-button:after {
+				left: 0px;
+			}
+			
+			.action-button .ui-btn-icon-notext.right-button:after {
+				left: unset;
+				right: 0px;
+			}
+		</style>
+	</head>
+	<body>
+		<div data-role="page" class="ui-page-theme-a">
+            <div th:replace="mobile/include/header :: header"/>
+            <div>
+                <div class="ui-panel-wrapper">
+					<div class="ui-nodisc-icon ui-alt-icon action-button">
+						<div style="width: calc(100% - 66px); display: inline-block;"></div>
+						<div style="display: inline-block; text-align:right;">
+							<div style="width: 60px; display: inline-block;">
+								<a id="check" href="#" class="ui-btn ui-corner-all ui-icon-check ui-btn-icon-notext ui-btn-inline right-button"></a>
+							</div>
+						</div>
+					</div>
+	                <form id="form" action="view" data-ajax="false" method="get">
+	                	<div>
+		            		<div style="display:inline-block; width:calc(100% - 48px)">
+			                	<label for="accountUserId">帳戶</label>
+				                <input id="accountUserId" type="text" name="accountUserId" th:value="${accountUserId}"/>
+				            </div>
+			            	<a id="btnAccount" href="#popupAccount" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-gear ui-btn-icon-left ui-btn-a"
+			            		style="height:35px;width:40px;padding:0px;margin:0px;top:-1px;"></a>
+		            	</div>
+		                <label for="accountId">帳號</label>
+		                <input id="accountId" type="text" name="accountId" th:value="${accountId}"/>
+	                </form>
+                </div>
+            <div th:replace="mobile/include/menu :: menu"/>
+            
+            <div id="divAccount">
+            	<div id="popupAccount" data-role="popup" data-theme="a">
+					<ul id="listAccount" data-role="listview" data-inset="true" style="min-width:210px;">
+						<li><a style="height:35.18px;"></a></li>
+						<li th:each="list : ${accountList}" th:inline="text">
+							<a><h2>
+								[[${list.memo}]]
+								<div style="display:none;">[[${list.accountUserId}]]</div>
+								<div style="display:none;">[[${list.accountId}]]</div>
+							</h2></a>
+						</li>
+					</ul>
+				</div>
+			</div>
+        </div>
+        
+        <script>
+        	$(document).ready(function() {
+        		$("#back").click(function() {
+        			location.href = "index";
+                });
+        		
+        		$("#check").click(function() {
+                    $("#form").submit();
+                });
+        		
+        		$('#popupAccount a').click(function(){
+                	$('#accountUserId').val($(this).find('div:eq(0)').text());
+                	$('#accountId').val($(this).find('div:eq(1)').text());
+                	$('#popupAccount').popup('close');
+                });
+        	});
+        </script>
+	</body>
+</html>

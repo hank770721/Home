@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>HKMA - 庫存清單</title>
+        <link rel="icon" href="/home/icon/favicon.png">
+        <!-- android -->
+        <link rel="shortcut icon" href="/home/icon/favicon.png">
+        <!-- ios -->
+        <link rel="apple-touch-icon" href="/home/icon/asset_ios.png">
+        <link rel="apple-touch-icon" href="/home/icon/asset_ios_180.png" sizes="180x180">
+        <link rel="apple-touch-icon" href="/home/icon/asset_ios_120.png" sizes="120x120">
+        <link rel="apple-touch-icon" href="/home/icon/asset_ios_114.png" sizes="114x114">
+        
+        <!-- jQuery -->
+		<script src="http://code.jquery.com/jquery-1.12.4.min.js"></script>
+		<!-- jQuery Mobile --> 
+		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+		<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+		
+		<!-- HKMA -->
+		<link rel="stylesheet" href="/home/css/hkma.css"></link>
+		
+		<meta name="_csrf" th:content="${_csrf.token}"/>
+ 		<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+		
+		<style>
+			/*項目標籤容器*/
+			.ui-collapsible-content{
+				padding:0;
+				background-color:transparent;
+				border-color:transparent;
+				color:black;
+				text-shadow:none;
+			}
+			.ui-collapsible-inset.ui-collapsible-themed-content .ui-collapsible-content {
+			    border-right-width: 0px;
+			}
+			.ui-collapsible-content>.ui-listview {
+				margin:0;
+			    margin-left:10px;
+			}
+			.ui-collapsible-heading-toggle .ui-collapsible-heading-toggle{
+				border-top-width:0px;
+			}
+			/*ui-btn增加左右框線*/
+			.ui-collapsible-content .ui-listview .ui-btn {
+				border-left-width:1px;
+				border-right-width:1px;
+				border-bottom-width:1px;
+			}
+			/*裡面的項目標籤無須圓角*/
+			.ui-corner-all .ui-corner-all{
+				border-radius:unset;
+			}
+			/*最後的ui-btn增加下框線*/
+			/*.ui-collapsible-content .ui-listview .ui-last-child .ui-btn{*/
+			.ui-collapsible>.ui-collapsible-content>.ui-listview>li.ui-last-child>a.ui-btn{
+				border-bottom-width:1px;
+			}
+		</style>
+	</head>
+	<body>
+		<div data-role="page" class="ui-page-theme-a">
+            <div th:replace="mobile/include/header :: header"/>
+            <div class="ui-panel-wrapper">
+            	<div data-role="collapsibleset" data-theme="a" data-content-theme="b">
+					<div th:each="class1 : ${class1List}" data-role="collapsible">
+						<h2 th:text="${class1.class1}"></h2>
+						<ul data-role="listview" data-filter-theme="a" data-divider-theme="b">
+							<div th:each="class2 : ${class1.class2List}" data-role="collapsible">
+								<h2 th:inline="text">
+									[[${class2.class2}]]<span class="ui-li-count">[[${class2.quantity}]]</span>
+								</h2>
+								<ul data-role="listview">
+									<div th:each="name : ${class2.nameList}" data-role="collapsible">
+										<h2 th:inline="text" style="font-weight:normal">
+											[[${name.name}]]<span class="ui-li-count">[[${name.quantity}]]</span>
+										</h2>
+										<ul data-role="listview">
+											<div th:each="purchase : ${name.purchaseList}" data-role="collapsible">
+												<h2 th:inline="text">
+													購買日期:[[${purchase.purchaseDate}]]<span class="ui-li-count">[[${purchase.quantity}]]</span><br/>
+													有效日期:[[${purchase.expiryDate}]]
+												</h2>
+												<ul th:if="${!purchase.useList.empty}" th:each="use : ${purchase.useList}" data-role="listview">
+													<li th:inline="text">
+														<a href="#" th:onclick="view([[${use.useId}]])">
+															<h3><strong>使用日期:[[${use.beginDate}]]</strong></h3>
+														</a>
+													</li>
+												</ul>
+											</div>
+										</ul>
+									</div>
+								</ul>
+							</div>
+						</ul>
+					</div>
+				</div>
+			</div>
+            <div th:replace="mobile/include/menu :: menu"/>
+        </div>
+        
+        <div style="display: none;">
+        	<form id="formView" data-ajax="false" method="post">
+        		<input name="recordId">
+        		<input name="url" value="/m/inventory/list/inventory/view">
+				<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        	</form>
+        </div>
+        
+        <script>
+	        function view(recordId){
+	        	$("input[name='recordId']").val(recordId);
+	        	$("#formView").attr("action", "/home/m/inventory/record/use/view/"+recordId);
+	            $("#formView").submit();
+	        };
+	   	</script>
+	</body>
+</html>

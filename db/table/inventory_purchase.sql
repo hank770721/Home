@@ -1,0 +1,20 @@
+CREATE TABLE `inventory_purchase` (
+  `recordId` varchar(12) NOT NULL,
+  `recordDate` varchar(8) DEFAULT NULL,
+  `class1` varchar(4) DEFAULT NULL,
+  `class2` varchar(7) DEFAULT NULL,
+  `brand` varchar(45) DEFAULT NULL,
+  `name` varchar(45) DEFAULT NULL,
+  `model` varchar(9) DEFAULT NULL,
+  `size` varchar(45) DEFAULT NULL,
+  `quantity` decimal(1,0) DEFAULT NULL,
+  `purchaseDate` varchar(8) DEFAULT NULL,
+  `manufactureDate` varchar(8) DEFAULT NULL,
+  `expiryDate` varchar(8) DEFAULT NULL,
+  `amount` decimal(4,0) DEFAULT NULL,
+  `enterUserId` varchar(20) DEFAULT NULL,
+  `enterDatetime` datetime DEFAULT NULL,
+  `updateUserId` varchar(20) DEFAULT NULL,
+  `updateDatetime` datetime DEFAULT NULL,
+  PRIMARY KEY (`recordId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

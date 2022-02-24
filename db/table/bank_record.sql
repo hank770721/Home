@@ -1,0 +1,21 @@
+CREATE TABLE `bank_record` (
+  `recordId` varchar(14) NOT NULL,
+  `recordDate` varchar(8) DEFAULT NULL,
+  `transMode` char(1) DEFAULT NULL,
+  `fromAccountUserId` varchar(20) DEFAULT NULL,
+  `fromAccountId` varchar(4) DEFAULT NULL,
+  `toAccountUserId` varchar(20) DEFAULT NULL,
+  `toAccountId` varchar(4) DEFAULT NULL,
+  `memo` varchar(20) DEFAULT NULL,
+  `amount` decimal(9,0) DEFAULT NULL,
+  `isDividend` char(1) DEFAULT NULL,
+  `type` char(1) DEFAULT NULL,
+  `stockId` varchar(5) DEFAULT NULL,
+  `fromTable` varchar(20) DEFAULT NULL,
+  `fromId` varchar(14) DEFAULT NULL,
+  `enterUserId` varchar(12) DEFAULT NULL,
+  `enterDatetime` datetime DEFAULT NULL,
+  `updateUserId` varchar(12) DEFAULT NULL,
+  `updateDatetime` datetime DEFAULT NULL,
+  PRIMARY KEY (`recordId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

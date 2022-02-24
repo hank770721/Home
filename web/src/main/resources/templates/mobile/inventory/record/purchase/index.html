@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>HKMA - 購買紀錄</title>
+        <link rel="icon" href="/home/icon/favicon.png">
+        <!--android-->
+        <link rel="shortcut icon" href="/home/icon/favicon.png">
+        <!--ios-->
+        <link rel="apple-touch-icon" href="/home/icon/asset_ios.png">
+        <link rel="apple-touch-icon" href="/home/icon/asset_ios_180.png" sizes="180x180">
+        <link rel="apple-touch-icon" href="/home/icon/asset_ios_120.png" sizes="120x120">
+        <link rel="apple-touch-icon" href="/home/icon/asset_ios_114.png" sizes="114x114">
+        
+        <!-- jQuery -->
+		<script src="http://code.jquery.com/jquery-1.12.4.min.js"></script>
+		<!-- jQuery Mobile --> 
+		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+		<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+		
+		<!-- HKMA -->
+		<link rel="stylesheet" href="/home/css/hkma.css"></link>
+        
+        <style>
+        	.action-button .ui-btn-icon-notext.ui-corner-all {
+				height: 37px;
+				background-color: transparent;
+				border: 0px;
+				margin: 0px;
+			}
+			
+			.action-button .ui-btn-icon-notext:after {
+				top: 0px;
+				margin: 0px;
+			}
+			
+			.action-button .ui-btn-icon-notext.left-button:after {
+				left: 0px;
+			}
+			
+			.action-button .ui-btn-icon-notext.right-button:after {
+				left: unset;
+				right: 0px;
+			}
+			
+        	.ui-panel-wrapper ul li p{
+        		margin: 0px;
+        	}
+        	.ui-panel-wrapper ul li a>div{
+        		padding: 3px;
+        		height: 12px;
+        		line-height: 12px;
+        	}
+        	.ui-panel-wrapper ul li div div{
+        		display: inline-block;
+        	}
+        </style>
+	</head>
+	<body>
+		<div data-role="page" class="ui-page-theme-a">
+            <div th:replace="mobile/include/header :: header"/>
+            <div>
+                <div class="ui-panel-wrapper">
+                	<div class="ui-nodisc-icon ui-alt-icon action-button">
+						<div style="width: calc(100% - 131px); display: inline-block;"></div>
+						<div style="display: inline-block; text-align:right;">
+							<div style="width: 60px; display: inline-block;">
+								<a href="search" class="ui-btn ui-corner-all ui-icon-search ui-btn-icon-notext ui-btn-inline right-button"></a>
+							</div>
+							<div style="width: 60px; display: inline-block;">
+								<a href="new" class="ui-btn ui-corner-all ui-icon-plus ui-btn-icon-notext ui-btn-inline right-button"></a>
+							</div>
+						</div>
+					</div>
+	                <ul data-role="listview" data-inset="true" data-icon="">
+	                    <li th:each="row : ${list}">
+	                    	<a href="#" th:onclick="view([[${row.recordId}]])">
+	                    		<div><p th:text="${row.name}"/></div>
+	                    		<div><p th:text="${'購買日期:' + row.purchaseDate}"/></div>
+	                    	</a>
+	                    </li>
+		            </ul>
+                </div>
+            <div th:replace="mobile/include/menu :: menu"/>
+        </div>
+        
+        <script>
+	        function view(recordId){
+	        	location.href = "view/"+recordId;
+	        };
+        </script>
+	</body>
+</html>

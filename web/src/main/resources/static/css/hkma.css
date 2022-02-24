@@ -1,0 +1,58 @@
+.page-header.ui-header {
+    /*標題框固定begin*/
+    position: fixed;
+    z-index: 1000;
+    width: 100%;
+    /*標題框固定ending*/
+    height: 40px;   /*標題框高度*/
+    border-style: none; /*標題框框線*/
+}
+.page-header.ui-header .ui-btn {
+    width: 40px; 
+    height: 40px;
+    background: #ffffff;   
+    border: 0px;
+    top: 50%;
+    margin-top: -20px;
+    margin-left: -5px;
+}
+.ui-mobile label {
+    margin: 0px; /*label與input間隔由input訂*/
+}
+.ui-page-theme-a .ui-bar-inherit {
+    text-shadow: none;  /*標題文字陰影*/
+}
+.ui-page-theme-a .ui-btn:hover {
+    background: #ffffff;    /*表單按鈕按完顏色*/
+}
+.ui-page-theme-a .ui-btn:focus {
+    -webkit-box-shadow: none;   /*表單按鈕focus陰影*/
+}
+.ui-panel-wrapper {
+    margin-top: 40px;   /*網頁內容固定下移40px*/
+    min-height: calc(100vh - 70px);
+    padding: 15px;
+}
+#memuPanel{
+    /*功能表scrollbar*/
+    position: fixed;
+    overflow: auto;
+    top: 0;
+    bottom: 0px;
+    /*功能表scrollbar*/
+}
+#memuPanel .ui-panel-inner {
+    padding-top: 0px;
+}
+#memuPanel .ui-panel-inner > .ui-listview {
+    margin-top: 40px;
+}
+#memuPanel .ui-listview li {
+    padding: 0px;
+}
+#memuPanel .ui-listview li h3 {
+    margin: 0px;
+}
+#memuPanel .ui-listview .ui-listview li div {
+    margin-left: 20px
+}
