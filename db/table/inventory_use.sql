@@ -1,5 +1,6 @@
 CREATE TABLE `inventory_use` (
   `recordId` varchar(12) NOT NULL,
+  `userId` varchar(12) DEFAULT NULL,
   `recordDate` varchar(8) DEFAULT NULL,
   `purchaseId` varchar(12) DEFAULT NULL,
   `beginDate` varchar(8) DEFAULT NULL,
