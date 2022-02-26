@@ -6,6 +6,7 @@ CREATE TABLE `life_expense` (
   `accountId` varchar(4) DEFAULT NULL,
   `memo` varchar(20) DEFAULT NULL,
   `amount` decimal(9,0) DEFAULT NULL,
+  `isConsolidation` char(1) DEFAULT NULL,
   `enterUserId` varchar(12) DEFAULT NULL,
   `enterDatetime` datetime DEFAULT NULL,
   `updateUserId` varchar(12) DEFAULT NULL,
