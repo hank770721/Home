@@ -36,6 +36,8 @@ public class ExpenseEntity extends BaseEntity implements Serializable {
 	@Column(name="amount")
 	private Double amount;
 	
+	private String isConsolidation;
+	
 	public void setRecordId(String recordId) {
         this.recordId = recordId;
     }
@@ -91,4 +93,12 @@ public class ExpenseEntity extends BaseEntity implements Serializable {
 	public Double getAmount() {
         return amount;
     }
+
+	public String getIsConsolidation() {
+		return isConsolidation;
+	}
+
+	public void setIsConsolidation(String isConsolidation) {
+		this.isConsolidation = isConsolidation;
+	}
 }

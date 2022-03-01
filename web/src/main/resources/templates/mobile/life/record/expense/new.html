@@ -86,6 +86,9 @@
 	                	<input type="number" step="1" name="amount" th:value="${amount}"/>
 	                	<label for="memo">備註</label>
 		                <input type="text" th:field="*{memo}"/>
+		                <label>
+	                		<input type="checkbox" name="isConsolidation" th:checked="${expense.isConsolidation eq '1'}">盤整
+	                	</label>
 						<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
 	 					<input type="hidden" name="_method"/>
 	                </form>

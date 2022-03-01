@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,33 +54,37 @@ public class DashboardExpenseDataController {
 		for (ExpenseEntity expense : expenseEntityList) {
 			String recordDate = expense.getRecordDate();
 			double amount = expense.getAmount();
+			String isConsolidation = expense.getIsConsolidation();
 			
-			Map<String,Object> record = new HashMap<>();
-			record.put("recordDate", recordDate.substring(0, 4) + "/" + recordDate.substring(4, 6) + "/" + recordDate.substring(6, 8));
-			record.put("memo", expense.getMemo());
-			
-			switch(expense.getTransMode()) {
-				case "1":
-					record.put("plus", decimalFormat.format(amount));
-					record.put("minus", "");
-					
-					blance = blance + amount;
-					
-					break;
-				case "2":
-					record.put("plus", "");
-					record.put("minus", decimalFormat.format(amount));
-					
-					blance = blance - amount;
-					
-					break;
+			//20220301 盤整不列入
+			if (isConsolidation == null || isConsolidation.equals("0")) {
+				Map<String,Object> record = new HashMap<>();
+				record.put("recordDate", recordDate.substring(0, 4) + "/" + recordDate.substring(4, 6) + "/" + recordDate.substring(6, 8));
+				record.put("memo", expense.getMemo());
+				
+				switch(expense.getTransMode()) {
+					case "1":
+						record.put("plus", decimalFormat.format(amount));
+						record.put("minus", "");
+						
+						blance = blance + amount;
+						
+						break;
+					case "2":
+						record.put("plus", "");
+						record.put("minus", decimalFormat.format(amount));
+						
+						blance = blance - amount;
+						
+						break;
+				}
+				
+				thisMonthBlance = blance;
+				
+				record.put("blance", decimalFormat.format(blance));
+				
+				thisMonthExpenseList.add(record);
 			}
-			
-			thisMonthBlance = blance;
-			
-			record.put("blance", decimalFormat.format(blance));
-			
-			thisMonthExpenseList.add(record);
 		};
 		
 		Collections.reverse(thisMonthExpenseList);
@@ -95,33 +98,37 @@ public class DashboardExpenseDataController {
 		for (ExpenseEntity expense : expenseEntityList) {
 			String recordDate = expense.getRecordDate();
 			double amount = expense.getAmount();
+			String isConsolidation = expense.getIsConsolidation();
 			
-			Map<String,Object> record = new HashMap<>();
-			record.put("recordDate", recordDate.substring(0, 4) + "/" + recordDate.substring(4, 6) + "/" + recordDate.substring(6, 8));
-			record.put("memo", expense.getMemo());
-			
-			switch(expense.getTransMode()) {
-				case "1":
-					record.put("plus", decimalFormat.format(amount));
-					record.put("minus", "");
-					
-					blance = blance + amount;
-					
-					break;
-				case "2":
-					record.put("plus", "");
-					record.put("minus", decimalFormat.format(amount));
-					
-					blance = blance - amount;
-					
-					break;
+			//20220301 盤整不列入
+			if (isConsolidation == null || isConsolidation.equals("0")) {
+				Map<String,Object> record = new HashMap<>();
+				record.put("recordDate", recordDate.substring(0, 4) + "/" + recordDate.substring(4, 6) + "/" + recordDate.substring(6, 8));
+				record.put("memo", expense.getMemo());
+				
+				switch(expense.getTransMode()) {
+					case "1":
+						record.put("plus", decimalFormat.format(amount));
+						record.put("minus", "");
+						
+						blance = blance + amount;
+						
+						break;
+					case "2":
+						record.put("plus", "");
+						record.put("minus", decimalFormat.format(amount));
+						
+						blance = blance - amount;
+						
+						break;
+				}
+				
+				lastMonthBlance = blance;
+				
+				record.put("blance", decimalFormat.format(blance));
+				
+				lastMonthExpenseList.add(record);
 			}
-			
-			lastMonthBlance = blance;
-			
-			record.put("blance", decimalFormat.format(blance));
-			
-			lastMonthExpenseList.add(record);
 		};
 		
 		Collections.reverse(lastMonthExpenseList);
@@ -135,33 +142,37 @@ public class DashboardExpenseDataController {
 		for (ExpenseEntity expense : expenseEntityList) {
 			String recordDate = expense.getRecordDate();
 			double amount = expense.getAmount();
+			String isConsolidation = expense.getIsConsolidation();
 			
-			Map<String,Object> record = new HashMap<>();
-			record.put("recordDate", recordDate.substring(0, 4) + "/" + recordDate.substring(4, 6) + "/" + recordDate.substring(6, 8));
-			record.put("memo", expense.getMemo());
-			
-			switch(expense.getTransMode()) {
-				case "1":
-					record.put("plus", decimalFormat.format(amount));
-					record.put("minus", "");
-					
-					blance = blance + amount;
-					
-					break;
-				case "2":
-					record.put("plus", "");
-					record.put("minus", decimalFormat.format(amount));
-					
-					blance = blance - amount;
-					
-					break;
+			//20220301 盤整不列入
+			if (isConsolidation == null || isConsolidation.equals("0")) {
+				Map<String,Object> record = new HashMap<>();
+				record.put("recordDate", recordDate.substring(0, 4) + "/" + recordDate.substring(4, 6) + "/" + recordDate.substring(6, 8));
+				record.put("memo", expense.getMemo());
+				
+				switch(expense.getTransMode()) {
+					case "1":
+						record.put("plus", decimalFormat.format(amount));
+						record.put("minus", "");
+						
+						blance = blance + amount;
+						
+						break;
+					case "2":
+						record.put("plus", "");
+						record.put("minus", decimalFormat.format(amount));
+						
+						blance = blance - amount;
+						
+						break;
+				}
+				
+				lastYearBlance = blance;
+				
+				record.put("blance", decimalFormat.format(blance));
+				
+				lastYearExpenseList.add(record);
 			}
-			
-			lastYearBlance = blance;
-			
-			record.put("blance", decimalFormat.format(blance));
-			
-			lastYearExpenseList.add(record);
 		};
 		
 		Collections.reverse(lastYearExpenseList);

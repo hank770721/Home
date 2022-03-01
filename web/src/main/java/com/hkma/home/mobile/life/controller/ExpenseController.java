@@ -305,6 +305,10 @@ public class ExpenseController {
 		recordDate = recordDate.replaceAll("-","");
 		expense.setRecordDate(recordDate);
 		
+		if (expense.getIsConsolidation() != null) {
+			expense.setIsConsolidation("1");
+		}
+		
 		String recordId;
 		Optional<String> recordIdOptional = expenseRepository.getMaxRecordIdByRecordDate(recordDate);
 		
@@ -502,6 +506,10 @@ public class ExpenseController {
 		}
 		
 		expense.setRecordDate(recordDate);
+		
+		if (expense.getIsConsolidation() != null) {
+			expense.setIsConsolidation("1");
+		}
 		
 		if (principal != null){
 			expense.setUpdateUserId(principal.getName());
