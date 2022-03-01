@@ -102,10 +102,10 @@
 	                	<label for="memo">備註</label>
 		                <input type="text" th:field="*{memo}"/>
 	                	<label>
-	                		<input type="checkbox" name="isDividend" th:checked="${record.isDividend eq 'on'}">股利
-	                	 </label>
-	                	 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-	                	 <input type="hidden" name="_method"/>
+	                		<input type="checkbox" name="isDividend" th:checked="${record.isDividend eq '1'}">股利
+	                	</label>
+						<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+						<input type="hidden" name="_method"/>
 	                </form>
                 </div>
             <div th:replace="mobile/include/menu :: menu"/>
