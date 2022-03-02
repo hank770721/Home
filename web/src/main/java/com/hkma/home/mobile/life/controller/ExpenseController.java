@@ -233,6 +233,7 @@ public class ExpenseController {
 		String accountUserId = expense.getAccountUserId();
 		String accountId = expense.getAccountId();
 		Double amount = expense.getAmount();
+		String isConsolidation = expense.getIsConsolidation();
 		
 		if(bindingResult.hasErrors()) {
 			isError = true;
@@ -303,11 +304,15 @@ public class ExpenseController {
 		}
 		
 		recordDate = recordDate.replaceAll("-","");
-		expense.setRecordDate(recordDate);
 		
-		if (expense.getIsConsolidation() != null) {
-			expense.setIsConsolidation("1");
+		if(isConsolidation == null) {
+			isConsolidation = "0";
+		}else {
+			isConsolidation = "1";
 		}
+		
+		expense.setRecordDate(recordDate);
+		expense.setIsConsolidation(isConsolidation);
 		
 		String recordId;
 		Optional<String> recordIdOptional = expenseRepository.getMaxRecordIdByRecordDate(recordDate);
@@ -341,11 +346,12 @@ public class ExpenseController {
 		if(expenseOptional.isPresent()) {
 			ExpenseEntity expense = expenseOptional.get();
 			
-			String recordDate, userId;
-			List<Map<String,Object>> accountList = new ArrayList<>();
+			String recordDate = expense.getRecordDate();
+			Double amount = expense.getAmount();
+			String isConsolidation = expense.getIsConsolidation();
 			
-			recordDate = expense.getRecordDate();
-			int amount = (int)((double)expense.getAmount());
+			String userId;
+			List<Map<String,Object>> accountList = new ArrayList<>();
 			
 			expense.setRecordDate(recordDate.substring(0,4) + "-" + recordDate.substring(4,6) + "-" + recordDate.substring(6,8));
 			
@@ -385,8 +391,13 @@ public class ExpenseController {
 				}
 			});
 			
+			if(isConsolidation.equals("1")) {
+				isConsolidation = "on";
+				expense.setIsConsolidation(isConsolidation);
+			}
+			
 			model.addAttribute("expense", expense);
-			model.addAttribute("amount", amount);
+			model.addAttribute("amount", (int)((double)amount));
 			model.addAttribute("accountList", accountList);
 			
 			return "mobile/life/record/expense/view";
@@ -409,6 +420,7 @@ public class ExpenseController {
 		String accountUserId = expense.getAccountUserId();
 		String accountId = expense.getAccountId();
 		Double amount = expense.getAmount();
+		String isConsolidation = expense.getIsConsolidation();
 		
 		if(bindingResult.hasErrors()) {
 			isError = true;
@@ -475,7 +487,7 @@ public class ExpenseController {
 			
 			model.addAttribute("accountList", accountList);
 			
-			return "mobile/asset/record/assetrecord/view";
+			return "mobile/life/record/expense/view";
 		}
 		
 		//日期修改重取單號
@@ -505,11 +517,14 @@ public class ExpenseController {
 			}
 		}
 		
-		expense.setRecordDate(recordDate);
-		
-		if (expense.getIsConsolidation() != null) {
-			expense.setIsConsolidation("1");
+		if(isConsolidation == null) {
+			isConsolidation = "0";
+		}else {
+			isConsolidation = "1";
 		}
+		
+		expense.setRecordDate(recordDate);
+		expense.setIsConsolidation(isConsolidation);
 		
 		if (principal != null){
 			expense.setUpdateUserId(principal.getName());
