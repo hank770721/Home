@@ -182,7 +182,17 @@ public class InventoryPurchaseController {
 			BindingResult bindingResult,
 			Principal principal,
     		Model model){
+		boolean isError = false;
+		String userId = "";
+		String stockroomIdError = null;
+		
+		if (principal != null) {
+			userId = principal.getName();
+		}
+		
 		String recordDate = purchase.getRecordDate();
+		String stockroomUserId = purchase.getStockroomUserId();
+		String stockroomId = purchase.getStockroomId();
 		Double quantity = purchase.getQuantity();
 		String purchaseDate = purchase.getPurchaseDate();
 		String manufactureDate = purchase.getManufactureDate();
@@ -190,6 +200,17 @@ public class InventoryPurchaseController {
 		Double amount = purchase.getAmount();
 		
 		if (bindingResult.hasErrors()) {
+			isError = true;
+		}
+		
+		if (!stockroomRepository.existsByUserIdAndStockroomUserIdAndStockroomId(userId, stockroomUserId, stockroomId)) {
+			stockroomIdError = "倉庫不存在";
+			isError = true;
+		}
+		
+		if (isError) {
+			model.addAttribute("stockroomIdError", stockroomIdError);
+			
 			if(quantity != null) {
 				model.addAttribute("quantity", (int)((double)quantity));
 			}else {
@@ -202,19 +223,14 @@ public class InventoryPurchaseController {
 				model.addAttribute("amount", amount);
 			}
 			
-			String userId = "";
 			List<Map<String,Object>> stockroomList = new ArrayList<>();
-			
-			if (principal != null) {
-				userId = principal.getName();
-			}
 			
 			List<AuthorityEntity> authorityList = inventoryAuthorityRepository.findByUserId(userId);
 			authorityList.forEach(authority ->{
-				String stockroomUserId = authority.getStockroomUserId();
-				String stockroomId = authority.getStockroomId();
+				String stockroomUserId_list = authority.getStockroomUserId();
+				String stockroomId_list = authority.getStockroomId();
 				
-				Optional<StockroomEntity> bankAccountOptional = stockroomRepository.findByUserIdAndId(stockroomUserId, stockroomId);
+				Optional<StockroomEntity> bankAccountOptional = stockroomRepository.findByUserIdAndId(stockroomUserId_list, stockroomId_list);
 				
 				if(bankAccountOptional.isPresent()) {
 					StockroomEntity stockroomEntity = bankAccountOptional.get();
@@ -223,8 +239,8 @@ public class InventoryPurchaseController {
 					
 					Map<String,Object> map = new HashMap<>();
 					
-					map.put("stockroomUserId", stockroomUserId);
-					map.put("stockroomId", stockroomId);
+					map.put("stockroomUserId", stockroomUserId_list);
+					map.put("stockroomId", stockroomId_list);
 					map.put("name", name);
 					
 					stockroomList.add(map);
@@ -374,7 +390,17 @@ public class InventoryPurchaseController {
     		BindingResult bindingResult,
 			Principal principal,
     		Model model){
+		boolean isError = false;
+		String userId = "";
+		String stockroomIdError = null;
+		
+		if (principal != null) {
+			userId = principal.getName();
+		}
+		
 		String recordDate = purchase.getRecordDate();
+		String stockroomUserId = purchase.getStockroomUserId();
+		String stockroomId = purchase.getStockroomId();
 		Double quantity = purchase.getQuantity();
 		String purchaseDate = purchase.getPurchaseDate();
 		String manufactureDate = purchase.getManufactureDate();
@@ -382,6 +408,17 @@ public class InventoryPurchaseController {
 		Double amount = purchase.getAmount();
 		
 		if (bindingResult.hasErrors()) {
+			isError = true;
+		}
+		
+		if (!stockroomRepository.existsByUserIdAndStockroomUserIdAndStockroomId(userId, stockroomUserId, stockroomId)) {
+			stockroomIdError = "倉庫不存在";
+			isError = true;
+		}
+		
+		if (isError) {
+			model.addAttribute("stockroomIdError", stockroomIdError);
+			
 			if(quantity != null) {
 				model.addAttribute("quantity", (int)((double)quantity));
 			}else {
@@ -394,19 +431,14 @@ public class InventoryPurchaseController {
 				model.addAttribute("amount", amount);
 			}
 			
-			String userId = "";
 			List<Map<String,Object>> stockroomList = new ArrayList<>();
-			
-			if (principal != null) {
-				userId = principal.getName();
-			}
 			
 			List<AuthorityEntity> authorityList = inventoryAuthorityRepository.findByUserId(userId);
 			authorityList.forEach(authority ->{
-				String stockroomUserId = authority.getStockroomUserId();
-				String stockroomId = authority.getStockroomId();
+				String stockroomUserId_list = authority.getStockroomUserId();
+				String stockroomId_list = authority.getStockroomId();
 				
-				Optional<StockroomEntity> bankAccountOptional = stockroomRepository.findByUserIdAndId(stockroomUserId, stockroomId);
+				Optional<StockroomEntity> bankAccountOptional = stockroomRepository.findByUserIdAndId(stockroomUserId_list, stockroomId_list);
 				
 				if(bankAccountOptional.isPresent()) {
 					StockroomEntity stockroomEntity = bankAccountOptional.get();
@@ -415,8 +447,8 @@ public class InventoryPurchaseController {
 					
 					Map<String,Object> map = new HashMap<>();
 					
-					map.put("stockroomUserId", stockroomUserId);
-					map.put("stockroomId", stockroomId);
+					map.put("stockroomUserId", stockroomUserId_list);
+					map.put("stockroomId", stockroomId_list);
 					map.put("name", name);
 					
 					stockroomList.add(map);
