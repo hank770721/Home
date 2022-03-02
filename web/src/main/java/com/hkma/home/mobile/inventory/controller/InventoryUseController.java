@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.hkma.home.inventory.entity.InventoryPurchaseEntity;
 import com.hkma.home.inventory.entity.InventoryUseEntity;
-import com.hkma.home.inventory.repository.InventoryAuthorityRepository;
 import com.hkma.home.inventory.repository.InventoryPurchaseRepository;
 import com.hkma.home.inventory.repository.InventoryUseRepository;
 
@@ -36,9 +35,6 @@ public class InventoryUseController {
 	
 	@Autowired
 	private InventoryPurchaseRepository inventoryPurchaseRepository;
-	
-	@Autowired
-	private InventoryAuthorityRepository authorityRepository;
 	
 	@GetMapping({"/","/index"})
 	public String indexUseGet(
@@ -159,10 +155,12 @@ public class InventoryUseController {
 	@PostMapping("/new")
 	public String newUsePost(
 			@ModelAttribute("use") InventoryUseEntity use,
+			BindingResult bindingResult,
 			Principal principal,
     		Model model){
+		boolean isError = false;
 		String userId = "";
-		String purchaseIdError;
+		String purchaseIdError = null;
 		
 		if (principal != null) {
 			userId = principal.getName();
@@ -174,19 +172,16 @@ public class InventoryUseController {
 		String endDate = use.getEndDate();
 		String isRunOut = use.getIsRunOut();
 		
-		Optional<InventoryPurchaseEntity> purchaseOptional = inventoryPurchaseRepository.findById(purchaseId);
+		if (bindingResult.hasErrors()) {
+			isError = true;
+		}
 		
-		if (purchaseOptional.isPresent()) {
-			InventoryPurchaseEntity purchase = purchaseOptional.get();
-			
-			if(!authorityRepository.existsByUserIdAndStockroomUserId(userId, purchase.getStockroomUserId())) {
-				purchaseIdError = "無此購買單號";
-				
-				model.addAttribute("purchaseIdError", purchaseIdError);
-			}
-		}else {
+		if(!inventoryPurchaseRepository.existsByUserIdAndRecordId(userId, purchaseId)) {
 			purchaseIdError = "無此購買單號";
-			
+			isError = true;
+		}
+		
+		if (isError) {
 			model.addAttribute("purchaseIdError", purchaseIdError);
 			
 			return "mobile/inventory/record/use/new";
@@ -257,54 +252,53 @@ public class InventoryUseController {
 		
 		Optional<InventoryUseEntity> optional = inventoryUseRepository.findById(recordId);
 		
-		if(optional.isPresent()) {
-			InventoryUseEntity use = optional.get();
-			
-			String recordDate = use.getRecordDate();
-			String purchaseId = use.getPurchaseId();
-			String beginDate = use.getBeginDate();
-			String endDate = use.getEndDate();
-			String isRunOut = use.getIsRunOut();
-			String name;
-			
-			Optional<InventoryPurchaseEntity> purchaseOptional = inventoryPurchaseRepository.findById(purchaseId);
-				
-			if (purchaseOptional.isPresent()) {
-				InventoryPurchaseEntity purchase = purchaseOptional.get();
-				
-				if(authorityRepository.existsByUserIdAndStockroomUserId(userId, purchase.getStockroomUserId())) {
-					name = purchase.getBrand() + purchase.getName();
-					
-					if(!(recordDate == null)) {
-						use.setRecordDate(recordDate.substring(0,4) + "-" + recordDate.substring(4,6) + "-" + recordDate.substring(6,8));
-					}
-					
-					if(!(beginDate == null)) {
-						use.setBeginDate(beginDate.substring(0,4) + "-" + beginDate.substring(4,6) + "-" + beginDate.substring(6,8));
-					}
-					
-					if(!(endDate == null)) {
-						use.setEndDate(endDate.substring(0,4) + "-" + endDate.substring(4,6) + "-" + endDate.substring(6,8));
-					}
-					
-					if(isRunOut.equals("1")) {
-						isRunOut = "on";
-						use.setIsRunOut(isRunOut);
-					}
-		
-					model.addAttribute("use", use);
-					model.addAttribute("name", name);
-		
-					return "mobile/inventory/record/use/view";
-				}else {
-					return "redirect:/m/inventory/record/use/index";
-				}
-			}else {
-				return "redirect:/m/inventory/record/use/index";
-			}
-		}else {
+		if(!optional.isPresent()) {
 			return "redirect:/m/inventory/record/use/index";
 		}
+		
+		InventoryUseEntity use = optional.get();
+		
+		String recordDate = use.getRecordDate();
+		String purchaseId = use.getPurchaseId();
+		String beginDate = use.getBeginDate();
+		String endDate = use.getEndDate();
+		String isRunOut = use.getIsRunOut();
+			
+		Optional<InventoryPurchaseEntity> purchaseOptional = inventoryPurchaseRepository.findById(purchaseId);
+				
+		if (!purchaseOptional.isPresent()) {
+			return "redirect:/m/inventory/record/use/index";
+		}
+		
+		if(!inventoryPurchaseRepository.existsByUserIdAndRecordId(userId, purchaseId)) {
+			return "redirect:/m/inventory/record/use/index";
+		}
+		
+		InventoryPurchaseEntity purchase = purchaseOptional.get();
+		
+		String name = purchase.getBrand() + purchase.getName();
+		
+		if(!(recordDate == null)) {
+			use.setRecordDate(recordDate.substring(0,4) + "-" + recordDate.substring(4,6) + "-" + recordDate.substring(6,8));
+		}
+		
+		if(!(beginDate == null)) {
+			use.setBeginDate(beginDate.substring(0,4) + "-" + beginDate.substring(4,6) + "-" + beginDate.substring(6,8));
+		}
+		
+		if(!(endDate == null)) {
+			use.setEndDate(endDate.substring(0,4) + "-" + endDate.substring(4,6) + "-" + endDate.substring(6,8));
+		}
+		
+		if(isRunOut.equals("1")) {
+			isRunOut = "on";
+			use.setIsRunOut(isRunOut);
+		}
+
+		model.addAttribute("use", use);
+		model.addAttribute("name", name);
+
+		return "mobile/inventory/record/use/view";
 	}
 			
 	@PostMapping("/view/{recordId}")
@@ -321,67 +315,66 @@ public class InventoryUseController {
 		
 		Optional<InventoryUseEntity> optional = inventoryUseRepository.findById(recordId);
 		
-		if(optional.isPresent()) {
-			InventoryUseEntity use = optional.get();
-			
-			String recordDate = use.getRecordDate();
-			String purchaseId = use.getPurchaseId();
-			String beginDate = use.getBeginDate();
-			String endDate = use.getEndDate();
-			String isRunOut = use.getIsRunOut();
-			String name;
-			
-			if(!(recordDate == null)) {
-				use.setRecordDate(recordDate.substring(0,4) + "-" + recordDate.substring(4,6) + "-" + recordDate.substring(6,8));
-			}
-			
-			Optional<InventoryPurchaseEntity> purchaseOptional = inventoryPurchaseRepository.findById(purchaseId);
-			
-			if (purchaseOptional.isPresent()) {
-				InventoryPurchaseEntity purchase = purchaseOptional.get();
-				
-				if(authorityRepository.existsByUserIdAndStockroomUserId(userId, purchase.getStockroomUserId())) {
-					name = purchase.getBrand() + purchase.getName();
-					
-					if(!(beginDate == null)) {
-						use.setBeginDate(beginDate.substring(0,4) + "-" + beginDate.substring(4,6) + "-" + beginDate.substring(6,8));
-					}
-					
-					if(!(endDate == null)) {
-						use.setEndDate(endDate.substring(0,4) + "-" + endDate.substring(4,6) + "-" + endDate.substring(6,8));
-					}
-					
-					if(isRunOut.equals("1")) {
-						isRunOut = "on";
-						use.setIsRunOut(isRunOut);
-					}
-					
-					model.addAttribute("use", use);
-					model.addAttribute("url", url);
-					model.addAttribute("name", name);
-
-					return "mobile/inventory/record/use/view";
-				}else {
-					if (!url.equals("")) {
-						return "redirect:" + url;
-					}else {
-						return "redirect:/m/inventory/record/use/index";
-					}
-				}
-			}else{
-				if (!url.equals("")) {
-					return "redirect:" + url;
-				}else {
-					return "redirect:/m/inventory/record/use/index";
-				}
-			}
-		}else {
+		if(!optional.isPresent()) {
 			if (!url.equals("")) {
 				return "redirect:" + url;
 			}else {
 				return "redirect:/m/inventory/record/use/index";
 			}
 		}
+		
+		InventoryUseEntity use = optional.get();
+		
+		String recordDate = use.getRecordDate();
+		String purchaseId = use.getPurchaseId();
+		String beginDate = use.getBeginDate();
+		String endDate = use.getEndDate();
+		String isRunOut = use.getIsRunOut();
+			
+		if(!(recordDate == null)) {
+			use.setRecordDate(recordDate.substring(0,4) + "-" + recordDate.substring(4,6) + "-" + recordDate.substring(6,8));
+		}
+			
+		Optional<InventoryPurchaseEntity> purchaseOptional = inventoryPurchaseRepository.findById(purchaseId);
+			
+		if (!purchaseOptional.isPresent()) {
+			if (!url.equals("")) {
+				return "redirect:" + url;
+			}else {
+				return "redirect:/m/inventory/record/use/index";
+			}
+		}
+		
+		InventoryPurchaseEntity purchase = purchaseOptional.get();
+		
+		if(!inventoryPurchaseRepository.existsByUserIdAndRecordId(userId, purchaseId)) {
+			if (!url.equals("")) {
+				return "redirect:" + url;
+			}else {
+				return "redirect:/m/inventory/record/use/index";
+			}
+		}
+
+		String name = purchase.getBrand() + purchase.getName();
+		
+		if(!(beginDate == null)) {
+			use.setBeginDate(beginDate.substring(0,4) + "-" + beginDate.substring(4,6) + "-" + beginDate.substring(6,8));
+		}
+		
+		if(!(endDate == null)) {
+			use.setEndDate(endDate.substring(0,4) + "-" + endDate.substring(4,6) + "-" + endDate.substring(6,8));
+		}
+		
+		if(isRunOut.equals("1")) {
+			isRunOut = "on";
+			use.setIsRunOut(isRunOut);
+		}
+		
+		model.addAttribute("use", use);
+		model.addAttribute("url", url);
+		model.addAttribute("name", name);
+
+		return "mobile/inventory/record/use/view";
 	}
 
 	@PutMapping("/view/{recordId}")
@@ -392,9 +385,9 @@ public class InventoryUseController {
     		BindingResult bindingResult,
 			Principal principal,
     		Model model){
-		
+		boolean isError = false;
 		String userId = "";
-		String purchaseIdError;
+		String purchaseIdError = null;
 		
 		if (principal != null) {
 			userId = principal.getName();
@@ -406,20 +399,18 @@ public class InventoryUseController {
 		String endDate = use.getEndDate();
 		String isRunOut = use.getIsRunOut();
 		
-		Optional<InventoryPurchaseEntity> purchaseOptional = inventoryPurchaseRepository.findById(purchaseId);
+		if (bindingResult.hasErrors()) {
+			isError = true;
+		}
 		
-		if (purchaseOptional.isPresent()) {
-			InventoryPurchaseEntity purchase = purchaseOptional.get();
-			
-			if(!authorityRepository.existsByUserIdAndStockroomUserId(userId, purchase.getStockroomUserId())) {
-				purchaseIdError = "無此購買單號";
-				
-				model.addAttribute("purchaseIdError", purchaseIdError);
-			}
-		}else {
+		if(!inventoryPurchaseRepository.existsByUserIdAndRecordId(userId, purchaseId)) {
 			purchaseIdError = "無此購買單號";
-			
+			isError = true;
+		}
+		
+		if (isError) {
 			model.addAttribute("purchaseIdError", purchaseIdError);
+			model.addAttribute("url", url);
 			
 			return "mobile/inventory/record/use/view";
 		}

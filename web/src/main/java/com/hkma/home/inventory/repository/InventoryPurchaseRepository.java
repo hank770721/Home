@@ -49,4 +49,10 @@ public interface InventoryPurchaseRepository extends JpaRepository<InventoryPurc
 	
 	@Query(value="SELECT CONCAT(inventory_purchase.brand,inventory_purchase.name) FROM inventory_purchase WHERE class1 = :class1 AND class2 = :class2 AND inventory_purchase.quantity - IFNULL((SELECT COUNT(1) FROM home.inventory_use WHERE inventory_use.purchaseId = inventory_purchase.recordId AND inventory_use.isRunOut),0) > 0 GROUP BY CONCAT(inventory_purchase.brand,inventory_purchase.name)", nativeQuery=true)
 	Optional<List<String>> findNameByClass1Class2(String class1, String class2);
+	
+	@Query(value="SELECT (CASE WHEN COUNT(1)>0 THEN 'true' ELSE 'false' END) "
+			+ "FROM inventory_purchase "
+			+ "JOIN inventory_authority ON inventory_authority.userId = :userId AND inventory_authority.stockroomUserId = inventory_purchase.stockroomUserId AND inventory_authority.stockroomId = inventory_purchase.stockroomId "
+			+ "WHERE inventory_purchase.recordId = :recordId", nativeQuery=true)
+	boolean existsByUserIdAndRecordId(String userId, String recordId);
 }
