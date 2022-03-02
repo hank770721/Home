@@ -15,8 +15,8 @@ public interface ExpenseRepository extends JpaRepository<ExpenseEntity,String>{
 	@Query(value="SELECT * FROM life_expense "
 			+ "WHERE LEFT(recordDate,6) = :month "
 			+ "AND EXISTS (SELECT 1 FROM bank_authority WHERE userId = :userId AND bank_authority.accountUserId = life_expense.accountUserId AND bank_authority.accountId = life_expense.accountId) "
-			+ "ORDER BY recordDate DESC", nativeQuery=true)
-	List<ExpenseEntity> findByUserIdMonthOrderByRecordDateDesc(String userId, String month);
+			+ "ORDER BY recordDate DESC, recordId DESC", nativeQuery=true)
+	List<ExpenseEntity> findByUserIdMonthOrderByRecordDateDescRecordIdDesc(String userId, String month);
 	
 	@Query(value="SELECT * FROM life_expense "
 			+ "WHERE LEFT(recordDate,6) = :month "

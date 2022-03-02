@@ -64,7 +64,7 @@ public class ExpenseController {
 		
 		List<Map<String, Object>> list = new ArrayList<>();
 		
-		List<ExpenseEntity> expenseList = expenseRepository.findByUserIdMonthOrderByRecordDateDesc(userId, month);
+		List<ExpenseEntity> expenseList = expenseRepository.findByUserIdMonthOrderByRecordDateDescRecordIdDesc(userId, month);
 		
 		expenseList.forEach(expense -> {
 			double amount;
