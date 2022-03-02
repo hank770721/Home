@@ -289,6 +289,7 @@ public class InventoryUseController {
 					
 					if(isRunOut.equals("1")) {
 						isRunOut = "on";
+						use.setIsRunOut(isRunOut);
 					}
 		
 					model.addAttribute("use", use);
@@ -352,6 +353,7 @@ public class InventoryUseController {
 					
 					if(isRunOut.equals("1")) {
 						isRunOut = "on";
+						use.setIsRunOut(isRunOut);
 					}
 					
 					model.addAttribute("use", use);
