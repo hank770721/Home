@@ -1,7 +1,8 @@
 CREATE TABLE `inventory_purchase` (
   `recordId` varchar(12) NOT NULL,
-  `userId` varchar(12) DEFAULT NULL,
   `recordDate` varchar(8) DEFAULT NULL,
+  `stockroomUserId` varchar(12) DEFAULT NULL,
+  `stockroomId` varchar(3) DEFAULT NULL,
   `class1` varchar(4) DEFAULT NULL,
   `class2` varchar(7) DEFAULT NULL,
   `brand` varchar(45) DEFAULT NULL,
@@ -18,4 +19,4 @@ CREATE TABLE `inventory_purchase` (
   `updateUserId` varchar(20) DEFAULT NULL,
   `updateDatetime` datetime DEFAULT NULL,
   PRIMARY KEY (`recordId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

@@ -13,13 +13,13 @@ public interface InventoryUseRepository extends JpaRepository<InventoryUseEntity
 	Optional<String> getMaxRecordIdByRecordDate(String recordDate);
 	
 	@Query(value="SELECT * FROM inventory_use "
-			+ "WHERE EXISTS (SELECT 1 FROM inventory_authority JOIN inventory_purchase ON inventory_authority.userId = :userId AND inventory_authority.dataUserId = inventory_purchase.userId WHERE inventory_purchase.recordId = inventory_use.purchaseId) "
+			+ "WHERE EXISTS (SELECT 1 FROM inventory_authority JOIN inventory_purchase ON inventory_authority.userId = :userId AND inventory_authority.stockroomUserId = inventory_purchase.stockroomUserId AND inventory_authority.stockroomId = inventory_purchase.stockroomId WHERE inventory_purchase.recordId = inventory_use.purchaseId) "
 			+ "AND SUBSTRING(recordDate,1,6) = :month "
 			+ "ORDER BY recordId DESC", nativeQuery=true)
 	List<InventoryUseEntity> findByUserIdAndMonthOrderByRecordIdDesc(String userId, String month);
 	
 	@Query(value="SELECT * FROM inventory_use "
-			+ "WHERE EXISTS (SELECT 1 FROM inventory_authority JOIN inventory_purchase ON inventory_authority.userId = :userId AND inventory_authority.dataUserId = inventory_purchase.userId WHERE inventory_purchase.recordId = inventory_use.purchaseId) "
+			+ "WHERE EXISTS (SELECT 1 FROM inventory_authority JOIN inventory_purchase ON inventory_authority.userId = :userId AND inventory_authority.stockroomUserId = inventory_purchase.stockroomUserId AND inventory_authority.stockroomId = inventory_purchase.stockroomId WHERE inventory_purchase.recordId = inventory_use.purchaseId) "
 			+ "AND (SELECT inventory_purchase.name FROM inventory_purchase WHERE inventory_purchase.recordId = inventory_use.purchaseId) LIKE CONCAT('%',:name,'%') "
 			+ "ORDER BY recordId DESC", nativeQuery=true)
 	List<InventoryUseEntity> findByUserIdAndNameOrderByRecordIdDesc(String userId, String name);

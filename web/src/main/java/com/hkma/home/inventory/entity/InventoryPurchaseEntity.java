@@ -18,10 +18,12 @@ public class InventoryPurchaseEntity extends BaseEntity implements Serializable 
 	@Column(name="recordId", nullable = false)
 	private String recordId;
 	
-	private String userId;
-	
 	@Column(name="recordDate")
 	private String recordDate;
+	
+	private String stockroomUserId;
+	
+	private String stockroomId;
 	
 	@NotBlank(message="未輸入")
 	@Column(name="class1")
@@ -69,12 +71,20 @@ public class InventoryPurchaseEntity extends BaseEntity implements Serializable 
         return recordId;
     }
 	
-	public String getUserId() {
-		return userId;
+	public String getStockroomUserId() {
+		return stockroomUserId;
 	}
 
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setStockroomUserId(String stockroomUserId) {
+		this.stockroomUserId = stockroomUserId;
+	}
+
+	public String getStockroomId() {
+		return stockroomId;
+	}
+
+	public void setStockroomId(String stockroomId) {
+		this.stockroomId = stockroomId;
 	}
 
 	public void setRecordDate(String recordDate) {

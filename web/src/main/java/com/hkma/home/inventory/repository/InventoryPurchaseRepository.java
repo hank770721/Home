@@ -17,13 +17,13 @@ public interface InventoryPurchaseRepository extends JpaRepository<InventoryPurc
 	
 	@Query(value="SELECT * FROM inventory_purchase "
 			+ "WHERE SUBSTRING(recordDate,1,6) = :month "
-			+ "AND EXISTS (SELECT 1 FROM inventory_authority WHERE inventory_authority.userId = :userId AND inventory_authority.dataUserId = inventory_purchase.userId) "
+			+ "AND EXISTS (SELECT 1 FROM inventory_authority WHERE inventory_authority.userId = :userId AND inventory_authority.stockroomUserId = inventory_purchase.stockroomUserId AND inventory_authority.stockroomId = inventory_purchase.stockroomId) "
 			+ "ORDER BY recordId DESC", nativeQuery=true)
 	List<InventoryPurchaseEntity> findByUserIdAndMonthOrderByRecordId(String userId, String month);
 	
 	@Query(value="SELECT * FROM inventory_purchase "
 			+ "WHERE name LIKE CONCAT('%',:name,'%') "
-			+ "AND EXISTS (SELECT 1 FROM inventory_authority WHERE inventory_authority.userId = :userId AND inventory_authority.dataUserId = inventory_purchase.userId) "
+			+ "AND EXISTS (SELECT 1 FROM inventory_authority WHERE inventory_authority.userId = :userId AND inventory_authority.stockroomUserId = inventory_purchase.stockroomUserId AND inventory_authority.stockroomId = inventory_purchase.stockroomId) "
 			+ "AND ("
 			+ "(:inventoryType = '1' AND (inventory_purchase.quantity - IFNULL((SELECT COUNT(1) FROM home.inventory_use WHERE inventory_use.purchaseId = inventory_purchase.recordId AND inventory_use.isRunOut),0) > 0)) "
 			+ "OR (:inventoryType = '2' AND (inventory_purchase.quantity - IFNULL((SELECT COUNT(1) FROM home.inventory_use WHERE inventory_use.purchaseId = inventory_purchase.recordId AND inventory_use.isRunOut),0) = 0)) "
@@ -36,7 +36,7 @@ public interface InventoryPurchaseRepository extends JpaRepository<InventoryPurc
 	List<InventoryPurchaseEntity> findInventory();
 	
 	@Query(value="SELECT * FROM inventory_purchase "
-			+ "WHERE EXISTS (SELECT 1 FROM inventory_authority WHERE inventory_authority.userId = :userId AND inventory_authority.dataUserId = inventory_purchase.userId) "
+			+ "WHERE EXISTS (SELECT 1 FROM inventory_authority WHERE inventory_authority.userId = :userId AND inventory_authority.stockroomUserId = inventory_purchase.stockroomUserId AND inventory_authority.stockroomId = inventory_purchase.stockroomId) "
 			+ "AND inventory_purchase.quantity - IFNULL((SELECT COUNT(1) FROM home.inventory_use WHERE inventory_use.purchaseId = inventory_purchase.recordId),0) > 0 AND (recordId LIKE CONCAT('%',:recordId,'%') OR name LIKE CONCAT('%',:recordId,'%')) "
 			+ "ORDER BY recordId", nativeQuery=true)
 	List<InventoryPurchaseEntity> findByUserIdAndRecordIdOrName(String userId, String recordId);

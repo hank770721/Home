@@ -16,8 +16,6 @@ public class InventoryUseEntity extends BaseEntity implements Serializable {
 	@Column(name="recordId", nullable = false)
 	private String recordId;
 	
-	private String userId;
-	
 	@Column(name="recordDate")
 	private String recordDate;
 	
@@ -40,14 +38,6 @@ public class InventoryUseEntity extends BaseEntity implements Serializable {
 	public String getRecordId() {
         return recordId;
     }
-	
-	public String getUserId() {
-		return userId;
-	}
-
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
 
 	public void setRecordDate(String recordDate) {
         this.recordDate = recordDate;

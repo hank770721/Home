@@ -4,5 +4,6 @@ import java.io.Serializable;
 
 public class AuthorityPk implements Serializable {
 	private String userId;
-	private String dataUserId;
+	private String stockroomUserId;
+	private String stockroomId;
 }

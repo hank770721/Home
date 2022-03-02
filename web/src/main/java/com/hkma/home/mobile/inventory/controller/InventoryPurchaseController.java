@@ -24,10 +24,14 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.hkma.home.inventory.entity.AuthorityEntity;
 import com.hkma.home.inventory.entity.InventoryPurchaseEntity;
 import com.hkma.home.inventory.entity.InventoryUseEntity;
+import com.hkma.home.inventory.entity.StockroomEntity;
+import com.hkma.home.inventory.repository.InventoryAuthorityRepository;
 import com.hkma.home.inventory.repository.InventoryPurchaseRepository;
 import com.hkma.home.inventory.repository.InventoryUseRepository;
+import com.hkma.home.inventory.repository.StockroomRepository;
 
 @Controller("MobileInventoryPurchase")
 @RequestMapping("/m/inventory/record/purchase")
@@ -37,6 +41,12 @@ public class InventoryPurchaseController {
 	
 	@Autowired
 	private InventoryUseRepository inventoryUseRepository;
+	
+	@Autowired
+	private InventoryAuthorityRepository inventoryAuthorityRepository;
+	
+	@Autowired
+	private StockroomRepository stockroomRepository;
 	
 	@GetMapping({"/","/index"})
 	public String indexPurchaseGet(
@@ -124,12 +134,44 @@ public class InventoryPurchaseController {
 	
 	@GetMapping("/new")
 	public String newPurchaseGet(
-			@ModelAttribute("purchase") InventoryPurchaseEntity purchase){
+			@ModelAttribute("purchase") InventoryPurchaseEntity purchase,
+			Principal principal,
+    		Model model){
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		
 		String recordDate = dateFormat.format(new Date());
+		String userId = "";
+		List<Map<String,Object>> stockroomList = new ArrayList<>();
+		
+		if (principal != null) {
+			userId = principal.getName();
+		}
+		
+		List<AuthorityEntity> authorityList = inventoryAuthorityRepository.findByUserId(userId);
+		authorityList.forEach(authority ->{
+			String stockroomUserId = authority.getStockroomUserId();
+			String stockroomId = authority.getStockroomId();
+			
+			Optional<StockroomEntity> bankAccountOptional = stockroomRepository.findByUserIdAndId(stockroomUserId, stockroomId);
+			
+			if(bankAccountOptional.isPresent()) {
+				StockroomEntity stockroomEntity = bankAccountOptional.get();
+				
+				String name = stockroomEntity.getName();
+				
+				Map<String,Object> map = new HashMap<>();
+				
+				map.put("stockroomUserId", stockroomUserId);
+				map.put("stockroomId", stockroomId);
+				map.put("name", name);
+				
+				stockroomList.add(map);
+			}
+		});
 		
 		purchase.setRecordDate(recordDate);
+		
+		model.addAttribute("stockroomList", stockroomList);
 		
 		return "mobile/inventory/record/purchase/new";
 	}
@@ -159,6 +201,37 @@ public class InventoryPurchaseController {
 			}else {
 				model.addAttribute("amount", amount);
 			}
+			
+			String userId = "";
+			List<Map<String,Object>> stockroomList = new ArrayList<>();
+			
+			if (principal != null) {
+				userId = principal.getName();
+			}
+			
+			List<AuthorityEntity> authorityList = inventoryAuthorityRepository.findByUserId(userId);
+			authorityList.forEach(authority ->{
+				String stockroomUserId = authority.getStockroomUserId();
+				String stockroomId = authority.getStockroomId();
+				
+				Optional<StockroomEntity> bankAccountOptional = stockroomRepository.findByUserIdAndId(stockroomUserId, stockroomId);
+				
+				if(bankAccountOptional.isPresent()) {
+					StockroomEntity stockroomEntity = bankAccountOptional.get();
+					
+					String name = stockroomEntity.getName();
+					
+					Map<String,Object> map = new HashMap<>();
+					
+					map.put("stockroomUserId", stockroomUserId);
+					map.put("stockroomId", stockroomId);
+					map.put("name", name);
+					
+					stockroomList.add(map);
+				}
+			});
+			
+			model.addAttribute("stockroomList", stockroomList);
 			
 			return "mobile/inventory/record/purchase/new";
 		}
@@ -210,7 +283,6 @@ public class InventoryPurchaseController {
 		purchase.setRecordId(recordId);
 
 		if (principal != null){
-			purchase.setUserId(principal.getName());
 			purchase.setEnterUserId(principal.getName());
 			purchase.setUpdateUserId(principal.getName());
 		}
@@ -223,6 +295,7 @@ public class InventoryPurchaseController {
 	@GetMapping("/view/{recordId}")
 	public String viewPurchaseGet(
 			@PathVariable("recordId") String recordId,
+			Principal principal,
 			Model model){
 		Optional<InventoryPurchaseEntity> optional = inventoryPurchaseRepository.findById(recordId);
 		
@@ -254,6 +327,37 @@ public class InventoryPurchaseController {
 			List<InventoryUseEntity> useList = inventoryUseRepository.findByPurchaseIdOrderByRecordIdAsc(recordId);
 
 			if(useList.size() == 0) {
+				String userId = "";
+				List<Map<String,Object>> stockroomList = new ArrayList<>();
+				
+				if (principal != null) {
+					userId = principal.getName();
+				}
+				
+				List<AuthorityEntity> authorityList = inventoryAuthorityRepository.findByUserId(userId);
+				authorityList.forEach(authority ->{
+					String stockroomUserId = authority.getStockroomUserId();
+					String stockroomId = authority.getStockroomId();
+					
+					Optional<StockroomEntity> bankAccountOptional = stockroomRepository.findByUserIdAndId(stockroomUserId, stockroomId);
+					
+					if(bankAccountOptional.isPresent()) {
+						StockroomEntity stockroomEntity = bankAccountOptional.get();
+						
+						String name = stockroomEntity.getName();
+						
+						Map<String,Object> map = new HashMap<>();
+						
+						map.put("stockroomUserId", stockroomUserId);
+						map.put("stockroomId", stockroomId);
+						map.put("name", name);
+						
+						stockroomList.add(map);
+					}
+				});
+				
+				model.addAttribute("stockroomList", stockroomList);
+				
 				return "mobile/inventory/record/purchase/view";
 			}else {
 				return "mobile/inventory/record/purchase/view_noedit";
@@ -289,6 +393,37 @@ public class InventoryPurchaseController {
 			}else {
 				model.addAttribute("amount", amount);
 			}
+			
+			String userId = "";
+			List<Map<String,Object>> stockroomList = new ArrayList<>();
+			
+			if (principal != null) {
+				userId = principal.getName();
+			}
+			
+			List<AuthorityEntity> authorityList = inventoryAuthorityRepository.findByUserId(userId);
+			authorityList.forEach(authority ->{
+				String stockroomUserId = authority.getStockroomUserId();
+				String stockroomId = authority.getStockroomId();
+				
+				Optional<StockroomEntity> bankAccountOptional = stockroomRepository.findByUserIdAndId(stockroomUserId, stockroomId);
+				
+				if(bankAccountOptional.isPresent()) {
+					StockroomEntity stockroomEntity = bankAccountOptional.get();
+					
+					String name = stockroomEntity.getName();
+					
+					Map<String,Object> map = new HashMap<>();
+					
+					map.put("stockroomUserId", stockroomUserId);
+					map.put("stockroomId", stockroomId);
+					map.put("name", name);
+					
+					stockroomList.add(map);
+				}
+			});
+			
+			model.addAttribute("stockroomList", stockroomList);
 			
 			return "mobile/inventory/record/purchase/view";
 		}

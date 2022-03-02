@@ -18,7 +18,11 @@ public class AuthorityEntity implements Serializable {
 	
 	@Id
 	@Column(nullable = false)
-	private String dataUserId;
+	private String stockroomUserId;
+	
+	@Id
+	@Column(nullable = false)
+	private String stockroomId;
 
 	public String getUserId() {
 		return userId;
@@ -28,11 +32,19 @@ public class AuthorityEntity implements Serializable {
 		this.userId = userId;
 	}
 
-	public String getDataUserId() {
-		return dataUserId;
+	public String getStockroomUserId() {
+		return stockroomUserId;
 	}
 
-	public void setDataUserId(String dataUserId) {
-		this.dataUserId = dataUserId;
+	public void setStockroomUserId(String stockroomUserId) {
+		this.stockroomUserId = stockroomUserId;
+	}
+
+	public String getStockroomId() {
+		return stockroomId;
+	}
+
+	public void setStockroomId(String stockroomId) {
+		this.stockroomId = stockroomId;
 	}
 }

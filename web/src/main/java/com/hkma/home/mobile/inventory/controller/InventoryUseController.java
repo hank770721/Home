@@ -179,7 +179,7 @@ public class InventoryUseController {
 		if (purchaseOptional.isPresent()) {
 			InventoryPurchaseEntity purchase = purchaseOptional.get();
 			
-			if(!authorityRepository.existsByUserIdAndDataUserId(userId, purchase.getUserId())) {
+			if(!authorityRepository.existsByUserIdAndStockroomUserId(userId, purchase.getStockroomUserId())) {
 				purchaseIdError = "無此購買單號";
 				
 				model.addAttribute("purchaseIdError", purchaseIdError);
@@ -272,7 +272,7 @@ public class InventoryUseController {
 			if (purchaseOptional.isPresent()) {
 				InventoryPurchaseEntity purchase = purchaseOptional.get();
 				
-				if(authorityRepository.existsByUserIdAndDataUserId(userId, purchase.getUserId())) {
+				if(authorityRepository.existsByUserIdAndStockroomUserId(userId, purchase.getStockroomUserId())) {
 					name = purchase.getBrand() + purchase.getName();
 					
 					if(!(recordDate == null)) {
@@ -339,7 +339,7 @@ public class InventoryUseController {
 			if (purchaseOptional.isPresent()) {
 				InventoryPurchaseEntity purchase = purchaseOptional.get();
 				
-				if(authorityRepository.existsByUserIdAndDataUserId(userId, purchase.getUserId())) {
+				if(authorityRepository.existsByUserIdAndStockroomUserId(userId, purchase.getStockroomUserId())) {
 					name = purchase.getBrand() + purchase.getName();
 					
 					if(!(beginDate == null)) {
@@ -409,7 +409,7 @@ public class InventoryUseController {
 		if (purchaseOptional.isPresent()) {
 			InventoryPurchaseEntity purchase = purchaseOptional.get();
 			
-			if(!authorityRepository.existsByUserIdAndDataUserId(userId, purchase.getUserId())) {
+			if(!authorityRepository.existsByUserIdAndStockroomUserId(userId, purchase.getStockroomUserId())) {
 				purchaseIdError = "無此購買單號";
 				
 				model.addAttribute("purchaseIdError", purchaseIdError);
