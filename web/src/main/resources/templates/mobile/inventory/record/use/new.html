@@ -69,13 +69,13 @@
 		                <div>
 		            		<div style="display:inline-block; width:calc(100% - 48px)">
 		            			<label for="purchaseId">購買單號<span th:if="${purchaseIdError}" th:text="${purchaseIdError}" class="error"></span></label>
-			            		<input id="purchaseId" type="text" th:field="*{purchaseId}" style="display:inline-block;"/>
+			            		<input id="purchaseId" type="text" th:field="*{purchaseId}"/>
 			            	</div>
 			            	<a id="purchaseBtn" href="#popupPurchase" data-rel="popup" data-transition="slideup" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-gear ui-btn-icon-left ui-btn-a"
 			            		style="height:35px;width:40px;padding:0px;margin:0px;top:-1px;"></a>
 		            	</div>
 	                	<label for="name">名稱</label>
-		                <input id="name" type="text" name="name"/>
+		                <input id="name" type="text" name="name" readonly="true"/>
 	                	<label for="beginDate">啟用日期</label>
 	                	<input type="date" th:field="*{beginDate}" data-clear-btn="true"/>
 	                	<label for="endDate">結束日期</label>

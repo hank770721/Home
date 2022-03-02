@@ -69,13 +69,13 @@
 	                	<div>
 		            		<div style="display:inline-block; width:calc(100% - 48px)">
 		            			<label for="stockroomId">倉庫<span th:if="${stockroomIdError}" th:text="${stockroomIdError}" class="error"></span></label>
-	                			<input type="text" th:field="*{stockroomId}"/>
+	                			<input type="text" th:field="*{stockroomId}" readonly="true"/>
 				            </div>
 			            	<a href="#popupStockroom" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-gear ui-btn-icon-left ui-btn-a"
 			            		style="height:35px;width:40px;padding:0px;margin:0px;top:-1px;"></a>
 		            	</div>
 		            	<label for="stockroomUserId">帳戶<span th:if="${stockroomUserIdError}" th:text="${stockroomUserIdError}" class="error"></span></label>
-				        <input type="text" th:field="*{stockroomUserId}"/>
+				        <input type="text" th:field="*{stockroomUserId}" readonly="true"/>
 	                	<label for="class1">類別一<span th:if="${#fields.hasErrors('class1')}" th:errors="*{class1}" class="error"></span></label>
 		                <input type="text" th:field="*{class1}"/>
 	                	<label for="class2">類別二<span th:if="${#fields.hasErrors('class2')}" th:errors="*{class2}" class="error"></span></label>

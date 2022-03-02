@@ -58,29 +58,29 @@
 	                	<input type="hidden" th:field="*{recordId}"/>
 	                	<input type="hidden" th:field="*{recordDate}"/>
 	                	<label for="stockroomId">倉庫</label>
-	                	<input type="text" th:field="*{stockroomId}"/>
+	                	<input type="text" th:field="*{stockroomId}" readonly="true"/>
 	                	<label for="stockroomUserId">帳戶</label>
-				        <input id="stockroomUserId" type="text" th:field="*{stockroomUserId}"/>
+				        <input type="text" th:field="*{stockroomUserId}" readonly="true"/>
 	                	<label for="class1">類別一</label>
-		                <input type="text" th:field="*{class1}"/>
+		                <input type="text" th:field="*{class1}" readonly="true"/>
 	                	<label for="class2">類別二</label>
-		                <input type="text" th:field="*{class2}"/>
+		                <input type="text" th:field="*{class2}" readonly="true"/>
 	                	<label for="brand">品牌</label>
-		                <input type="text" th:field="*{brand}"/>
+		                <input type="text" th:field="*{brand}" readonly="true"/>
 	                	<label for="name">名稱</label>
-		                <input type="text" th:field="*{name}"/>
+		                <input type="text" th:field="*{name}" readonly="true"/>
 		                <label for="size">規格</label>
-		                <input type="text" th:field="*{size}"/>
+		                <input type="text" th:field="*{size}" readonly="true"/>
 	                	<label for="quantity">數量</label>
-	                	<input type="number" step="1" name="quantity" th:value="${quantity}"/>
+	                	<input type="number" step="1" name="quantity" th:value="${quantity}" readonly="true"/>
 	                	<label for="purchaseDate">購買日期</label>
-	                	<input type="date" data-clear-btn="true" th:field="*{purchaseDate}"/>
+	                	<input type="date" data-clear-btn="true" th:field="*{purchaseDate}" readonly="true"/>
 	                	<label for="manufactureDate">生產日期</label>
-	                	<input type="date" data-clear-btn="true" th:field="*{manufactureDate}"/>
+	                	<input type="date" data-clear-btn="true" th:field="*{manufactureDate}" readonly="true"/>
 	                	<label for="expiryDate">有效日期</label>
-	                	<input type="date" data-clear-btn="true" th:field="*{expiryDate}"/>
+	                	<input type="date" data-clear-btn="true" th:field="*{expiryDate}" readonly="true"/>
 	                	<label for="amount">金額</label>
-	                	<input type="number" step="1" name="amount" th:value="${amount}"/>
+	                	<input type="number" step="1" name="amount" th:value="${amount}" readonly="true"/>
 	                </form>
                 </div>
             <div th:replace="mobile/include/menu :: menu"/>
