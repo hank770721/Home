@@ -7,5 +7,5 @@ import com.hkma.home.user.entity.UserAccountEntity;
 public interface UserAccountService {
 	public Optional<UserAccountEntity> findByUserId(String userId);
 	
-	public String getPasswordbyUserId(String userId);
+	public String getPasswordByUserId(String userId);
 }

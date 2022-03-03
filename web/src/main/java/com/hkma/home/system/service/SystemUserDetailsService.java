@@ -22,7 +22,7 @@ public class SystemUserDetailsService implements UserDetailsService{
 		Optional<UserAccountEntity> userAccountOptional = service.findByUserId(userId);
 		
 		if (userAccountOptional.isPresent()) {
-			String password = service.getPasswordbyUserId(userId);
+			String password = service.getPasswordByUserId(userId);
 
             return new User(userId, password, Collections.emptyList());
 		}else {

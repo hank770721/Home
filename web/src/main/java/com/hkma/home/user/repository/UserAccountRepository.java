@@ -12,5 +12,5 @@ public interface UserAccountRepository extends JpaRepository<UserAccountEntity,S
 	Optional<UserAccountEntity> findByUserId(String userId);
 	
 	@Query(value="SELECT password FROM user_account WHERE userId = :userId", nativeQuery=true)
-	String getPasswordbyUserId(String userId);
+	String getPasswordByUserId(String userId);
 }

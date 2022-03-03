@@ -21,7 +21,7 @@ public class UserAccountServiceImpl implements UserAccountService{
 	}
 	
 	@Override
-	public String getPasswordbyUserId(String userId) {
-        return new BCryptPasswordEncoder().encode(userAccountRepository.getPasswordbyUserId(userId));
+	public String getPasswordByUserId(String userId) {
+        return new BCryptPasswordEncoder().encode(userAccountRepository.getPasswordByUserId(userId));
     }
 }
