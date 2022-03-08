@@ -42,8 +42,8 @@
                         <tr>
                           <th>日期</th>
                           <th>摘要</th>
-                          <th style="text-align:right">收入</th>
                           <th style="text-align:right">支出</th>
+                          <th style="text-align:right">存入</th>
                           <th style="text-align:right">結餘</th>
                         </tr>
                     </thead>
@@ -51,8 +51,8 @@
 	                    <tr th:each="row : ${list}">
 	                        <td th:text="${row.recordDate}"/>
 	                        <td th:text="${row.memo}"/>
-	                        <td style="text-align:right; color:red;" th:text="${row.plus}"></td>
 	                        <td style="text-align:right; color:green;" th:text="${row.minus}"/>
+	                        <td style="text-align:right; color:red;" th:text="${row.plus}"></td>
 	                        <td th:style="'text-align:right; color:' + (${#strings.indexOf(row.blance,'-')} >= 0 ? 'green' : 'red')" th:text="${row.blance}"/>
 	                    </tr>
                     </tbody>

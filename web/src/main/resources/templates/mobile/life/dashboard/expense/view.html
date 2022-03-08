@@ -167,8 +167,8 @@
                                                         <tr>
                                                             <th>日期</th>
                                                             <th>摘要</th>
-                                                            <th class="decimal">收入</th>
                                                             <th class="decimal">支出</th>
+                                                            <th class="decimal">存入</th>
                                                             <th class="decimal">結餘</th>
                                                         </tr>
                                                     </thead>
@@ -193,8 +193,8 @@
                                                         <tr>
                                                             <th>日期</th>
                                                             <th>摘要</th>
-                                                            <th class="decimal">收入</th>
                                                             <th class="decimal">支出</th>
+                                                            <th class="decimal">存入</th>
                                                             <th class="decimal">結餘</th>
                                                         </tr>
                                                     </thead>
@@ -219,8 +219,8 @@
                                                         <tr>
                                                             <th>日期</th>
                                                             <th>摘要</th>
-                                                            <th class="decimal">收入</th>
                                                             <th class="decimal">支出</th>
+                                                            <th class="decimal">存入</th>
                                                             <th class="decimal">結餘</th>
                                                         </tr>
                                                     </thead>
@@ -307,15 +307,15 @@
                             td = document.createElement('td');
                             td.textContent = row["memo"];
                             tr.appendChild(td);
-
-                            td = document.createElement('td');
-                            td.textContent = row["plus"];
-                            td.className += "decimal plus";
-                            tr.appendChild(td);
                             
                             td = document.createElement('td');
                             td.textContent = row["minus"];
                             td.className += "decimal minus";
+                            tr.appendChild(td);
+
+                            td = document.createElement('td');
+                            td.textContent = row["plus"];
+                            td.className += "decimal plus";
                             tr.appendChild(td);
                             
                             td = document.createElement('td');
@@ -344,15 +344,15 @@
                             td = document.createElement('td');
                             td.textContent = row["memo"];
                             tr.appendChild(td);
-
-                            td = document.createElement('td');
-                            td.textContent = row["plus"];
-                            td.className += "decimal plus";
-                            tr.appendChild(td);
                             
                             td = document.createElement('td');
                             td.textContent = row["minus"];
                             td.className += "decimal minus";
+                            tr.appendChild(td);
+
+                            td = document.createElement('td');
+                            td.textContent = row["plus"];
+                            td.className += "decimal plus";
                             tr.appendChild(td);
                             
                             td = document.createElement('td');
@@ -381,15 +381,15 @@
                             td = document.createElement('td');
                             td.textContent = row["memo"];
                             tr.appendChild(td);
-
-                            td = document.createElement('td');
-                            td.textContent = row["plus"];
-                            td.className += "decimal plus";
-                            tr.appendChild(td);
                             
                             td = document.createElement('td');
                             td.textContent = row["minus"];
                             td.className += "decimal minus";
+                            tr.appendChild(td);
+
+                            td = document.createElement('td');
+                            td.textContent = row["plus"];
+                            td.className += "decimal plus";
                             tr.appendChild(td);
                             
                             td = document.createElement('td');
