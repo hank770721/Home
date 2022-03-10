@@ -168,7 +168,6 @@ public class ExpenseController {
 		
 		String recordDate = dateFormat.format(new Date());
 		String userId, accountUserId, accountId;
-		List<Map<String,Object>> accountList = new ArrayList<>();
 		
 		if (principal != null){
 			userId = principal.getName();
@@ -180,6 +179,8 @@ public class ExpenseController {
 			accountId = "001";
 		}
 		
+		//帳戶
+		List<Map<String,Object>> accountList = new ArrayList<>();
 		List<AuthorityEntity> authorityList = authorityRepository.findByUserIdOrderByOrderNumberAsc(userId);
 		authorityList.forEach(authority ->{
 			String authorityAccountUserId = authority.getAccountUserId();
@@ -191,22 +192,19 @@ public class ExpenseController {
 				BankAccountEntity bankAccountEntity = bankAccountOptional.get();
 				
 				String memo = bankAccountEntity.getMemo();
-				String isBankAccount = bankAccountEntity.getIsBankAccount();
 				
 				if(bankAccountEntity.getBank() != null) {
 					BankEntity bank = bankAccountEntity.getBank();
 					memo = bank.getName() + " - " + memo;
 				};
 				
-				if(isBankAccount == null) {
-					Map<String,Object> map = new HashMap<>();
-					
-					map.put("accountUserId", authorityAccountUserId);
-					map.put("accountId", authorityAccountId);
-					map.put("memo", memo);
-					
-					accountList.add(map);
-				}
+				Map<String,Object> map = new HashMap<>();
+				
+				map.put("accountUserId", authorityAccountUserId);
+				map.put("accountId", authorityAccountId);
+				map.put("memo", memo);
+				
+				accountList.add(map);
 			}
 		});
 		
@@ -260,13 +258,15 @@ public class ExpenseController {
 			}
 			
 			String userId;
-			List<Map<String,Object>> accountList = new ArrayList<>();
 			
 			if (principal != null){
 				userId = principal.getName();
 			}else {
 				userId = "mia";
 			}
+			
+			//帳戶
+			List<Map<String,Object>> accountList = new ArrayList<>();
 			
 			List<AuthorityEntity> authorityList = authorityRepository.findByUserIdOrderByOrderNumberAsc(userId);
 			authorityList.forEach(authority ->{
@@ -279,22 +279,19 @@ public class ExpenseController {
 					BankAccountEntity bankAccountEntity = bankAccountOptional.get();
 					
 					String memo = bankAccountEntity.getMemo();
-					String isBankAccount = bankAccountEntity.getIsBankAccount();
 					
 					if(bankAccountEntity.getBank() != null) {
 						BankEntity bank = bankAccountEntity.getBank();
 						memo = bank.getName() + " - " + memo;
 					};
 					
-					if(isBankAccount == null) {
-						Map<String,Object> map = new HashMap<>();
-						
-						map.put("accountUserId", authorityAccountUserId);
-						map.put("accountId", authorityAccountId);
-						map.put("memo", memo);
-						
-						accountList.add(map);
-					}
+					Map<String,Object> map = new HashMap<>();
+					
+					map.put("accountUserId", authorityAccountUserId);
+					map.put("accountId", authorityAccountId);
+					map.put("memo", memo);
+					
+					accountList.add(map);
 				}
 			});
 			
@@ -351,7 +348,6 @@ public class ExpenseController {
 			String isConsolidation = expense.getIsConsolidation();
 			
 			String userId;
-			List<Map<String,Object>> accountList = new ArrayList<>();
 			
 			expense.setRecordDate(recordDate.substring(0,4) + "-" + recordDate.substring(4,6) + "-" + recordDate.substring(6,8));
 			
@@ -360,6 +356,9 @@ public class ExpenseController {
 			}else {
 				userId = "mia";
 			}
+			
+			//帳戶
+			List<Map<String,Object>> accountList = new ArrayList<>();
 			
 			List<AuthorityEntity> authorityList = authorityRepository.findByUserIdOrderByOrderNumberAsc(userId);
 			authorityList.forEach(authority ->{
@@ -372,22 +371,19 @@ public class ExpenseController {
 					BankAccountEntity bankAccountEntity = bankAccountOptional.get();
 					
 					String memo = bankAccountEntity.getMemo();
-					String isBankAccount = bankAccountEntity.getIsBankAccount();
 					
 					if(bankAccountEntity.getBank() != null) {
 						BankEntity bank = bankAccountEntity.getBank();
 						memo = bank.getName() + " - " + memo;
 					};
 					
-					if(isBankAccount == null) {
-						Map<String,Object> map = new HashMap<>();
-						
-						map.put("accountUserId", authorityAccountUserId);
-						map.put("accountId", authorityAccountId);
-						map.put("memo", memo);
-						
-						accountList.add(map);
-					}
+					Map<String,Object> map = new HashMap<>();
+					
+					map.put("accountUserId", authorityAccountUserId);
+					map.put("accountId", authorityAccountId);
+					map.put("memo", memo);
+					
+					accountList.add(map);
 				}
 			});
 			
@@ -438,7 +434,6 @@ public class ExpenseController {
 		
 		if(isError) {
 			String userId;
-			List<Map<String,Object>> accountList = new ArrayList<>();
 			
 			if (principal != null){
 				userId = principal.getName();
@@ -455,6 +450,9 @@ public class ExpenseController {
 				model.addAttribute("amount", amount);
 			}
 			
+			//帳戶
+			List<Map<String,Object>> accountList = new ArrayList<>();
+			
 			List<AuthorityEntity> authorityList = authorityRepository.findByUserIdOrderByOrderNumberAsc(userId);
 			authorityList.forEach(authority ->{
 				String authorityAccountUserId = authority.getAccountUserId();
@@ -466,22 +464,19 @@ public class ExpenseController {
 					BankAccountEntity bankAccountEntity = bankAccountOptional.get();
 					
 					String memo = bankAccountEntity.getMemo();
-					String isBankAccount = bankAccountEntity.getIsBankAccount();
 					
 					if(bankAccountEntity.getBank() != null) {
 						BankEntity bank = bankAccountEntity.getBank();
 						memo = bank.getName() + " - " + memo;
 					};
 					
-					if(isBankAccount == null) {
-						Map<String,Object> map = new HashMap<>();
-						
-						map.put("accountUserId", authorityAccountUserId);
-						map.put("accountId", authorityAccountId);
-						map.put("memo", memo);
-						
-						accountList.add(map);
-					}
+					Map<String,Object> map = new HashMap<>();
+					
+					map.put("accountUserId", authorityAccountUserId);
+					map.put("accountId", authorityAccountId);
+					map.put("memo", memo);
+					
+					accountList.add(map);
 				}
 			});
 			
@@ -563,6 +558,7 @@ public class ExpenseController {
 			accountId = "001";
 		}
 		
+		//帳戶
 		List<AuthorityEntity> authorityList = authorityRepository.findByUserIdOrderByOrderNumberAsc(userId);
 		authorityList.forEach(authority ->{
 			String authorityAccountUserId = authority.getAccountUserId();
@@ -581,15 +577,13 @@ public class ExpenseController {
 					memo = bank.getName() + " - " + memo;
 				};
 				
-				if(isBankAccount == null) {
-					Map<String,Object> map = new HashMap<>();
-					
-					map.put("accountUserId", authorityAccountUserId);
-					map.put("accountId", authorityAccountId);
-					map.put("memo", memo);
-					
-					accountList.add(map);
-				}
+				Map<String,Object> map = new HashMap<>();
+				
+				map.put("accountUserId", authorityAccountUserId);
+				map.put("accountId", authorityAccountId);
+				map.put("memo", memo);
+				
+				accountList.add(map);
 			}
 		});
 		
