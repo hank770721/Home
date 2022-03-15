@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>HKMA - 固定費用</title>
+        <link rel="icon" href="/home/icon/favicon.png">
+        <!--android-->
+        <link rel="shortcut icon" href="/home/icon/favicon.png">
+        <!--ios-->
+        <link rel="apple-touch-icon" href="/home/icon/asset_ios.png">
+        <link rel="apple-touch-icon" href="/home/icon/asset_ios_180.png" sizes="180x180">
+        <link rel="apple-touch-icon" href="/home/icon/asset_ios_120.png" sizes="120x120">
+        <link rel="apple-touch-icon" href="/home/icon/asset_ios_114.png" sizes="114x114">
+        
+        <!-- jQuery -->
+		<script src="http://code.jquery.com/jquery-1.12.4.min.js"></script>
+		<!-- jQuery Mobile --> 
+		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+		<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+		
+		<!-- HKMA -->
+		<link rel="stylesheet" href="/home/css/hkma.css"></link>
+		
+		<style>
+			.action-button .ui-btn-icon-notext.ui-corner-all {
+				height: 37px;
+				background-color: transparent;
+				border: 0px;
+				margin: 0px;
+			}
+			
+			.action-button .ui-btn-icon-notext:after {
+				top: 0px;
+				margin: 0px;
+			}
+			
+			.action-button .ui-btn-icon-notext.left-button:after {
+				left: 0px;
+			}
+			
+			.action-button .ui-btn-icon-notext.right-button:after {
+				left: unset;
+				right: 0px;
+			}
+			
+			.error{
+				padding-left:20px;
+				color:red;
+			}
+		</style>
+	</head>
+	<body>
+		<div data-role="page" class="ui-page-theme-a">
+            <div th:replace="mobile/include/header :: header"/>
+            <div>
+                <div class="ui-panel-wrapper">
+                	<div class="ui-nodisc-icon ui-alt-icon action-button">
+						<a id="back" href="#" class="ui-btn ui-corner-all ui-icon-back ui-btn-icon-notext ui-btn-inline left-button"></a>
+						<div style="width: calc(100% - 164px); display: inline-block;"></div>
+						<div style="display: inline-block; text-align:right;">
+							<div style="width: 60px; display: inline-block;">
+								<a href="#popupDialog" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext ui-btn-inline right-button"></a>
+							</div>
+							<div style="width: 60px; display: inline-block;">
+								<a id="check" href="#" class="ui-btn ui-corner-all ui-icon-check ui-btn-icon-notext ui-btn-inline right-button"></a>
+							</div>
+						</div>
+					</div>
+	                <form id="form" th:action="${fixedCost.userId + '&' + fixedCost.id}" data-ajax="false" th:object="${fixedCost}" method="post">
+						<input type="hidden" th:field="*{userId}"/>
+	                	<label for="id">代號</label>
+	                	<input type="text" th:field="*{id}" disabled="disabled"/>
+	                	<label for="month">月</label>
+	                	<input type="text" th:field="*{month}"/>
+	                	<label for="day">日</label>
+	                	<input type="text" th:field="*{day}"/>
+	                	<label for="cycleQty">次</label>
+	                	<input type="number" step="1" th:field="*{cycleQty}"/>
+	                	<label for="cycleType">循環類別</label>
+	                	<select name="cycleType">
+	                        <option value="1" th:selected="${fixedCost.cycleType=='1'}">年</option>
+	                        <option value="2" th:selected="${fixedCost.cycleType=='2'}">月</option>
+	                    </select>
+	                	<label for="name">名稱</label>
+	                	<input type="text" th:field="*{name}"/>
+	                	<label for="amount">金額<span th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}" class="error"></span></label>
+	                	<input type="number" step="1" name="amount" th:value="${amount}"/>
+	                	<label for="memo">備註</label>
+		                <input type="text" th:field="*{memo}"/>
+	                	<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+	                	<input type="hidden" name="_method"/>
+	                </form>
+                </div>
+            <div th:replace="mobile/include/menu :: menu"/>
+            <div data-role="popup" id="popupDialog" data-overlay-theme="b" data-theme="b" data-dismissible="false" style="max-width:400px;">
+            	<div data-role="header" data-theme="a">
+            		<h1>刪除資料?</h1>
+            	</div>
+				<div role="main" class="ui-content">
+					<h3 class="ui-title">您確定要刪掉這筆資料</h3>
+					<p>這個動作無法被復原</p>
+					<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">取消</a>
+					<a id="delete" href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b">刪除</a>
+			    </div>
+			</div>
+        </div>
+        
+        <script>
+        	$(document).ready(function() {
+        		$("#back").click(function() {
+        			location.href = "../index";
+                });
+        		
+        		$("#delete").click(function() {
+        			$("input[name='_method']").val("delete");
+        			$("#form").submit();
+                });
+        		
+        		$("#check").click(function() {
+        			$("input[name='_method']").val("put");
+                    $("#form").submit();
+                });
+        	});
+        </script>
+	</body>
+</html>
