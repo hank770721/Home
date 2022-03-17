@@ -55,27 +55,27 @@
 					</div>
 	                <form id="form" data-ajax="false" th:object="${record}" method="post">
 	                	<label for="recordDate">日期</label>
-	                	<input type="date" data-clear-btn="true" th:field="*{recordDate}"/>
+	                	<input type="date" data-clear-btn="true" th:field="*{recordDate}" readonly="true"/>
 	                	<label for="transMode">類別</label>
 	                	<select id="transMode" name="transMode">
 	                        <option th:value="${record.transMode}" selected="selected" th:text="${transModeName}"></option>
 	                    </select>
 	                    <div id="fromAccount">
 		                	<label for="fromAccountUserId">轉出帳戶</label>
-			                <input id="fromAccountUserId" type="text" th:field="*{fromAccountUserId}"/>
+			                <input id="fromAccountUserId" type="text" th:field="*{fromAccountUserId}" readonly="true"/>
 		                	<label for="fromAccountId">轉出帳號</label>
-		                	<input type="text" th:field="*{fromAccountId}"/>
+		                	<input type="text" th:field="*{fromAccountId}" readonly="true"/>
 		                </div>
 		                <div id="toAccount">
 		                	<label for="toAccountUserId">轉入帳戶</label>
-			                <input id="toAccountUserId" type="text" th:field="*{toAccountUserId}"/>
+			                <input id="toAccountUserId" type="text" th:field="*{toAccountUserId}" readonly="true"/>
 		                	<label for="toAccountId">轉入帳號</label>
-		                	<input type="text" th:field="*{toAccountId}"/>
+		                	<input type="text" th:field="*{toAccountId}" readonly="true"/>
 		                </div>
 	                	<label for="amount">金額</label>
-	                	<input type="number" name="amount" step="1" th:value="${#numbers.formatInteger(record.amount,0)}"/>
+	                	<input type="number" name="amount" step="1" th:value="${#numbers.formatInteger(record.amount,0)}" readonly="true"/>
 	                	<label for="memo">備註</label>
-		                <input type="text" th:field="*{memo}"/>
+		                <input type="text" th:field="*{memo}" readonly="true"/>
 	                	<label>
 	                		<input type="checkbox" name="isDividend" th:checked="${record.isDividend=='1'}">股利
 	                	 </label>
