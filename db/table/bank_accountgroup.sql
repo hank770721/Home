@@ -1,4 +1,4 @@
-CREATE TABLE `life_expense_accountgroup` (
+CREATE TABLE `bank_accountgroup` (
   `userId` varchar(20) NOT NULL,
   `groupId` varchar(4) NOT NULL,
   `groupName` varchar(4) DEFAULT NULL,

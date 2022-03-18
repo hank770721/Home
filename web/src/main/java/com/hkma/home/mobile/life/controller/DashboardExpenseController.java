@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.hkma.home.life.entity.ExpenseAccountGroupEntity;
-import com.hkma.home.life.repository.ExpenseAccountGroupRepository;
+import com.hkma.home.bank.entity.AccountGroupEntity;
+import com.hkma.home.bank.repository.AccountGroupRepository;
 
 @Controller("MobileLifeDashboardExpense")
 @RequestMapping("/m/life/dashboard/expense")
 public class DashboardExpenseController {
 	@Autowired
-	private ExpenseAccountGroupRepository expenseAccountGroupRepository;
+	private AccountGroupRepository accountGroupRepository;
 	
 	@GetMapping("/view")
 	public String view(
@@ -38,7 +38,6 @@ public class DashboardExpenseController {
 			Principal principal,
 			Model model){
 		String userId, userIdModel, groupId;
-		List<Map<String,Object>> groupList = new ArrayList<>();
 		
 		if (principal != null){
 			userId = principal.getName();
@@ -50,13 +49,16 @@ public class DashboardExpenseController {
 			groupId = "001";
 		}
 		
-		List<ExpenseAccountGroupEntity> expenseAccountGroupList = expenseAccountGroupRepository.findByUserId(userId);
-		expenseAccountGroupList.forEach(expenseAccountGroup ->{
+		//群組
+		List<Map<String,Object>> groupList = new ArrayList<>();
+		
+		List<AccountGroupEntity> accountGroupList = accountGroupRepository.findByUserId(userId);
+		accountGroupList.forEach(accountGroup ->{
 			Map<String,Object> map = new HashMap<>();
 			
-			map.put("userId", expenseAccountGroup.getUserId());
-			map.put("groupId", expenseAccountGroup.getGroupId());
-			map.put("groupName", expenseAccountGroup.getGroupName());
+			map.put("userId", accountGroup.getUserId());
+			map.put("groupId", accountGroup.getGroupId());
+			map.put("groupName", accountGroup.getGroupName());
 			
 			groupList.add(map);
 		});

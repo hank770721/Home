@@ -1,4 +1,4 @@
-package com.hkma.home.life.entity;
+package com.hkma.home.bank.entity;
 
 import java.io.Serializable;
 
@@ -8,9 +8,9 @@ import javax.persistence.IdClass;
 import javax.persistence.Table;
 
 @Entity
-@IdClass(ExpenseAccountGroupDetailPk.class)
-@Table(name = "life_expense_accountgroupdetail")
-public class ExpenseAccountGroupDetailEntity implements Serializable {
+@IdClass(AccountGroupDetailPk.class)
+@Table(name = "bank_accountgroupdetail")
+public class AccountGroupDetailEntity implements Serializable {
 	@Id
 	private String userId;
 	

@@ -33,7 +33,7 @@ public interface ExpenseRepository extends JpaRepository<ExpenseEntity,String>{
 	//List<ExpenseEntity> findByAccountUserIdAndAccountIdOrderByRecordDateAsc(String accountUserId, String accountId);
 	
 	@Query(value="SELECT * FROM life_expense "
-			+ "JOIN life_expense_accountgroupdetail accountgroupdetail ON accountgroupdetail.accountUserId = life_expense.accountUserId AND accountgroupdetail.accountId = life_expense.accountId "
+			+ "JOIN bank_accountgroupdetail accountgroupdetail ON accountgroupdetail.accountUserId = life_expense.accountUserId AND accountgroupdetail.accountId = life_expense.accountId "
 			+ "WHERE LEFT(life_expense.recordDate,6) = :month "
 			+ "AND accountgroupdetail.userId = :userId "
 			+ "AND accountgroupdetail.groupId = :groupId "
