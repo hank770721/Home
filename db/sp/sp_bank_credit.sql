@@ -1,5 +1,4 @@
-DELIMITER $$
-CREATE DEFINER=`root`@`%` PROCEDURE `sp_bank_credit`(in_accountUserId VARCHAR(20), in_accountId VARCHAR(4))
+CREATE DEFINER=`root`@`%` PROCEDURE `sp_bank_credit`(in_userId VARCHAR(12), in_accountUserId VARCHAR(12), in_accountId VARCHAR(4))
 BEGIN
 	DROP TEMPORARY TABLE IF EXISTS `temp_Detail`;
     DROP TEMPORARY TABLE IF EXISTS `temp_Detail2`;
@@ -23,25 +22,45 @@ BEGIN
     
     -- 銀行
     INSERT INTO temp_Detail(recordId, recordDate, memo, plus, minus)
-		SELECT 	recordId,
-				concat(left(recordDate,4),'/',substr(recordDate,5,2),'/',right(recordDate,2) ) AS recordDate,
-				memo,
-                (CASE WHEN transMode = '1' THEN amount ELSE 0 END) AS plus,
-                (CASE WHEN transMode = '2' THEN amount ELSE 0 END) AS minus
+		SELECT 	bank_record.recordId,
+				concat(left(bank_record.recordDate,4),'/',substr(bank_record.recordDate,5,2),'/',right(bank_record.recordDate,2) ) AS recordDate,
+				bank_record.memo,
+                0 AS plus,
+                (CASE WHEN bank_record.transMode = '2' THEN bank_record.amount ELSE 0 END) AS minus
 		FROM home.bank_record
+        JOIN bank_account ON bank_account.userId = bank_record.fromAccountUserId AND bank_account.id = bank_record.fromAccountId AND bank_account.isCreditCard = '1'
+        JOIN bank_authority ON bank_authority.userId = in_userId AND bank_authority.accountUserId = bank_account.userId AND bank_authority.accountId = bank_account.id
 		WHERE (
-			(fromAccountUserId = in_accountUserId AND fromAccountId = in_accountId) 
-            OR (toAccountUserId = in_accountUserId AND toAccountId = in_accountId)
+			(bank_account.userId = in_accountUserId AND bank_account.id = in_accountId)
+            OR (in_accountUserId = '' AND in_accountId = '')
+		);
+        
+	INSERT INTO temp_Detail(recordId, recordDate, memo, plus, minus)
+		SELECT 	bank_record.recordId,
+				concat(left(bank_record.recordDate,4),'/',substr(bank_record.recordDate,5,2),'/',right(bank_record.recordDate,2) ) AS recordDate,
+				bank_record.memo,
+                (CASE WHEN bank_record.transMode = '1' THEN bank_record.amount ELSE 0 END) AS plus,
+                0 AS minus
+		FROM home.bank_record
+        JOIN bank_account ON bank_account.userId = bank_record.toAccountUserId AND bank_account.id = bank_record.toAccountId AND bank_account.isCreditCard = '1'
+        JOIN bank_authority ON bank_authority.userId = in_userId AND bank_authority.accountUserId = bank_account.userId AND bank_authority.accountId = bank_account.id
+		WHERE (
+            (bank_account.userId = in_accountUserId AND bank_account.id = in_accountId)
+            OR (in_accountUserId = '' AND in_accountId = '')
 		);
         
 	-- 生活
     INSERT INTO temp_Detail(recordId, recordDate, memo, plus, minus)
-		SELECT 	recordId,
-				concat(left(recordDate,4),'/',substr(recordDate,5,2),'/',right(recordDate,2) ) AS recordDate,
-				memo,
-				(CASE WHEN transMode = '1' THEN amount ELSE 0 END) AS plus,
-				(CASE WHEN transMode = '2' THEN amount ELSE 0 END) AS minus
-		FROM life_expense WHERE accountUserId = in_accountUserId AND accountId = in_accountId;
+		SELECT 	life_expense.recordId,
+				concat(left(life_expense.recordDate,4),'/',substr(life_expense.recordDate,5,2),'/',right(life_expense.recordDate,2) ) AS recordDate,
+				life_expense.memo,
+				(CASE WHEN life_expense.transMode = '1' THEN life_expense.amount ELSE 0 END) AS plus,
+				(CASE WHEN life_expense.transMode = '2' THEN life_expense.amount ELSE 0 END) AS minus
+		FROM life_expense
+        JOIN bank_account ON bank_account.userId = life_expense.accountUserId AND bank_account.id = life_expense.accountId AND bank_account.isCreditCard = '1'
+        JOIN bank_authority ON bank_authority.userId = in_userId AND bank_authority.accountUserId = bank_account.userId AND bank_authority.accountId = bank_account.id
+        WHERE (bank_account.userId = in_accountUserId AND bank_account.id = in_accountId)
+        OR (in_accountUserId = '' AND in_accountId = '');
         
 	SET @i = 0;
 	INSERT INTO temp_Detail2(recordId, recordDate, memo, plus, minus, blance)
@@ -56,5 +75,4 @@ BEGIN
     
     DROP TABLE temp_Detail;
     DROP TABLE temp_Detail2;
-END$$
-DELIMITER ;
+END

@@ -38,12 +38,22 @@ public class TableCreditController {
 	public String view(
 			@RequestParam(required=false, value = "accountUserId") String accountUserId,
 			@RequestParam(required=false, value = "accountId") String accountId,
+			Principal principal,
 			Model model){
+		String userId;
+		
+		if (principal != null) {
+			userId = principal.getName();
+		}else {
+			userId = "mia";
+		}
+		
 		String sql;
 		List<Map<String,Object>> list = new ArrayList<>();
 		
-		sql = "call home.sp_bank_credit(:accountUserId, :accountId);";
+		sql = "call home.sp_bank_credit(:userId, :accountUserId, :accountId);";
 		MapSqlParameterSource params = new MapSqlParameterSource();
+		params.addValue("userId", userId);
 		params.addValue("accountUserId", accountUserId);
 		params.addValue("accountId", accountId);
 		
