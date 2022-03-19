@@ -22,6 +22,9 @@
 		<!-- HKMA -->
 		<link rel="stylesheet" href="/home/css/hkma.css"></link>
 		
+		<meta th:name="_csrf" th:content="${_csrf.token}"/>
+		<meta th:name="_csrf_header" th:content="${_csrf.headerName}"/>
+		
 		<style>
 			.action-button .ui-btn-icon-notext.ui-corner-all {
 				height: 37px;
@@ -59,16 +62,35 @@
 						</div>
 					</div>
 	                <form id="form" action="view" data-ajax="false" method="get">
-	                	<div>
-		            		<div style="display:inline-block; width:calc(100% - 48px)">
-			                	<label for="accountUserId">帳戶</label>
-				                <input id="accountUserId" type="text" name="accountUserId" th:value="${accountUserId}"/>
-				            </div>
-			            	<a id="btnAccount" href="#popupAccount" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-gear ui-btn-icon-left ui-btn-a"
-			            		style="height:35px;width:40px;padding:0px;margin:0px;top:-1px;"></a>
-		            	</div>
-		                <label for="accountId">帳號</label>
-		                <input id="accountId" type="text" name="accountId" th:value="${accountId}"/>
+	                	<label for="type">類別</label>
+	                	<select id="type" name="type" onblur="typeChange();" >
+	                        <option value="1">帳戶</option>
+	                        <option value="2">群組</option>
+	                    </select>
+	                    <div id="account">
+		                	<div>
+			            		<div style="display:inline-block; width:calc(100% - 48px)">
+				                	<label for="accountUserId">帳戶</label>
+					                <input id="accountUserId" type="text" name="accountUserId" th:value="${accountUserId}"/>
+					            </div>
+				            	<a id="btnAccount" href="#popupAccount" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-gear ui-btn-icon-left ui-btn-a"
+				            		style="height:35px;width:40px;padding:0px;margin:0px;top:-1px;"></a>
+			            	</div>
+			                <label for="accountId">帳號</label>
+			                <input id="accountId" type="text" name="accountId" th:value="${accountId}"/>
+			           	</div>
+			           	<div id="group">
+		                	<div>
+			            		<div style="display:inline-block; width:calc(100% - 48px)">
+				                	<label for="userId">帳戶</label>
+					                <input id="userId" type="text" name="userId" th:value="${userId}"/>
+					            </div>
+				            	<a id="btnGroup" href="#popupGroup" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-gear ui-btn-icon-left ui-btn-a"
+				            		style="height:35px;width:40px;padding:0px;margin:0px;top:-1px;"></a>
+			            	</div>
+			                <label for="groupId">群組</label>
+			                <input id="groupId" type="text" name="groupId" th:value="${groupId}"/>
+			           	</div>
 	                </form>
                 </div>
             <div th:replace="mobile/include/menu :: menu"/>
@@ -76,21 +98,44 @@
             <div id="divAccount">
             	<div id="popupAccount" data-role="popup" data-theme="a">
 					<ul id="listAccount" data-role="listview" data-inset="true" style="min-width:210px;">
-						<li><a style="height:35.18px;"></a></li>
-						<li th:each="list : ${accountList}" th:inline="text">
-							<a><h2>
-								[[${list.memo}]]
-								<div style="display:none;">[[${list.accountUserId}]]</div>
-								<div style="display:none;">[[${list.accountId}]]</div>
-							</h2></a>
-						</li>
 					</ul>
+				</div>
+			</div>
+			<div id="divGroup">
+            	<div id="popupGroup" data-role="popup" data-theme="a">
+            		<ul id="listGroup" data-role="listview" data-inset="true" style="min-width:210px;"></ul>
 				</div>
 			</div>
         </div>
         
         <script>
+        	function typeShow(){
+                switch($('#type').val()){
+	                case '1':
+	                	$('#account').show();
+	                	$('#group').hide();
+	                    break;
+	                case '2':
+	                	$('#account').hide();
+	                	$('#group').show();
+	                    break;
+                };
+            };
+            
+            function typeChange(){
+            	typeShow();
+            	
+            	$('#accountUserId').val("");
+                $('#accountId').val("");
+            	$('#userId').val("");
+            	$('#groupId').val("");
+            }
+            
         	$(document).ready(function() {
+        		var token = $("meta[name='_csrf']").attr("content");
+        		
+        		typeShow();
+        		
         		$("#back").click(function() {
         			location.href = "index";
                 });
@@ -99,11 +144,47 @@
                     $("#form").submit();
                 });
         		
-        		$('#popupAccount a').click(function(){
-                	$('#accountUserId').val($(this).find('div:eq(0)').text());
-                	$('#accountId').val($(this).find('div:eq(1)').text());
-                	$('#popupAccount').popup('close');
-                });
+        		$('#btnAccount').click(function(){
+		        	$('#popupAccount').remove();
+	                $.ajax({
+	                	type: 'POST',
+	                    url: '/home/m/bank/popup/account',
+	                    cache: false, 
+	                    data: {"_csrf":token},
+	                    success: function(data) {
+	                    	$("#divAccount").html(data);  
+                            $('#divAccount').enhanceWithin();
+	                        $('#popupAccount').attr('id','popupAccount');
+	                        $('#popupAccount a').click(function(){
+	                        	$('#accountUserId').val($(this).find('div:eq(0)').text());
+	                        	$('#accountId').val($(this).find('div:eq(1)').text());
+	                        	$('#popupAccount').popup('close');
+	                        });
+	                        $('#popupAccount').popup('open');
+	                    }
+	                });
+	            });
+        		
+        		$('#btnGroup').click(function(){
+		        	$('#popupGroup').remove();
+	                $.ajax({
+	                	type: 'POST',
+	                    url: '/home/m/bank/popup/accountGroup',
+	                    cache: false, 
+	                    data: {"_csrf":token},
+	                    success: function(data) {
+	                    	$("#divGroup").html(data);  
+                            $('#divGroup').enhanceWithin();
+	                        $('#popupGroup').attr('id','popupGroup');
+	                        $('#popupGroup a').click(function(){
+	                        	$('#userId').val($(this).find('div:eq(0)').text());
+	                        	$('#groupId').val($(this).find('div:eq(1)').text());
+	                        	$('#popupGroup').popup('close');
+	                        });
+	                        $('#popupGroup').popup('open');
+	                    }
+	                });
+	            });
         	});
         </script>
 	</body>

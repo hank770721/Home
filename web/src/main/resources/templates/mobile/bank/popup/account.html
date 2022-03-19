@@ -1,0 +1,12 @@
+<div id="popupAccount" data-role="popup" data-theme="a">
+	<ul id="listAccount" data-role="listview" data-inset="true" style="min-width:210px;">
+		<li><a style="height:35.18px;"></a></li>
+		<li th:each="list : ${accountList}" th:inline="text">
+			<a><h2>
+				[[${list.memo}]]
+				<div style="display:none;">[[${list.accountUserId}]]</div>
+				<div style="display:none;">[[${list.accountId}]]</div>
+			</h2></a>
+		</li>
+	</ul>
+</div>

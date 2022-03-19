@@ -1,0 +1,12 @@
+<div id="popupGroup" data-role="popup" data-theme="a">
+	<ul id="listGroup" data-role="listview" data-inset="true" style="min-width:210px;">
+		<li><a style="height:35.18px;"></a></li>
+		<li th:each="list : ${groupList}" th:inline="text">
+			<a><h2>
+				[[${list.groupName}]]
+				<div style="display:none;">[[${list.userId}]]</div>
+				<div style="display:none;">[[${list.groupId}]]</div>
+			</h2></a>
+		</li>
+	</ul>
+</div>

@@ -39,18 +39,24 @@ public class TableRecordController {
 	
 	@GetMapping("/view")
 	public String view(
+			@RequestParam(required=false, value = "type") String type,
 			@RequestParam(required=false, value = "accountUserId") String accountUserId,
 			@RequestParam(required=false, value = "accountId") String accountId,
+			@RequestParam(required=false, value = "userId") String userId,
+			@RequestParam(required=false, value = "groupId") String groupId,
 			Model model){
 		String sql;
 		List<Map<String,Object>> list = new ArrayList<>();
 		
 		//list = jdbcTemplate.queryForList("call home.sp_asset_detail;");
 		
-		sql = "call home.sp_bank_record(:accountUserId, :accountId);";
+		sql = "call home.sp_bank_record(:type, :accountUserId, :accountId, :userId, :groupId);";
 		MapSqlParameterSource params = new MapSqlParameterSource();
+		params.addValue("type", type);
 		params.addValue("accountUserId", accountUserId);
 		params.addValue("accountId", accountId);
+		params.addValue("userId", userId);
+		params.addValue("groupId", groupId);
 		
 		list = namedParameterJdbcTemplate.queryForList(sql, params);
 
