@@ -82,8 +82,8 @@
 			           	<div id="group">
 		                	<div>
 			            		<div style="display:inline-block; width:calc(100% - 48px)">
-				                	<label for="userId">帳戶</label>
-					                <input id="userId" type="text" name="userId" th:value="${userId}"/>
+				                	<label for="groupUserId">帳戶</label>
+					                <input id="groupUserId" type="text" name="groupUserId" th:value="${userId}"/>
 					            </div>
 				            	<a id="btnGroup" href="#popupGroup" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-gear ui-btn-icon-left ui-btn-a"
 				            		style="height:35px;width:40px;padding:0px;margin:0px;top:-1px;"></a>
@@ -127,7 +127,7 @@
             	
             	$('#accountUserId').val("");
                 $('#accountId').val("");
-            	$('#userId').val("");
+            	$('#groupUserId').val("");
             	$('#groupId').val("");
             }
             
@@ -177,7 +177,7 @@
                             $('#divGroup').enhanceWithin();
 	                        $('#popupGroup').attr('id','popupGroup');
 	                        $('#popupGroup a').click(function(){
-	                        	$('#userId').val($(this).find('div:eq(0)').text());
+	                        	$('#groupUserId').val($(this).find('div:eq(0)').text());
 	                        	$('#groupId').val($(this).find('div:eq(1)').text());
 	                        	$('#popupGroup').popup('close');
 	                        });
