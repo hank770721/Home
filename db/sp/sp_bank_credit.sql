@@ -4,6 +4,7 @@ BEGIN
     DROP TEMPORARY TABLE IF EXISTS `temp_Detail2`;
     
     CREATE TEMPORARY TABLE temp_Detail(
+		dateType CHAR(1),
 		recordId VARCHAR(12),
 		recordDate VARCHAR(10),
         memo VARCHAR(20),
@@ -12,6 +13,7 @@ BEGIN
 	);
     
     CREATE TEMPORARY TABLE temp_Detail2(
+		dateType CHAR(1),
 		recordId VARCHAR(12),
 		recordDate VARCHAR(10),
         memo VARCHAR(20),
@@ -21,8 +23,9 @@ BEGIN
 	);
     
     -- 銀行
-    INSERT INTO temp_Detail(recordId, recordDate, memo, plus, minus)
-		SELECT 	bank_record.recordId,
+    INSERT INTO temp_Detail(dateType, recordId, recordDate, memo, plus, minus)
+		SELECT 	'1',
+				bank_record.recordId,
 				concat(left(bank_record.recordDate,4),'/',substr(bank_record.recordDate,5,2),'/',right(bank_record.recordDate,2) ) AS recordDate,
 				bank_record.memo,
                 0 AS plus,
@@ -35,8 +38,9 @@ BEGIN
             OR (in_accountUserId = '' AND in_accountId = '')
 		);
         
-	INSERT INTO temp_Detail(recordId, recordDate, memo, plus, minus)
-		SELECT 	bank_record.recordId,
+	INSERT INTO temp_Detail(dateType, recordId, recordDate, memo, plus, minus)
+		SELECT 	'1',
+				bank_record.recordId,
 				concat(left(bank_record.recordDate,4),'/',substr(bank_record.recordDate,5,2),'/',right(bank_record.recordDate,2) ) AS recordDate,
 				bank_record.memo,
                 (CASE WHEN bank_record.transMode = '1' THEN bank_record.amount ELSE 0 END) AS plus,
@@ -50,8 +54,9 @@ BEGIN
 		);
         
 	-- 生活
-    INSERT INTO temp_Detail(recordId, recordDate, memo, plus, minus)
-		SELECT 	life_expense.recordId,
+    INSERT INTO temp_Detail(dateType, recordId, recordDate, memo, plus, minus)
+		SELECT 	'2',
+				life_expense.recordId,
 				concat(left(life_expense.recordDate,4),'/',substr(life_expense.recordDate,5,2),'/',right(life_expense.recordDate,2) ) AS recordDate,
 				life_expense.memo,
 				(CASE WHEN life_expense.transMode = '1' THEN life_expense.amount ELSE 0 END) AS plus,
@@ -63,15 +68,15 @@ BEGIN
         OR (in_accountUserId = '' AND in_accountId = '');
         
 	SET @i = 0;
-	INSERT INTO temp_Detail2(recordId, recordDate, memo, plus, minus, blance)
-		SELECT recordId, recordDate, memo, plus, minus, @i := @i + plus - minus FROM temp_Detail ORDER BY recordDate, recordId;
+	INSERT INTO temp_Detail2(dateType, recordId, recordDate, memo, plus, minus, blance)
+		SELECT dateType, recordId, recordDate, memo, plus, minus, @i := @i + plus - minus FROM temp_Detail ORDER BY recordDate, recordId, dateType;
         
 	SELECT 	recordDate,
 			memo,
             format(plus,0) AS plus,
             format(minus,0) AS minus,
             format(blance,0) AS blance
-		FROM temp_Detail2 ORDER BY recordDate DESC, recordId DESC;
+		FROM temp_Detail2 ORDER BY recordDate DESC, recordId DESC, dateType DESC;
     
     DROP TABLE temp_Detail;
     DROP TABLE temp_Detail2;
