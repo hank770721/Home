@@ -150,7 +150,7 @@
 	                	type: 'POST',
 	                    url: '/home/m/bank/popup/account',
 	                    cache: false, 
-	                    data: {"_csrf":token},
+	                    data: {"isBankAccount":"1","_csrf":token},
 	                    success: function(data) {
 	                    	$("#divAccount").html(data);  
                             $('#divAccount').enhanceWithin();

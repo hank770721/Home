@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.hkma.home.bank.entity.AccountGroupEntity;
 import com.hkma.home.bank.entity.AuthorityEntity;
@@ -35,6 +36,8 @@ public class Popup {
 	
 	@PostMapping("/account")
 	public String accunt(
+			@RequestParam(required=false, value="isBankAccount") String isBankAccount_param,
+			@RequestParam(required=false, value="isSecurities") String isSecurities_param,
 			Principal principal,
 			Model model) {
 		List<Map<String,Object>> accountList = new ArrayList<>();
@@ -53,21 +56,23 @@ public class Popup {
 					BankAccountEntity bankAccountEntity = bankAccountOptional.get();
 					String memo = bankAccountEntity.getMemo();
 					String isBankAccount = bankAccountEntity.getIsBankAccount();
+					String isSecurities = bankAccountEntity.getIsSecurities();
+					
+					if (isBankAccount_param != null && isBankAccount == null) return;
+					if (isSecurities_param != null && isSecurities == null) return;
 					
 					if(bankAccountEntity.getBank() != null) {
 						BankEntity bank = bankAccountEntity.getBank();
 						memo = bank.getName() + " - " + memo;
 					};
+				
+					Map<String,Object> map = new HashMap<>();
 					
-					if(isBankAccount != null && isBankAccount.equals("1")) {
-						Map<String,Object> map = new HashMap<>();
-						
-						map.put("accountUserId", authorityAccountUserId);
-						map.put("accountId", authorityAccountId);
-						map.put("memo", memo);
-						
-						accountList.add(map);
-					}
+					map.put("accountUserId", authorityAccountUserId);
+					map.put("accountId", authorityAccountId);
+					map.put("memo", memo);
+					
+					accountList.add(map);
 				}
 			});
 		}
