@@ -1,4 +1,4 @@
-package com.hkma.home.stock.controller;
+package com.hkma.home.mobile.stock.controller;
 
 import java.security.Principal;
 import java.util.ArrayList;
@@ -13,14 +13,19 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.hkma.home.stock.entity.AssetTypeEntity;
 import com.hkma.home.stock.entity.StockProfileEntity;
+import com.hkma.home.stock.repository.AssetTypeRepository;
 import com.hkma.home.stock.repository.StockProfileRepository;
 
 @Controller("MobileStockPopup")
 @RequestMapping("/m/stock/popup")
-public class Popup {
+public class PopupController {
 	@Autowired
 	private StockProfileRepository stockProfileRepository;
+	
+	@Autowired
+	private AssetTypeRepository assetTypeRepository;
 	
 	@PostMapping("/profile")
 	public String profile(
@@ -45,5 +50,31 @@ public class Popup {
 		model.addAttribute("list", list);
 		
 		return "mobile/stock/popup/profile";
+	}
+	
+	@PostMapping("/assettype")
+	public String assettype(
+			@RequestParam(required=false) String accountUserId,
+			@RequestParam(required=false) String accountId,
+			Principal principal,
+			Model model) {
+		List<Map<String,Object>> list = new ArrayList<>();
+		
+		if (principal != null){
+			List<AssetTypeEntity> assetTypeList = assetTypeRepository.findByAccountUserIdAndAccountId(accountUserId, accountId);
+			
+			assetTypeList.forEach(assetType ->{
+				Map<String,Object> map = new HashMap<>();
+				
+				map.put("id", assetType.getId());
+				map.put("name", assetType.getName());
+				
+				list.add(map);
+			});
+		}
+		
+		model.addAttribute("list", list);
+		
+		return "mobile/stock/popup/assettype";
 	}
 }
