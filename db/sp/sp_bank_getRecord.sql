@@ -1,4 +1,3 @@
-DELIMITER $$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_bank_getRecord`(in_accountUserId VARCHAR(20), in_accountId VARCHAR(4))
 BEGIN
 	DROP TEMPORARY TABLE IF EXISTS `temp_Detail`;
@@ -39,7 +38,7 @@ BEGIN
                 (CASE WHEN bank_record.transMode = '1' THEN 0 ELSE bank_record.amount END) AS minus
 		FROM home.bank_record
 		LEFT JOIN collect.stock_profile ON stock_profile.id = bank_record.stockId
-		LEFT JOIN home.stock_assettype ON stock_assettype.userId = ifnull(fromAccountUserId,toAccountUserId) AND stock_assettype.id = bank_record.type
+		LEFT JOIN home.stock_assettype ON stock_assettype.accountUserId = ifnull(fromAccountUserId,toAccountUserId) AND stock_assettype.id = bank_record.type
 		WHERE (
 			(bank_record.fromAccountUserId = in_accountUserId AND bank_record.fromAccountId = in_accountId)
             OR (bank_record.toAccountUserId = in_accountUserId AND bank_record.toAccountId = in_accountId)
@@ -59,5 +58,4 @@ BEGIN
     
     DROP TABLE temp_Detail;
     DROP TABLE temp_Detail2;
-END$$
-DELIMITER ;
+END

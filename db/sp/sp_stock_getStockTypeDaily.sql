@@ -1,4 +1,3 @@
-DELIMITER $$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_stock_getStockTypeDaily`(in_accountUserid VARCHAR(20), in_accountId VARCHAR(4), in_endDate VARCHAR(8))
 BEGIN
     DECLARE i_dateCount INT;
@@ -70,7 +69,7 @@ BEGIN
 				END IF ;
 				
 				BEGIN
-					DECLARE cur_Assettype CURSOR FOR SELECT id, name FROM home.stock_assettype WHERE userId = in_accountUserid AND accountId = in_accountId ORDER BY id;
+					DECLARE cur_Assettype CURSOR FOR SELECT id, name FROM home.stock_assettype WHERE accountUserid = in_accountUserid AND accountId = in_accountId ORDER BY id;
 					
 					OPEN cur_Assettype;
 					loop2: LOOP
@@ -115,5 +114,4 @@ BEGIN
     SELECT date, typeId, amount, cost
 		FROM home.stock_getstocktypedaily_temp WHERE accountUserId = in_accountUserid AND accountId = in_accountId
         ORDER BY date;
-END$$
-DELIMITER ;
+END

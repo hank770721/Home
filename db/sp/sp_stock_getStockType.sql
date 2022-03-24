@@ -1,4 +1,3 @@
-DELIMITER $$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_stock_getStockType`(in_accountUserId VARCHAR(20), in_accountId VARCHAR(4), in_startMonth VARCHAR(6), in_endMonth VARCHAR(6))
 BEGIN
 	DECLARE i_count INT;
@@ -62,7 +61,7 @@ BEGIN
 		
 		WHILE (@month <= in_endMonth) DO
 			BEGIN
-				DECLARE cur_Assettype CURSOR FOR SELECT id, name FROM home.stock_assettype WHERE userid = in_accountUserId AND accountId = in_accountId ORDER BY id;
+				DECLARE cur_Assettype CURSOR FOR SELECT id, name FROM home.stock_assettype WHERE accountUserId = in_accountUserId AND accountId = in_accountId ORDER BY id;
 				
 				OPEN cur_Assettype;
 				loop1: LOOP
@@ -124,5 +123,4 @@ BEGIN
         AND accountId = in_accountId
         AND month BETWEEN in_startMonth AND in_endMonth
         ORDER BY month;
-END$$
-DELIMITER ;
+END
