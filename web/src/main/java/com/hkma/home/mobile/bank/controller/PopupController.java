@@ -40,7 +40,7 @@ public class PopupController {
 			@RequestParam(required=false, value="isSecurities") String isSecurities_param,
 			Principal principal,
 			Model model) {
-		List<Map<String,Object>> accountList = new ArrayList<>();
+		List<Map<String,Object>> list = new ArrayList<>();
 		
 		if (principal != null){
 			String userId = principal.getName();
@@ -72,12 +72,12 @@ public class PopupController {
 					map.put("accountId", authorityAccountId);
 					map.put("memo", memo);
 					
-					accountList.add(map);
+					list.add(map);
 				}
 			});
 		}
 		
-		model.addAttribute("accountList", accountList);
+		model.addAttribute("list", list);
 		
 		return "mobile/bank/popup/account";
 	}
@@ -86,7 +86,7 @@ public class PopupController {
 	public String accuntGroup(
 			Principal principal,
 			Model model) {
-		List<Map<String,Object>> groupList = new ArrayList<>();
+		List<Map<String,Object>> list = new ArrayList<>();
 		
 		if (principal != null){
 			String userId = principal.getName();
@@ -99,11 +99,11 @@ public class PopupController {
 				map.put("groupId", accountGroup.getGroupId());
 				map.put("groupName", accountGroup.getGroupName());
 				
-				groupList.add(map);
+				list.add(map);
 			});
 		}
 		
-		model.addAttribute("groupList", groupList);
+		model.addAttribute("list", list);
 		
 		return "mobile/bank/popup/accountgroup";
 	}
