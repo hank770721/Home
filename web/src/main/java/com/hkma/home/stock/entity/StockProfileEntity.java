@@ -17,6 +17,10 @@ public class StockProfileEntity implements Serializable {
 	@Column(name="name", nullable = false)
 	private String name;
 	
+	public String getId() {
+		return id;
+    }
+	
 	public String getName() {
 		return name;
     }

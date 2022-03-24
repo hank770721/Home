@@ -1,0 +1,12 @@
+<div id="popupStockProfile" data-role="popup" data-theme="a">
+	<ul id="listPopupStockProfile" data-role="listview" data-inset="true" style="min-width:210px;">
+		<li><a style="height:35.18px;"></a></li>
+		<li th:each="row : ${list}" th:inline="text">
+			<a><h2>
+				[[${row.id}]][[${row.name}]]
+				<div style="display:none;">[[${row.id}]]</div>
+				<div style="display:none;">[[${row.name}]]</div>
+			</h2></a>
+		</li>
+	</ul>
+</div>
