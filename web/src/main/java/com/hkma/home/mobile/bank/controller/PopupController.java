@@ -24,7 +24,7 @@ import com.hkma.home.bank.repository.BankAccountRepository;
 
 @Controller("MobileBankPopup")
 @RequestMapping("/m/bank/popup")
-public class Popup {
+public class PopupController {
 	@Autowired
 	private AuthorityRepository authorityRepository;
 	
