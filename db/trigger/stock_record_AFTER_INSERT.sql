@@ -1,5 +1,4 @@
-DELIMITER $$
-CREATE DEFINER=`root`@`localhost` TRIGGER `home`.`stock_record_AFTER_INSERT` AFTER INSERT ON `stock_record` FOR EACH ROW
+CREATE DEFINER=`root`@`%` TRIGGER `home`.`stock_record_AFTER_INSERT` AFTER INSERT ON `stock_record` FOR EACH ROW
 BEGIN
 	DECLARE i_count INT;
     DECLARE d_quantity DECIMAL(4,0);
@@ -50,7 +49,7 @@ BEGIN
             SET d_amount = new.amount;
 		ELSEIF(new.transMode = '2') THEN
 			SET d_quantity = new.quantity * (-1);
-            SET d_amount = new.amount * (-1);
+            SET d_amount = new.cost * (-1);
         END IF;
         
 		INSERT INTO stock_treasury(accountUserId, accountId, assetType, stockId, quantity, amount)
@@ -63,7 +62,7 @@ BEGIN
             SET d_amount = d_amount_treasury + new.amount;
 		ELSEIF(new.transMode = '2') THEN
 			SET d_quantity = d_quantity_treasury - new.quantity;
-            SET d_amount = d_amount_treasury - new.amount;
+            SET d_amount = d_amount_treasury - new.cost;
         END IF;
         
         IF(d_quantity = 0) THEN
@@ -78,5 +77,4 @@ BEGIN
 				AND stockId = new.stockId;
 		END IF;
     END IF;
-END$$
-DELIMITER ;
+END

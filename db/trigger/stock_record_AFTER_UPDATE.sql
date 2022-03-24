@@ -1,5 +1,4 @@
-DELIMITER $$
-CREATE DEFINER=`root`@`localhost` TRIGGER `home`.`stock_record_AFTER_UPDATE` AFTER UPDATE ON `stock_record` FOR EACH ROW
+CREATE DEFINER=`root`@`%` TRIGGER `home`.`stock_record_AFTER_UPDATE` AFTER UPDATE ON `stock_record` FOR EACH ROW
 BEGIN
 	DECLARE i_count INT;
     DECLARE s_transMode_record CHAR(1);
@@ -7,6 +6,7 @@ BEGIN
     DECLARE d_amount DECIMAL(5,0);
     DECLARE d_quantity_record DECIMAL(4,0);
     DECLARE d_amount_record DECIMAL(5,0);
+    DECLARE d_cost_record DECIMAL(7,1);
     DECLARE d_quantity_treasury DECIMAL(4,0);
     DECLARE d_amount_treasury DECIMAL(5,0);
     DECLARE done INT DEFAULT true;
@@ -53,7 +53,7 @@ BEGIN
     
     BEGIN
 		DECLARE cur_record CURSOR FOR
-			SELECT transMode, quantity, amount
+			SELECT transMode, quantity, amount, cost
             FROM stock_record
             WHERE accountUserId = old.accountUserId
             AND accountId = old.accountId
@@ -63,7 +63,7 @@ BEGIN
             
 		OPEN cur_record;
 		loop1: LOOP
-			FETCH cur_record INTO s_transMode_record, d_quantity_record, d_amount_record;
+			FETCH cur_record INTO s_transMode_record, d_quantity_record, d_amount_record, d_cost_record;
 			
 			IF(done = false) THEN
 				LEAVE loop1; 
@@ -74,7 +74,7 @@ BEGIN
 				SET d_amount = d_amount + d_amount_record;
 			ELSEIF(s_transMode_record = '2') THEN
 				SET d_quantity = d_quantity - d_quantity_record;
-				SET d_amount = d_amount - d_amount_record;
+				SET d_amount = d_amount - d_cost_record;
 			END IF;
 		END LOOP;
 		CLOSE cur_record;
@@ -113,7 +113,7 @@ BEGIN
 				SET d_amount = new.amount;
 			ELSEIF(new.transMode = '2') THEN
 				SET d_quantity = new.quantity * (-1);
-				SET d_amount = new.amount * (-1);
+				SET d_amount = new.cost * (-1);
 			END IF;
 			
 			INSERT INTO stock_treasury(accountUserId, accountId, assetType, stockId, quantity, amount)
@@ -126,7 +126,7 @@ BEGIN
 				SET d_amount = d_amount_treasury + new.amount;
 			ELSEIF(new.transMode = '2') THEN
 				SET d_quantity = d_quantity_treasury - new.quantity;
-				SET d_amount = d_amount_treasury - new.amount;
+				SET d_amount = d_amount_treasury - new.cost;
 			END IF;
 			
 			IF(d_quantity = 0) THEN
@@ -142,5 +142,4 @@ BEGIN
 			END IF;
 		END IF;
     END IF;
-END$$
-DELIMITER ;
+END
