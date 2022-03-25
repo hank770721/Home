@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>HKMA - 股票交易</title>
+        <link rel="icon" href="/home/icon/favicon.png">
+        <!--android-->
+        <link rel="shortcut icon" href="/home/icon/favicon.png">
+        <!--ios-->
+        <link rel="apple-touch-icon" href="/home/icon/asset_ios.png">
+        <link rel="apple-touch-icon" href="/home/icon/asset_ios_180.png" sizes="180x180">
+        <link rel="apple-touch-icon" href="/home/icon/asset_ios_120.png" sizes="120x120">
+        <link rel="apple-touch-icon" href="/home/icon/asset_ios_114.png" sizes="114x114">
+        
+        <!-- jQuery -->
+		<script src="http://code.jquery.com/jquery-1.12.4.min.js"></script>
+		<!-- jQuery Mobile --> 
+		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+		<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+		
+		<!-- HKMA -->
+		<link rel="stylesheet" href="/home/css/hkma.css"></link>
+		
+		<meta th:name="_csrf" th:content="${_csrf.token}"/>
+		<meta th:name="_csrf_header" th:content="${_csrf.headerName}"/>
+		
+		<style>
+			.action-button .ui-btn-icon-notext.ui-corner-all {
+				height: 37px;
+				background-color: transparent;
+				border: 0px;
+				margin: 0px;
+			}
+			
+			.action-button .ui-btn-icon-notext:after {
+				top: 0px;
+				margin: 0px;
+			}
+			
+			.action-button .ui-btn-icon-notext.left-button:after {
+				left: 0px;
+			}
+			
+			.action-button .ui-btn-icon-notext.right-button:after {
+				left: unset;
+				right: 0px;
+			}
+			
+			.error{
+				padding-left:20px;
+				color:red;
+			}
+		</style>
+	</head>
+	<body>
+		<div data-role="page" class="ui-page-theme-a">
+            <div th:replace="mobile/include/header :: header"/>
+            <div>
+                <div class="ui-panel-wrapper">
+					<div class="ui-nodisc-icon ui-alt-icon action-button">
+						<a id="back" href="#" class="ui-btn ui-corner-all ui-icon-back ui-btn-icon-notext ui-btn-inline left-button"></a>
+						<div style="width: calc(100% - 99px); display: inline-block;"></div>
+						<div style="display: inline-block; text-align:right;">
+							<div style="width: 60px; display: inline-block;">
+								<a id="check" href="#" class="ui-btn ui-corner-all ui-icon-check ui-btn-icon-notext ui-btn-inline right-button"></a>
+							</div>
+						</div>
+					</div>
+	                <form id="form" action="new" data-ajax="false" th:object="${stockRecord}" method="post">
+	                	<input type="hidden" th:field="*{recordId}"/>
+	                	<label for="recordDate">日期</label>
+	                	<input type="date" data-clear-btn="true" th:field="*{recordDate}"/>
+	                	<label for="transMode">類別</label>
+	                	<select id="transMode" name="transMode" onblur="transModeChange()">
+	                        <option value="1" th:selected="${stockRecord.transMode=='1'}">買進</option>
+	                        <option value="2" th:selected="${stockRecord.transMode=='2'}">賣出</option>
+	                    </select>
+	                	<div>
+		            		<div style="display:inline-block; width:calc(100% - 48px)">
+			                	<label for="accountUserId">帳戶<span th:if="${accountUserIdError}" th:text="${accountUserIdError}" class="error"></span></label>
+				                <input type="text" th:field="*{accountUserId}" readonly="true"/>
+				            </div>
+			            	<a id="btnAccount" href="#popupAccount" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-gear ui-btn-icon-left ui-btn-a"
+			            		style="height:35px;width:40px;padding:0px;margin:0px;top:-1px;"></a>
+		            	</div>
+	                	<label for="accountId">帳號<span th:if="${accountIdError}" th:text="${accountIdError}" class="error"></span></label>
+	                	<input type="text" th:field="*{accountId}" readonly="true"/>
+	                	<div>
+		            		<div style="display:inline-block; width:calc(100% - 48px)">
+			                	<label for="stockId">代號<span th:if="${stockIdError}" th:text="${stockIdError}" class="error"></span></label>
+				                <input type="text" th:field="*{stockId}"/>
+				            </div>
+			            	<a id="btnStockProfile" href="#popupStockProfile" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-gear ui-btn-icon-left ui-btn-a"
+			            		style="height:35px;width:40px;padding:0px;margin:0px;top:-1px;"></a>
+		            	</div>
+	                	<label for="stockName">商品</label>
+	                	<input type="text" id="stockName" th:value="${stockName}" readonly="true"/>
+	                	<label for="quantity">股數</label>
+	                	<input type="number" id="quantity" name="quantity" th:value="${quantity}" onblur="amountCompute()"/>
+	                	<label for="price">單價</label>
+	                	<input type="number" id="price" name="price" th:value="${price}" onblur="amountCompute()"/>
+	                	<label for="fee">手續費</label>
+	                	<input type="number" id="fee" name="fee" th:value="${fee}" onblur="amountCompute()"/>
+	                	<label for="tax">交易稅</label>
+	                	<input type="number" id="tax" name="tax" th:value="${tax}" onblur="amountCompute()"/>
+	                	<label for="amount">金額<span th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}" class="error"></span></label>
+	                	<input type="number" id="amount" name="amount" th:value="${amount}"/>
+	                	<div>
+		            		<div style="display:inline-block; width:calc(100% - 48px)">
+			                	<label for="assetType">資產類別</label>
+				                <input type="text" th:field="*{assetType}" readonly="true"/>
+				            </div>
+			            	<a id="btnAssetType" href="#popupAssetType" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-gear ui-btn-icon-left ui-btn-a"
+			            		style="height:35px;width:40px;padding:0px;margin:0px;top:-1px;"></a>
+		            	</div>
+	                	<label for="memo">備註</label>
+		                <input type="text" th:field="*{memo}"/>
+		                <div id="divCost">
+		                	<label for="cost">成本</label>
+		                	<input type="number" id="cost" name="cost" th:value="${cost}"/>
+		               	</div>
+	                	<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+	                	<input type="hidden" name="_method"/>
+	                </form>
+                </div>
+            <div th:replace="mobile/include/menu :: menu"/>
+            
+            <div id="divPopupAccount">
+            	<div id="popupAccount" data-role="popup" data-theme="a">
+					<ul id="listPopupAccount" data-role="listview" data-inset="true" style="min-width:210px;">
+					</ul>
+				</div>
+			</div>
+			
+			<div id="divPopupStockProfile">
+            	<div id="popupStockProfile" data-role="popup" data-theme="a">
+					<ul id="listPopupStockProfile" data-role="listview" data-inset="true" style="min-width:210px;">
+					</ul>
+				</div>
+			</div>
+			
+			<div id="divPopupAssetType">
+            	<div id="popupAssetType" data-role="popup" data-theme="a">
+					<ul id="listPopupAssetType" data-role="listview" data-inset="true" style="min-width:210px;">
+					</ul>
+				</div>
+			</div>
+        </div>
+        
+        <script>
+        	function transModeShow(){
+                switch($('#transMode').val()){
+	                case '1':
+	                	$('#divCost').hide();
+	                    break;
+	                case '2':
+	                	$('#divCost').show();
+	                    break;
+                };
+            };
+            
+	        function transModeChange(){
+	        	transModeShow();
+	        	amountCompute();
+	        	
+	        	switch($('#transMode').val()){
+	                case '1':
+	                	$('#cost').val("0");
+	                    break;
+	                case '2':
+	                    break;
+	            };
+	        }
+	        
+	        function amountCompute(){
+	        	var quantity = $('#quantity').val();
+	        	var price = $('#price').val();
+	        	var fee = $('#fee').val();
+	        	var tax = $('#tax').val();
+	        	
+	        	switch($('#transMode').val()){
+	                case '1':
+	                	$('#amount').val(quantity * price + parseInt(fee) + parseInt(tax));
+	                    break;
+	                case '2':
+	                	$('#amount').val(quantity * price - fee - tax);
+	                    break;
+	            };
+	        }
+        	
+        	$(document).ready(function() {
+				var token = $("meta[name='_csrf']").attr("content");
+        		
+        		transModeShow();
+        		
+        		$("#back").click(function() {
+        			location.href = "index";
+                });
+        		
+        		$("#check").click(function() {
+                    $("#form").submit();
+                });
+        		
+        		$('#btnAccount').click(function(){
+		        	$('#popupAccount').remove();
+	                $.ajax({
+	                	type: 'POST',
+	                    url: '/home/m/bank/popup/account',
+	                    cache: false, 
+	                    data: {"isSecurities":"1","_csrf":token},
+	                    success: function(data) {
+	                    	$("#divPopupAccount").html(data);  
+                            $('#divPopupAccount').enhanceWithin();
+	                        $('#popupAccount').attr('id','popupAccount');
+	                        $('#popupAccount a').click(function(){
+	                        	$('#accountUserId').val($(this).find('div:eq(0)').text());
+	                       		$('#accountId').val($(this).find('div:eq(1)').text());
+	                        	$('#popupAccount').popup('close');
+	                        });
+	                        $('#popupAccount').popup('open');
+	                    }
+	                });
+	            });
+        		
+        		$('#btnStockProfile').click(function(){
+		        	$('#popupStockProfile').remove();
+	                $.ajax({
+	                	type: 'POST',
+	                    url: '/home/m/stock/popup/profile',
+	                    cache: false, 
+	                    data: {"stockId":$("#stockId").val(),"_csrf":token},
+	                    success: function(data) {
+	                    	$("#divPopupStockProfile").html(data);  
+                            $('#divPopupStockProfile').enhanceWithin();
+	                        $('#popupStockProfile').attr('id','popupStockProfile');
+	                        $('#popupStockProfile a').click(function(){
+	                        	$('#stockId').val($(this).find('div:eq(0)').text());
+	                       		$('#stockName').val($(this).find('div:eq(1)').text());
+	                        	$('#popupStockProfile').popup('close');
+	                        });
+	                        $('#popupStockProfile').popup('open');
+	                    }
+	                });
+	            });
+        		
+        		$('#btnAssetType').click(function(){
+		        	$('#popupAssetType').remove();
+	                $.ajax({
+	                	type: 'POST',
+	                    url: '/home/m/stock/popup/assettype',
+	                    cache: false, 
+	                    data: {"accountUserId":$("#accountUserId").val(),"accountId":$("#accountId").val(),"_csrf":token},
+	                    success: function(data) {
+	                    	$("#divPopupAssetType").html(data);  
+                            $('#divPopupAssetType').enhanceWithin();
+	                        $('#popupAssetType').attr('id','popupAssetType');
+	                        $('#popupAssetType a').click(function(){
+	                        	$('#assetType').val($(this).find('div:eq(0)').text());
+	                        	$('#popupAssetType').popup('close');
+	                        });
+	                        $('#popupAssetType').popup('open');
+	                    }
+	                });
+	            });
+        	});
+        </script>
+	</body>
+</html>
