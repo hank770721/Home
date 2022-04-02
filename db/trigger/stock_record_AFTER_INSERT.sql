@@ -1,10 +1,10 @@
-CREATE DEFINER=`root`@`%` TRIGGER `home`.`stock_record_AFTER_INSERT` AFTER INSERT ON `stock_record` FOR EACH ROW
+CREATE DEFINER=`root`@`localhost` TRIGGER `home`.`stock_record_AFTER_INSERT` AFTER INSERT ON `stock_record` FOR EACH ROW
 BEGIN
 	DECLARE i_count INT;
     DECLARE d_quantity DECIMAL(4,0);
-    DECLARE d_amount DECIMAL(5,0);
+    DECLARE d_amount DECIMAL(6,0);
     DECLARE d_quantity_treasury DECIMAL(4,0);
-    DECLARE d_amount_treasury DECIMAL(5,0);
+    DECLARE d_amount_treasury DECIMAL(6,0);
     
 	IF (new.amount > 0) THEN
 		SELECT name INTO @memo FROM collect.stock_profile WHERE stock_profile.id = new.stockId;

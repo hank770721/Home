@@ -3,12 +3,12 @@ BEGIN
 	DECLARE i_count INT;
     DECLARE s_transMode_record CHAR(1);
     DECLARE d_quantity DECIMAL(4,0);
-    DECLARE d_amount DECIMAL(5,0);
+    DECLARE d_amount DECIMAL(6,0);
     DECLARE d_quantity_record DECIMAL(4,0);
-    DECLARE d_amount_record DECIMAL(5,0);
+    DECLARE d_amount_record DECIMAL(6,0);
     DECLARE d_cost_record DECIMAL(7,1);
     DECLARE d_quantity_treasury DECIMAL(4,0);
-    DECLARE d_amount_treasury DECIMAL(5,0);
+    DECLARE d_amount_treasury DECIMAL(6,0);
     DECLARE done INT DEFAULT true;
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = false;
     
