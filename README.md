@@ -38,5 +38,7 @@
   - 顯示申購股票損益明細。
 
 ## 2. 環境
+- JAVA
 - JDK 1.8
+- Spring Boot
 - Eclipse IDE
