@@ -1,6 +1,7 @@
 CREATE TABLE `life_expense` (
   `recordId` varchar(14) NOT NULL,
   `recordDate` varchar(8) DEFAULT NULL,
+  `vestingDate` varchar(8) DEFAULT NULL,
   `transMode` char(1) DEFAULT NULL,
   `accountUserId` varchar(20) DEFAULT NULL,
   `accountId` varchar(4) DEFAULT NULL,
