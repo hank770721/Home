@@ -209,6 +209,8 @@ public class ExpenseController {
 		});
 		
 		expense.setRecordDate(recordDate);
+		//20220409 增加歸屬日期
+		expense.setVestingDate(recordDate);
 		expense.setTransMode("1");
 		expense.setAccountUserId(accountUserId);
 		expense.setAccountId(accountId);
@@ -228,6 +230,8 @@ public class ExpenseController {
 		String accountUserIdError = null, accountIdError = null;
 		
 		String recordDate = expense.getRecordDate();
+		//20220409 增加歸屬日期
+		String vestingDate = expense.getVestingDate();
 		String accountUserId = expense.getAccountUserId();
 		String accountId = expense.getAccountId();
 		Double amount = expense.getAmount();
@@ -302,6 +306,9 @@ public class ExpenseController {
 		
 		recordDate = recordDate.replaceAll("-","");
 		
+		//20220409 增加歸屬日期
+		vestingDate = vestingDate.replaceAll("-","");
+		
 		if(isConsolidation == null) {
 			isConsolidation = "0";
 		}else {
@@ -309,6 +316,8 @@ public class ExpenseController {
 		}
 		
 		expense.setRecordDate(recordDate);
+		//20220409 增加歸屬日期
+		expense.setVestingDate(vestingDate);
 		expense.setIsConsolidation(isConsolidation);
 		
 		String recordId;
@@ -344,12 +353,17 @@ public class ExpenseController {
 			ExpenseEntity expense = expenseOptional.get();
 			
 			String recordDate = expense.getRecordDate();
+			//20220409 增加歸屬日期
+			String vestingDate = expense.getVestingDate();
 			Double amount = expense.getAmount();
 			String isConsolidation = expense.getIsConsolidation();
 			
 			String userId;
 			
 			expense.setRecordDate(recordDate.substring(0,4) + "-" + recordDate.substring(4,6) + "-" + recordDate.substring(6,8));
+			
+			//20220409 增加歸屬日期
+			expense.setVestingDate(vestingDate.substring(0,4) + "-" + vestingDate.substring(4,6) + "-" + vestingDate.substring(6,8));
 			
 			if (principal != null){
 				userId = principal.getName();
@@ -413,6 +427,8 @@ public class ExpenseController {
 		String accountUserIdError = null, accountIdError = null;
 		
 		String recordDate = expense.getRecordDate().replaceAll("-","");
+		//20220409 增加歸屬日期
+		String vestingDate = expense.getVestingDate().replaceAll("-","");
 		String accountUserId = expense.getAccountUserId();
 		String accountId = expense.getAccountId();
 		Double amount = expense.getAmount();
@@ -519,6 +535,8 @@ public class ExpenseController {
 		}
 		
 		expense.setRecordDate(recordDate);
+		//20220409 增加歸屬日期
+		expense.setVestingDate(vestingDate);
 		expense.setIsConsolidation(isConsolidation);
 		
 		if (principal != null){

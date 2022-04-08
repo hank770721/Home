@@ -34,9 +34,9 @@ public interface ExpenseRepository extends JpaRepository<ExpenseEntity,String>{
 	
 	@Query(value="SELECT * FROM life_expense "
 			+ "JOIN bank_accountgroupdetail accountgroupdetail ON accountgroupdetail.accountUserId = life_expense.accountUserId AND accountgroupdetail.accountId = life_expense.accountId "
-			+ "WHERE LEFT(life_expense.recordDate,6) = :month "
+			+ "WHERE LEFT(life_expense.vestingDate,6) = :month "
 			+ "AND accountgroupdetail.userId = :userId "
 			+ "AND accountgroupdetail.groupId = :groupId "
-			+ "ORDER BY life_expense.recordDate", nativeQuery=true)
-	List<ExpenseEntity> findByUserIdAndGroupIdAndMonthOrderByRecordDate(String userId, String groupId, String month);
+			+ "ORDER BY life_expense.vestingDate", nativeQuery=true)
+	List<ExpenseEntity> findByUserIdAndGroupIdAndMonthOrderByVestingDate(String userId, String groupId, String month);
 }

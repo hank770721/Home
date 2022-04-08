@@ -50,16 +50,20 @@ public class DashboardExpenseDataController {
 		double lastYearBlance = 0;
 		
 		//本月
-		List<ExpenseEntity> expenseEntityList = expenseRepository.findByUserIdAndGroupIdAndMonthOrderByRecordDate(userId, groupId, monthFormat.format(calendar.getTime()));
+		List<ExpenseEntity> expenseEntityList = expenseRepository.findByUserIdAndGroupIdAndMonthOrderByVestingDate(userId, groupId, monthFormat.format(calendar.getTime()));
 		for (ExpenseEntity expense : expenseEntityList) {
-			String recordDate = expense.getRecordDate();
+			//20220409 改顯示歸屬日期
+			//String recordDate = expense.getRecordDate();
+			String vestingDate = expense.getVestingDate();
 			double amount = expense.getAmount();
 			String isConsolidation = expense.getIsConsolidation();
 			
 			//20220301 盤整不列入
 			if (isConsolidation == null || isConsolidation.equals("0")) {
 				Map<String,Object> record = new HashMap<>();
-				record.put("recordDate", recordDate.substring(0, 4) + "/" + recordDate.substring(4, 6) + "/" + recordDate.substring(6, 8));
+				//20220409 改顯示歸屬日期
+				//record.put("recordDate", recordDate.substring(0, 4) + "/" + recordDate.substring(4, 6) + "/" + recordDate.substring(6, 8));
+				record.put("vestingDate", vestingDate.substring(0, 4) + "/" + vestingDate.substring(4, 6) + "/" + vestingDate.substring(6, 8));
 				record.put("memo", expense.getMemo());
 				
 				switch(expense.getTransMode()) {
@@ -94,16 +98,20 @@ public class DashboardExpenseDataController {
 		calendar.add(Calendar.MONTH, -1);
 		blance = 0;
 		
-		expenseEntityList = expenseRepository.findByUserIdAndGroupIdAndMonthOrderByRecordDate(userId, groupId, monthFormat.format(calendar.getTime()));
+		expenseEntityList = expenseRepository.findByUserIdAndGroupIdAndMonthOrderByVestingDate(userId, groupId, monthFormat.format(calendar.getTime()));
 		for (ExpenseEntity expense : expenseEntityList) {
-			String recordDate = expense.getRecordDate();
+			//20220409 改顯示歸屬日期
+			//String recordDate = expense.getRecordDate();
+			String vestingDate = expense.getVestingDate();
 			double amount = expense.getAmount();
 			String isConsolidation = expense.getIsConsolidation();
 			
 			//20220301 盤整不列入
 			if (isConsolidation == null || isConsolidation.equals("0")) {
 				Map<String,Object> record = new HashMap<>();
-				record.put("recordDate", recordDate.substring(0, 4) + "/" + recordDate.substring(4, 6) + "/" + recordDate.substring(6, 8));
+				//20220409 改顯示歸屬日期
+				//record.put("recordDate", recordDate.substring(0, 4) + "/" + recordDate.substring(4, 6) + "/" + recordDate.substring(6, 8));
+				record.put("vestingDate", vestingDate.substring(0, 4) + "/" + vestingDate.substring(4, 6) + "/" + vestingDate.substring(6, 8));
 				record.put("memo", expense.getMemo());
 				
 				switch(expense.getTransMode()) {
@@ -138,16 +146,20 @@ public class DashboardExpenseDataController {
 		calendar.add(Calendar.YEAR, -1);
 		blance = 0;
 		
-		expenseEntityList = expenseRepository.findByUserIdAndGroupIdAndMonthOrderByRecordDate(userId, groupId, monthFormat.format(calendar.getTime()));
+		expenseEntityList = expenseRepository.findByUserIdAndGroupIdAndMonthOrderByVestingDate(userId, groupId, monthFormat.format(calendar.getTime()));
 		for (ExpenseEntity expense : expenseEntityList) {
-			String recordDate = expense.getRecordDate();
+			//20220409 改顯示歸屬日期
+			//String recordDate = expense.getRecordDate();
+			String vestingDate = expense.getVestingDate();
 			double amount = expense.getAmount();
 			String isConsolidation = expense.getIsConsolidation();
 			
 			//20220301 盤整不列入
 			if (isConsolidation == null || isConsolidation.equals("0")) {
 				Map<String,Object> record = new HashMap<>();
-				record.put("recordDate", recordDate.substring(0, 4) + "/" + recordDate.substring(4, 6) + "/" + recordDate.substring(6, 8));
+				//20220409 改顯示歸屬日期
+				//record.put("recordDate", recordDate.substring(0, 4) + "/" + recordDate.substring(4, 6) + "/" + recordDate.substring(6, 8));
+				record.put("vestingDate", vestingDate.substring(0, 4) + "/" + vestingDate.substring(4, 6) + "/" + vestingDate.substring(6, 8));
 				record.put("memo", expense.getMemo());
 				
 				switch(expense.getTransMode()) {

@@ -70,7 +70,9 @@
 	                <form id="form" th:action="${expense.recordId}" data-ajax="false" th:object="${expense}" method="post">
 	                	<input type="hidden" th:field="*{recordId}"/>
 	                	<label for="recordDate">日期</label>
-	                	<input type="date" data-clear-btn="true" th:field="*{recordDate}"/>
+	                	<input type="date" data-clear-btn="true" th:field="*{recordDate}" onchange="syncVestingDate()"/>
+	                	<label for="vestingDate">歸屬日期</label>
+	                	<input type="date" data-clear-btn="true" th:field="*{vestingDate}"/>
 	                	<label for="transMode">類別</label>
 	                	<select id="transMode" name="transMode" onblur="transModeChange();" >
 	                        <option value="1" th:selected="${expense.transMode=='1'}">收入</option>
@@ -127,6 +129,10 @@
         </div>
         
         <script>
+	        function syncVestingDate(){
+	    		$('#vestingDate').val($('#recordDate').val());
+	    	}
+	        
         	$(document).ready(function() {
         		$("#back").click(function() {
         			location.href = "index";
