@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,29 +14,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.hkma.home.bank.entity.AccountGroupEntity;
-import com.hkma.home.bank.entity.AuthorityEntity;
-import com.hkma.home.bank.entity.BankAccountEntity;
-import com.hkma.home.bank.entity.BankEntity;
+import com.hkma.home.bank.entity.BankAccountListEntity;
 import com.hkma.home.bank.repository.AccountGroupRepository;
-import com.hkma.home.bank.repository.AuthorityRepository;
-import com.hkma.home.bank.repository.BankAccountRepository;
+import com.hkma.home.bank.repository.BankAccountListRepository;
 
 @Controller("MobileBankPopup")
 @RequestMapping("/m/bank/popup")
 public class PopupController {
 	@Autowired
-	private AuthorityRepository authorityRepository;
-	
-	@Autowired
-	private BankAccountRepository bankAccountRepository;
+	private BankAccountListRepository bankAccountListRepository;
 	
 	@Autowired
 	private AccountGroupRepository accountGroupRepository;
 	
 	@PostMapping("/account")
 	public String accunt(
-			@RequestParam(required=false, value="isBankAccount") String isBankAccount_param,
-			@RequestParam(required=false, value="isSecurities") String isSecurities_param,
+			@RequestParam(required=false, value="isBankAccount") Boolean isBankAccount,
+			@RequestParam(required=false, value="isSecurities") Boolean isSecurities,
 			Principal principal,
 			Model model) {
 		List<Map<String,Object>> list = new ArrayList<>();
@@ -45,35 +38,20 @@ public class PopupController {
 		if (principal != null){
 			String userId = principal.getName();
 			
-			List<AuthorityEntity> authorityList = authorityRepository.findByUserIdOrderByOrderNumberAsc(userId);
-			authorityList.forEach(authority ->{
-				String authorityAccountUserId = authority.getAccountUserId();
-				String authorityAccountId = authority.getAccountId();
+			List<BankAccountListEntity> bankAccountList = bankAccountListRepository.findByUserIdAndIsBankAccountAndIsSecurities(userId, isBankAccount, isSecurities);
+			bankAccountList.forEach(bankAccount ->{
+				String memo = bankAccount.getMemo();
+				String bankName = bankAccount.getBankName();
 				
-				Optional<BankAccountEntity> bankAccountOptional = bankAccountRepository.findByUserIdAndId(authorityAccountUserId, authorityAccountId);
+				if (bankName != null) memo = bankName + " - " + memo;
 				
-				if(bankAccountOptional.isPresent()) {
-					BankAccountEntity bankAccountEntity = bankAccountOptional.get();
-					String memo = bankAccountEntity.getMemo();
-					String isBankAccount = bankAccountEntity.getIsBankAccount();
-					String isSecurities = bankAccountEntity.getIsSecurities();
-					
-					if (isBankAccount_param != null && isBankAccount == null) return;
-					if (isSecurities_param != null && isSecurities == null) return;
-					
-					if(bankAccountEntity.getBank() != null) {
-						BankEntity bank = bankAccountEntity.getBank();
-						memo = bank.getName() + " - " + memo;
-					};
+				Map<String,Object> map = new HashMap<>();
 				
-					Map<String,Object> map = new HashMap<>();
-					
-					map.put("accountUserId", authorityAccountUserId);
-					map.put("accountId", authorityAccountId);
-					map.put("memo", memo);
-					
-					list.add(map);
-				}
+				map.put("accountUserId", bankAccount.getUserId());
+				map.put("accountId", bankAccount.getId());
+				map.put("memo", memo);
+				
+				list.add(map);
 			});
 		}
 		

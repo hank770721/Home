@@ -78,6 +78,7 @@
 						<input type="hidden" name="_method"/>
 	                </form>
                 </div>
+            </div>
             <div th:replace="mobile/include/menu :: menu"/>
             
             <div id="divPopupAccount">
@@ -106,7 +107,7 @@
 	                	type: 'POST',
 	                    url: '/home/m/bank/popup/account',
 	                    cache: false, 
-	                    data: {"isSecurities":"1","_csrf":token},
+	                    data: {"isSecurities":true,"_csrf":token},
 	                    success: function(data) {
 	                    	$("#divPopupAccount").html(data);  
                             $('#divPopupAccount').enhanceWithin();

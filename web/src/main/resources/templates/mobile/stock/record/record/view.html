@@ -229,7 +229,7 @@
 	                	type: 'POST',
 	                    url: '/home/m/bank/popup/account',
 	                    cache: false, 
-	                    data: {"isSecurities":"1","_csrf":token},
+	                    data: {"isSecurities":true,"_csrf":token},
 	                    success: function(data) {
 	                    	$("#divPopupAccount").html(data);  
                             $('#divPopupAccount').enhanceWithin();
