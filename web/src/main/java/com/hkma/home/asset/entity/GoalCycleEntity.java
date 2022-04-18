@@ -136,3 +136,9 @@ public class GoalCycleEntity extends BaseEntity implements Serializable {
 		this.memo = memo;
 	}
 }
+
+class GoalCyclePk implements Serializable {
+	private String accountUserId;
+	private String accountId;
+	private String id;
+}

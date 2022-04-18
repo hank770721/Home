@@ -58,3 +58,9 @@ public class AssetTypeEntity implements Serializable {
 		this.name = name;
 	}
 }
+
+class AssetTypePk implements Serializable {
+	private String accountUserId;
+	private String accountId;
+	private String id;
+}

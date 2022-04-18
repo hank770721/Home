@@ -8,7 +8,7 @@ import javax.persistence.IdClass;
 import javax.persistence.Table;
 
 @Entity
-@IdClass(BankAccountPk.class)
+@IdClass(BankAccountListPk.class)
 @Table(name = "bank_account")
 public class BankAccountListEntity implements Serializable {
 	@Id
@@ -62,4 +62,9 @@ public class BankAccountListEntity implements Serializable {
 	public void setBankName(String bankName) {
 		this.bankName = bankName;
 	}
+}
+
+class BankAccountListPk implements Serializable {
+	private String userId;
+	private String id;
 }

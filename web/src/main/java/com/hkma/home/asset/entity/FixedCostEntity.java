@@ -108,3 +108,8 @@ public class FixedCostEntity extends BaseEntity implements Serializable {
 		this.memo = memo;
 	}
 }
+
+class FixedCostPk implements Serializable {
+	private String userId;
+	private String id;
+}

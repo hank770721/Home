@@ -54,3 +54,9 @@ public class AuthorityEntity implements Serializable {
 		this.orderNumber = orderNumber;
 	}
 }
+
+class AuthorityPk implements Serializable {
+	private String userId;
+	private String accountUserId;
+	private String accountId;
+}

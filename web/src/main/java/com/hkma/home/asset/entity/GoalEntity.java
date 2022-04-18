@@ -58,3 +58,8 @@ public class GoalEntity extends BaseEntity implements Serializable {
 		this.memo = memo;
 	}
 }
+
+class GoalPk implements Serializable {
+	private String accountUserId;
+	private String accountId;
+}

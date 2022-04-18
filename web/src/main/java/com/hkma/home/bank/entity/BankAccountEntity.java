@@ -109,3 +109,8 @@ public class BankAccountEntity implements Serializable {
 		this.bank = bank;
 	}
 }
+
+class BankAccountPk implements Serializable {
+	private String userId;
+	private String id;
+}

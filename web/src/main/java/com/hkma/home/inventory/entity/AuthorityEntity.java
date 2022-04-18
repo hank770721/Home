@@ -48,3 +48,9 @@ public class AuthorityEntity implements Serializable {
 		this.stockroomId = stockroomId;
 	}
 }
+
+class AuthorityPk implements Serializable {
+	private String userId;
+	private String stockroomUserId;
+	private String stockroomId;
+}

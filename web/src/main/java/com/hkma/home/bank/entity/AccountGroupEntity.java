@@ -43,3 +43,8 @@ public class AccountGroupEntity implements Serializable {
 		this.groupName = groupName;
 	}
 }
+
+class AccountGroupPk implements Serializable {
+	private String userId;
+	private String groupId;
+}

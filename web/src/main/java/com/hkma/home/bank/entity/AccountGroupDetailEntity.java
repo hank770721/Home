@@ -55,3 +55,10 @@ public class AccountGroupDetailEntity implements Serializable {
 		this.accountId = accountId;
 	}
 }
+
+class AccountGroupDetailPk implements Serializable {
+	private String userId;
+	private String groupId;
+	private String accountUserId;
+	private String accountId;
+}
