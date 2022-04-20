@@ -29,6 +29,8 @@ import com.hkma.home.stock.entity.StockProfileEntity;
 import com.hkma.home.stock.entity.StockRecordEntity;
 import com.hkma.home.stock.repository.StockProfileRepository;
 import com.hkma.home.stock.repository.StockRecordRepository;
+import com.hkma.home.system.service.MenuService;
+import com.hkma.home.system.service.SystemUserDetailsService;
 
 @Controller("MobileStockRecord")
 @RequestMapping("/m/stock/record/record")
@@ -38,6 +40,9 @@ public class RecordController {
 	
 	@Autowired
 	private StockProfileRepository stockProfileRepository;
+	
+	@Autowired
+    private MenuService menuService;
 	
 	@GetMapping({"/","/index"})
 	public String indexGet(
@@ -330,6 +335,7 @@ public class RecordController {
 				Double fee = stockRecord.getFee();
 				Double tax = stockRecord.getTax();
 				Double amount = stockRecord.getAmount();
+				Double cost = stockRecord.getCost();
 				
 				stockRecord.setRecordDate(recordDate.substring(0,4) + "-" + recordDate.substring(4,6) + "-" + recordDate.substring(6,8));
 				
@@ -349,6 +355,7 @@ public class RecordController {
 				model.addAttribute("fee", (int)((double)fee));
 				model.addAttribute("tax", (int)((double)tax));
 				model.addAttribute("amount", (int)((double)amount));
+				model.addAttribute("cost", (int)((double)cost));
 				
 				return "mobile/stock/record/record/view";
 			}
@@ -501,8 +508,14 @@ public class RecordController {
 			return "redirect:/m/stock/record/record/index";
 		}else {
 			SimpleDateFormat monthFormat = new SimpleDateFormat("yyyyMM");
-	
+			
+			//String userId = principal.getName();
 			String month = monthFormat.format(new Date());
+			
+			//List<Map<String,Object>> menuList = menuService.getMenu(userId);
+			
+			//model.addAttribute("isLogin", true);
+			//model.addAttribute("menuList", menuList);
 			
 			model.addAttribute("month", month);
 			
