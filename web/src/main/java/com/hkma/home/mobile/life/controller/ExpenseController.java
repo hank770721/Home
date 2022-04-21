@@ -14,6 +14,8 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -46,232 +48,135 @@ public class ExpenseController {
 	private BankAccountRepository bankAccountRepository;
 	
 	@GetMapping({"/","/index"})
-	public String indexExpenseGet(
+	public String indexGet(
 			Principal principal,
 			Model model){
-		SimpleDateFormat monthFormat = new SimpleDateFormat("yyyyMM");
-		
-		String userId;
-		String month = monthFormat.format(new Date());
-		
-		if (principal != null) {
-			userId = principal.getName();
-		}else {
-			userId = "mia";
-		}
-
-		DecimalFormat decimalFormat = new DecimalFormat("###,###");
-		
 		List<Map<String, Object>> list = new ArrayList<>();
 		
-		List<ExpenseEntity> expenseList = expenseRepository.findByUserIdMonthOrderByRecordDateDescRecordIdDesc(userId, month);
+		if (principal == null) {
+			model.addAttribute("list", list);
+			
+			return "mobile/life/record/expense/index";
+		}else {
+			SimpleDateFormat monthFormat = new SimpleDateFormat("yyyyMM");
+			DecimalFormat decimalFormat = new DecimalFormat("###,###");
+			
+			String userId = principal.getName();
+			
+			String month = monthFormat.format(new Date());
+			
+			List<ExpenseEntity> expenseList = expenseRepository.findByUserIdMonthOrderByRecordDateDescRecordIdDesc(userId, month);
+			
+			expenseList.forEach(expense -> {
+				double amount;
+				String transMode, transModeStr = "", recordDate, memo = "";
+				Map<String, Object> map = new HashMap<>();
+				
+				recordDate = expense.getRecordDate();
+				amount = expense.getAmount();
+				transMode = expense.getTransMode();
+				
+				switch (transMode) {
+					case "1":
+						transModeStr = "收入";
+						break;
+					case "2":
+						transModeStr = "支出";
+						break;
+				}
+				
+				recordDate = recordDate.substring(0,4) + "/" + recordDate.substring(4,6) + "/" + recordDate.substring(6,8);
+				memo = expense.getMemo();
+				
+				map.put("recordId", expense.getRecordId());
+				map.put("transMode", transMode);
+				map.put("transModeStr", transModeStr);
+				map.put("recordDate", recordDate);
+				map.put("amount", decimalFormat.format(amount));
+				map.put("memo", memo);
+				
+				list.add(map);
+			});
 		
-		expenseList.forEach(expense -> {
-			double amount;
-			String transMode, transModeStr = "", recordDate, memo = "";
-			Map<String, Object> map = new HashMap<>();
+			model.addAttribute("list", list);
 			
-			recordDate = expense.getRecordDate();
-			amount = expense.getAmount();
-			transMode = expense.getTransMode();
-			
-			switch (transMode) {
-				case "1":
-					transModeStr = "收入";
-					break;
-				case "2":
-					transModeStr = "支出";
-					break;
-			}
-			
-			recordDate = recordDate.substring(0,4) + "/" + recordDate.substring(4,6) + "/" + recordDate.substring(6,8);
-			memo = expense.getMemo();
-			
-			map.put("recordId", expense.getRecordId());
-			map.put("transMode", transMode);
-			map.put("transModeStr", transModeStr);
-			map.put("recordDate", recordDate);
-			map.put("amount", decimalFormat.format(amount));
-			map.put("memo", memo);
-			
-			list.add(map);
-		});
-		
-		model.addAttribute("list", list);
-		
-		return "mobile/life/record/expense/index";
+			return "mobile/life/record/expense/index";
+		}
 	}
 	
 	@PostMapping("/index")
-	public String indexAssetRecordPost(
+	public String indexPost(
 			@RequestParam(required=false, value="accountUserId") String accountUserId,
 			@RequestParam(required=false, value="accountId") String accountId,
 			@RequestParam(required=false, value="month") String month,
 			Principal principal,
 			Model model){
-		DecimalFormat decimalFormat = new DecimalFormat("###,###");
-		
-		String userId;
 		List<Map<String, Object>> list = new ArrayList<>();
 		
-		if (principal != null) {
-			userId = principal.getName();
+		if (principal == null) {
+			model.addAttribute("list", list);
+			
+			return "mobile/life/record/expense/index";
 		}else {
-			userId = "mia";
+			DecimalFormat decimalFormat = new DecimalFormat("###,###");
+			
+			String userId = principal.getName();
+			
+			List<ExpenseEntity> expenseList = expenseRepository.findByUserIdMonthAccountUserIdAccountIdOrderByRecordDateDesc(userId, month, accountUserId, accountId);
+			
+			expenseList.forEach(expense -> {
+				double amount;
+				String transMode, transModeStr = "", recordDate, memo = "";
+				Map<String, Object> map = new HashMap<>();
+				
+				recordDate = expense.getRecordDate();
+				amount = expense.getAmount();
+				transMode = expense.getTransMode();
+				
+				switch (transMode) {
+					case "1":
+						transModeStr = "收入";
+						break;
+					case "2":
+						transModeStr = "支出";
+						break;
+				}
+				
+				recordDate = recordDate.substring(0,4) + "/" + recordDate.substring(4,6) + "/" + recordDate.substring(6,8);
+				
+				memo = expense.getMemo();
+				
+				map.put("recordId", expense.getRecordId());
+				map.put("transMode", transMode);
+				map.put("transModeStr", transModeStr);
+				map.put("recordDate", recordDate);
+				map.put("amount", decimalFormat.format(amount));
+				map.put("memo", memo);
+				
+				list.add(map);
+			});
+			
+			model.addAttribute("list", list);
+			
+			return "mobile/life/record/expense/index";
 		}
-		
-		List<ExpenseEntity> expenseList = expenseRepository.findByUserIdMonthAccountUserIdAccountIdOrderByRecordDateDesc(userId, month, accountUserId, accountId);
-		
-		expenseList.forEach(expense -> {
-			double amount;
-			String transMode, transModeStr = "", recordDate, memo = "";
-			Map<String, Object> map = new HashMap<>();
-			
-			recordDate = expense.getRecordDate();
-			amount = expense.getAmount();
-			transMode = expense.getTransMode();
-			
-			switch (transMode) {
-				case "1":
-					transModeStr = "收入";
-					break;
-				case "2":
-					transModeStr = "支出";
-					break;
-			}
-			
-			recordDate = recordDate.substring(0,4) + "/" + recordDate.substring(4,6) + "/" + recordDate.substring(6,8);
-			
-			memo = expense.getMemo();
-			
-			map.put("recordId", expense.getRecordId());
-			map.put("transMode", transMode);
-			map.put("transModeStr", transModeStr);
-			map.put("recordDate", recordDate);
-			map.put("amount", decimalFormat.format(amount));
-			map.put("memo", memo);
-			
-			list.add(map);
-		});
-		
-		model.addAttribute("list", list);
-		
-		return "mobile/life/record/expense/index";
 	}
 	
 	@GetMapping("/new")
-	public String newExpenseGet(
+	public String newGet(
 			@ModelAttribute("expense") ExpenseEntity expense,
 			Principal principal,
 			Model model){
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		
-		String recordDate = dateFormat.format(new Date());
-		String userId, accountUserId, accountId;
-		
-		if (principal != null){
-			userId = principal.getName();
-			accountUserId = "";
-			accountId = "";
+		if (principal == null){
+			return "redirect:/m/life/record/expense/index";
 		}else {
-			userId = "mia";
-			accountUserId = "mia";
-			accountId = "001";
-		}
-		
-		//帳戶
-		List<Map<String,Object>> accountList = new ArrayList<>();
-		List<AuthorityEntity> authorityList = authorityRepository.findByUserIdOrderByOrderNumberAsc(userId);
-		authorityList.forEach(authority ->{
-			String authorityAccountUserId = authority.getAccountUserId();
-			String authorityAccountId = authority.getAccountId();
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 			
-			Optional<BankAccountEntity> bankAccountOptional = bankAccountRepository.findByUserIdAndId(authorityAccountUserId, authorityAccountId);
-			
-			if(bankAccountOptional.isPresent()) {
-				BankAccountEntity bankAccountEntity = bankAccountOptional.get();
-				
-				String memo = bankAccountEntity.getMemo();
-				
-				if(bankAccountEntity.getBank() != null) {
-					BankEntity bank = bankAccountEntity.getBank();
-					memo = bank.getName() + " - " + memo;
-				};
-				
-				Map<String,Object> map = new HashMap<>();
-				
-				map.put("accountUserId", authorityAccountUserId);
-				map.put("accountId", authorityAccountId);
-				map.put("memo", memo);
-				
-				accountList.add(map);
-			}
-		});
-		
-		expense.setRecordDate(recordDate);
-		//20220409 增加歸屬日期
-		expense.setVestingDate(recordDate);
-		expense.setTransMode("1");
-		expense.setAccountUserId(accountUserId);
-		expense.setAccountId(accountId);
-		
-		model.addAttribute("accountList", accountList);
-		
-		return "mobile/life/record/expense/new";
-	}
-	
-	@PostMapping("/new")
-	public String newExpensePost(
-			@ModelAttribute("expense") @Valid ExpenseEntity expense,
-			BindingResult bindingResult,
-			Principal principal,
-			Model model){
-		boolean isError = false;
-		String accountUserIdError = null, accountIdError = null;
-		
-		String recordDate = expense.getRecordDate();
-		//20220409 增加歸屬日期
-		String vestingDate = expense.getVestingDate();
-		String accountUserId = expense.getAccountUserId();
-		String accountId = expense.getAccountId();
-		Double amount = expense.getAmount();
-		String isConsolidation = expense.getIsConsolidation();
-		
-		if(bindingResult.hasErrors()) {
-			isError = true;
-		}
-
-		if(accountUserId.equals("")) {
-			accountUserIdError = "未輸入";
-			isError = true;
-		}
-		
-		if(accountId.equals("")) {
-			accountIdError = "未輸入";
-			isError = true;
-		}
-		
-		if(isError) {
-			model.addAttribute("accountUserIdError", accountUserIdError);
-			model.addAttribute("accountIdError", accountIdError);
-			
-			if(amount != null) {
-				model.addAttribute("amount", (int)((double)amount));
-			}else {
-				model.addAttribute("amount", amount);
-			}
-			
-			String userId;
-			
-			if (principal != null){
-				userId = principal.getName();
-			}else {
-				userId = "mia";
-			}
+			String userId = principal.getName();
+			String recordDate = dateFormat.format(new Date());
 			
 			//帳戶
 			List<Map<String,Object>> accountList = new ArrayList<>();
-			
 			List<AuthorityEntity> authorityList = authorityRepository.findByUserIdOrderByOrderNumberAsc(userId);
 			authorityList.forEach(authority ->{
 				String authorityAccountUserId = authority.getAccountUserId();
@@ -298,177 +203,372 @@ public class ExpenseController {
 					accountList.add(map);
 				}
 			});
+			
+			expense.setRecordDate(recordDate);
+			//20220409 增加歸屬日期
+			expense.setVestingDate(recordDate);
+			expense.setTransMode("1");		
 			
 			model.addAttribute("accountList", accountList);
 			
 			return "mobile/life/record/expense/new";
 		}
-		
-		recordDate = recordDate.replaceAll("-","");
-		
-		//20220409 增加歸屬日期
-		vestingDate = vestingDate.replaceAll("-","");
-		
-		if(isConsolidation == null) {
-			isConsolidation = "0";
-		}else {
-			isConsolidation = "1";
-		}
-		
-		expense.setRecordDate(recordDate);
-		//20220409 增加歸屬日期
-		expense.setVestingDate(vestingDate);
-		expense.setIsConsolidation(isConsolidation);
-		
-		String recordId;
-		Optional<String> recordIdOptional = expenseRepository.getMaxRecordIdByRecordDate(recordDate);
-		
-		if (!recordIdOptional.isPresent()) {
-			recordId = recordDate + "0001";
-		}else {
-			recordId = recordIdOptional.get();
-			recordId = recordDate + String.format("%04d", (Integer.parseInt(recordId.substring(8,12)) + 1) );
-		}
-		
-		expense.setRecordId(recordId);
-
-		if (principal != null){
-			expense.setEnterUserId(principal.getName());
-			expense.setUpdateUserId(principal.getName());
-		}
-		
-		expenseRepository.save(expense);
-		
-		return "redirect:/m/life/record/expense/index";
 	}
-
-	@GetMapping("/view/{recordId}")
-	public String viewExpenseGet(
-			@PathVariable("recordId") String recordId,
+	
+	@Transactional(isolation=Isolation.SERIALIZABLE)
+	@PostMapping("/new")
+	public String newPost(
+			@ModelAttribute("expense") @Valid ExpenseEntity expense,
+			BindingResult bindingResult,
 			Principal principal,
 			Model model){
-		Optional<ExpenseEntity> expenseOptional = expenseRepository.findById(recordId);
-		
-		if(expenseOptional.isPresent()) {
-			ExpenseEntity expense = expenseOptional.get();
+		if (principal == null){
+			return "redirect:/m/life/record/expense/index";
+		}else {
+			boolean isError = false;
+			String accountUserIdError = null, accountIdError = null;
 			
 			String recordDate = expense.getRecordDate();
 			//20220409 增加歸屬日期
 			String vestingDate = expense.getVestingDate();
+			String accountUserId = expense.getAccountUserId();
+			String accountId = expense.getAccountId();
 			Double amount = expense.getAmount();
 			String isConsolidation = expense.getIsConsolidation();
 			
-			String userId;
+			if(bindingResult.hasErrors()) {
+				isError = true;
+			}
+	
+			if(accountUserId.equals("")) {
+				accountUserIdError = "未輸入";
+				isError = true;
+			}
 			
-			expense.setRecordDate(recordDate.substring(0,4) + "-" + recordDate.substring(4,6) + "-" + recordDate.substring(6,8));
+			if(accountId.equals("")) {
+				accountIdError = "未輸入";
+				isError = true;
+			}
+			
+			if(isError) {
+				model.addAttribute("accountUserIdError", accountUserIdError);
+				model.addAttribute("accountIdError", accountIdError);
+				
+				if(amount != null) {
+					model.addAttribute("amount", (int)((double)amount));
+				}else {
+					model.addAttribute("amount", amount);
+				}
+				
+				String userId = principal.getName();
+				
+				//帳戶
+				List<Map<String,Object>> accountList = new ArrayList<>();
+				
+				List<AuthorityEntity> authorityList = authorityRepository.findByUserIdOrderByOrderNumberAsc(userId);
+				authorityList.forEach(authority ->{
+					String authorityAccountUserId = authority.getAccountUserId();
+					String authorityAccountId = authority.getAccountId();
+					
+					Optional<BankAccountEntity> bankAccountOptional = bankAccountRepository.findByUserIdAndId(authorityAccountUserId, authorityAccountId);
+					
+					if(bankAccountOptional.isPresent()) {
+						BankAccountEntity bankAccountEntity = bankAccountOptional.get();
+						
+						String memo = bankAccountEntity.getMemo();
+						
+						if(bankAccountEntity.getBank() != null) {
+							BankEntity bank = bankAccountEntity.getBank();
+							memo = bank.getName() + " - " + memo;
+						};
+						
+						Map<String,Object> map = new HashMap<>();
+						
+						map.put("accountUserId", authorityAccountUserId);
+						map.put("accountId", authorityAccountId);
+						map.put("memo", memo);
+						
+						accountList.add(map);
+					}
+				});
+				
+				model.addAttribute("accountList", accountList);
+				
+				return "mobile/life/record/expense/new";
+			}
+			
+			recordDate = recordDate.replaceAll("-","");
 			
 			//20220409 增加歸屬日期
-			expense.setVestingDate(vestingDate.substring(0,4) + "-" + vestingDate.substring(4,6) + "-" + vestingDate.substring(6,8));
+			vestingDate = vestingDate.replaceAll("-","");
 			
-			if (principal != null){
-				userId = principal.getName();
+			if(isConsolidation == null) {
+				isConsolidation = "0";
 			}else {
-				userId = "mia";
+				isConsolidation = "1";
 			}
 			
-			//帳戶
-			List<Map<String,Object>> accountList = new ArrayList<>();
+			expense.setRecordDate(recordDate);
+			//20220409 增加歸屬日期
+			expense.setVestingDate(vestingDate);
+			expense.setIsConsolidation(isConsolidation);
 			
-			List<AuthorityEntity> authorityList = authorityRepository.findByUserIdOrderByOrderNumberAsc(userId);
-			authorityList.forEach(authority ->{
-				String authorityAccountUserId = authority.getAccountUserId();
-				String authorityAccountId = authority.getAccountId();
-				
-				Optional<BankAccountEntity> bankAccountOptional = bankAccountRepository.findByUserIdAndId(authorityAccountUserId, authorityAccountId);
-				
-				if(bankAccountOptional.isPresent()) {
-					BankAccountEntity bankAccountEntity = bankAccountOptional.get();
-					
-					String memo = bankAccountEntity.getMemo();
-					
-					if(bankAccountEntity.getBank() != null) {
-						BankEntity bank = bankAccountEntity.getBank();
-						memo = bank.getName() + " - " + memo;
-					};
-					
-					Map<String,Object> map = new HashMap<>();
-					
-					map.put("accountUserId", authorityAccountUserId);
-					map.put("accountId", authorityAccountId);
-					map.put("memo", memo);
-					
-					accountList.add(map);
-				}
-			});
+			String recordId;
+			Optional<String> recordIdOptional = expenseRepository.getMaxRecordIdByRecordDate(recordDate);
 			
-			if(isConsolidation.equals("1")) {
-				isConsolidation = "on";
-				expense.setIsConsolidation(isConsolidation);
+			if (!recordIdOptional.isPresent()) {
+				recordId = recordDate + "0001";
+			}else {
+				recordId = recordIdOptional.get();
+				recordId = recordDate + String.format("%04d", (Integer.parseInt(recordId.substring(8,12)) + 1) );
 			}
 			
-			model.addAttribute("expense", expense);
-			model.addAttribute("amount", (int)((double)amount));
-			model.addAttribute("accountList", accountList);
+			expense.setRecordId(recordId);
+	
+			if (principal != null){
+				expense.setEnterUserId(principal.getName());
+				expense.setUpdateUserId(principal.getName());
+			}
 			
-			return "mobile/life/record/expense/view";
-		}else {
+			expenseRepository.save(expense);
+			
 			return "redirect:/m/life/record/expense/index";
 		}
 	}
 
+	@GetMapping("/view/{recordId}")
+	public String viewGet(
+			@PathVariable("recordId") String recordId,
+			Principal principal,
+			Model model){
+		if (principal == null){
+			return "redirect:/m/life/record/expense/index";
+		}else {
+			Optional<ExpenseEntity> expenseOptional = expenseRepository.findById(recordId);
+			
+			if(!expenseOptional.isPresent()) {
+				return "redirect:/m/life/record/expense/index";
+			}else {
+				ExpenseEntity expense = expenseOptional.get();
+				
+				String recordDate = expense.getRecordDate();
+				//20220409 增加歸屬日期
+				String vestingDate = expense.getVestingDate();
+				Double amount = expense.getAmount();
+				String isConsolidation = expense.getIsConsolidation();
+				
+				String userId;
+				
+				expense.setRecordDate(recordDate.substring(0,4) + "-" + recordDate.substring(4,6) + "-" + recordDate.substring(6,8));
+				
+				//20220409 增加歸屬日期
+				expense.setVestingDate(vestingDate.substring(0,4) + "-" + vestingDate.substring(4,6) + "-" + vestingDate.substring(6,8));
+				
+				userId = principal.getName();
+				
+				//帳戶
+				List<Map<String,Object>> accountList = new ArrayList<>();
+				
+				List<AuthorityEntity> authorityList = authorityRepository.findByUserIdOrderByOrderNumberAsc(userId);
+				authorityList.forEach(authority ->{
+					String authorityAccountUserId = authority.getAccountUserId();
+					String authorityAccountId = authority.getAccountId();
+					
+					Optional<BankAccountEntity> bankAccountOptional = bankAccountRepository.findByUserIdAndId(authorityAccountUserId, authorityAccountId);
+					
+					if(bankAccountOptional.isPresent()) {
+						BankAccountEntity bankAccountEntity = bankAccountOptional.get();
+						
+						String memo = bankAccountEntity.getMemo();
+						
+						if(bankAccountEntity.getBank() != null) {
+							BankEntity bank = bankAccountEntity.getBank();
+							memo = bank.getName() + " - " + memo;
+						};
+						
+						Map<String,Object> map = new HashMap<>();
+						
+						map.put("accountUserId", authorityAccountUserId);
+						map.put("accountId", authorityAccountId);
+						map.put("memo", memo);
+						
+						accountList.add(map);
+					}
+				});
+				
+				if(isConsolidation.equals("1")) {
+					isConsolidation = "on";
+					expense.setIsConsolidation(isConsolidation);
+				}
+				
+				model.addAttribute("expense", expense);
+				model.addAttribute("amount", (int)((double)amount));
+				model.addAttribute("accountList", accountList);
+				
+				return "mobile/life/record/expense/view";
+			}
+		}
+	}
+
+	@Transactional(isolation=Isolation.SERIALIZABLE)
 	@PutMapping("/view/{recordId}")
-    public String viewExpensePut(
+    public String viewPut(
     		@PathVariable("recordId") String recordId,
     		@ModelAttribute("expense") @Valid ExpenseEntity expense,
     		BindingResult bindingResult,
 			Principal principal,
     		Model model){
-		boolean isError = false;
-		String accountUserIdError = null, accountIdError = null;
-		
-		String recordDate = expense.getRecordDate().replaceAll("-","");
-		//20220409 增加歸屬日期
-		String vestingDate = expense.getVestingDate().replaceAll("-","");
-		String accountUserId = expense.getAccountUserId();
-		String accountId = expense.getAccountId();
-		Double amount = expense.getAmount();
-		String isConsolidation = expense.getIsConsolidation();
-		
-		if(bindingResult.hasErrors()) {
-			isError = true;
-		}
-		
-		if(accountUserId.equals("")) {
-			accountUserIdError = "未輸入";
-			isError = true;
-		}
-		
-		if(accountId.equals("")) {
-			accountIdError = "未輸入";
-			isError = true;
-		}
-		
-		if(isError) {
-			String userId;
+		if (principal == null){
+			return "redirect:/m/life/record/expense/index";
+		}else {
+			boolean isError = false;
+			String accountUserIdError = null, accountIdError = null;
+			
+			String recordDate = expense.getRecordDate().replaceAll("-","");
+			//20220409 增加歸屬日期
+			String vestingDate = expense.getVestingDate().replaceAll("-","");
+			String accountUserId = expense.getAccountUserId();
+			String accountId = expense.getAccountId();
+			Double amount = expense.getAmount();
+			String isConsolidation = expense.getIsConsolidation();
+			
+			if(bindingResult.hasErrors()) {
+				isError = true;
+			}
+			
+			if(accountUserId.equals("")) {
+				accountUserIdError = "未輸入";
+				isError = true;
+			}
+			
+			if(accountId.equals("")) {
+				accountIdError = "未輸入";
+				isError = true;
+			}
+			
+			if(isError) {
+				String userId = principal.getName();
+				
+				model.addAttribute("accountUserIdError", accountUserIdError);
+				model.addAttribute("accountIdError", accountIdError);
+				
+				if(amount != null) {
+					model.addAttribute("amount", (int)((double)amount));
+				}else {
+					model.addAttribute("amount", amount);
+				}
+				
+				//帳戶
+				List<Map<String,Object>> accountList = new ArrayList<>();
+				
+				List<AuthorityEntity> authorityList = authorityRepository.findByUserIdOrderByOrderNumberAsc(userId);
+				authorityList.forEach(authority ->{
+					String authorityAccountUserId = authority.getAccountUserId();
+					String authorityAccountId = authority.getAccountId();
+					
+					Optional<BankAccountEntity> bankAccountOptional = bankAccountRepository.findByUserIdAndId(authorityAccountUserId, authorityAccountId);
+					
+					if(bankAccountOptional.isPresent()) {
+						BankAccountEntity bankAccountEntity = bankAccountOptional.get();
+						
+						String memo = bankAccountEntity.getMemo();
+						
+						if(bankAccountEntity.getBank() != null) {
+							BankEntity bank = bankAccountEntity.getBank();
+							memo = bank.getName() + " - " + memo;
+						};
+						
+						Map<String,Object> map = new HashMap<>();
+						
+						map.put("accountUserId", authorityAccountUserId);
+						map.put("accountId", authorityAccountId);
+						map.put("memo", memo);
+						
+						accountList.add(map);
+					}
+				});
+				
+				model.addAttribute("accountList", accountList);
+				
+				return "mobile/life/record/expense/view";
+			}
+			
+			//日期修改重取單號
+			Optional<ExpenseEntity> expenseOptional = expenseRepository.findById(recordId);
+			
+			if(expenseOptional.isPresent()) {
+				ExpenseEntity expense_old = expenseOptional.get();
+				
+				if(!expense_old.getRecordDate().equals(recordDate)) {
+					expenseRepository.delete(expense_old);
+					
+					String recordId_new;
+					Optional<String> recordIdOptional = expenseRepository.getMaxRecordIdByRecordDate(recordDate);
+					
+					if (!recordIdOptional.isPresent()) {
+						recordId_new = recordDate + "0001";
+					}else {
+						recordId_new = recordIdOptional.get();
+						recordId_new = recordDate + String.format("%04d", (Integer.parseInt(recordId_new.substring(8,12)) + 1) );
+					}
+					
+					expense.setRecordId(recordId_new);
+					
+					if (principal != null){
+						expense.setEnterUserId(principal.getName());
+					}
+				}
+			}
+			
+			if(isConsolidation == null) {
+				isConsolidation = "0";
+			}else {
+				isConsolidation = "1";
+			}
+			
+			expense.setRecordDate(recordDate);
+			//20220409 增加歸屬日期
+			expense.setVestingDate(vestingDate);
+			expense.setIsConsolidation(isConsolidation);
 			
 			if (principal != null){
-				userId = principal.getName();
-			}else {
-				userId = "mia";
+				expense.setUpdateUserId(principal.getName());
 			}
 			
-			model.addAttribute("accountUserIdError", accountUserIdError);
-			model.addAttribute("accountIdError", accountIdError);
+			expenseRepository.save(expense);
 			
-			if(amount != null) {
-				model.addAttribute("amount", (int)((double)amount));
-			}else {
-				model.addAttribute("amount", amount);
-			}
+			return "redirect:/m/life/record/expense/index";
+		}
+    }
+	
+	@DeleteMapping("/view/{recordId}")
+    public String viewDelete(
+    		@PathVariable("recordId") String recordId,
+    		Principal principal){
+		if (principal == null) {
+			return "redirect:/m/life/record/expense/index";
+		}else {
+			expenseRepository.deleteById(recordId);
 			
-			//帳戶
+			return "redirect:/m/life/record/expense/index";
+		}
+    }
+	
+	@GetMapping("/search")
+	public String searchGet(
+			Principal principal,
+			Model model){
+		if (principal == null) {
+			return "redirect:/m/life/record/expense/index";
+		}else {
+			SimpleDateFormat monthFormat = new SimpleDateFormat("yyyyMM");
+			
+			String userId = principal.getName();
+	
+			String month = monthFormat.format(new Date());
 			List<Map<String,Object>> accountList = new ArrayList<>();
 			
+			//帳戶
 			List<AuthorityEntity> authorityList = authorityRepository.findByUserIdOrderByOrderNumberAsc(userId);
 			authorityList.forEach(authority ->{
 				String authorityAccountUserId = authority.getAccountUserId();
@@ -497,119 +597,9 @@ public class ExpenseController {
 			});
 			
 			model.addAttribute("accountList", accountList);
+			model.addAttribute("month", month);
 			
-			return "mobile/life/record/expense/view";
+			return "mobile/life/record/expense/search";
 		}
-		
-		//日期修改重取單號
-		Optional<ExpenseEntity> expenseOptional = expenseRepository.findById(recordId);
-		
-		if(expenseOptional.isPresent()) {
-			ExpenseEntity expense_old = expenseOptional.get();
-			
-			if(!expense_old.getRecordDate().equals(recordDate)) {
-				expenseRepository.delete(expense_old);
-				
-				String recordId_new;
-				Optional<String> recordIdOptional = expenseRepository.getMaxRecordIdByRecordDate(recordDate);
-				
-				if (!recordIdOptional.isPresent()) {
-					recordId_new = recordDate + "0001";
-				}else {
-					recordId_new = recordIdOptional.get();
-					recordId_new = recordDate + String.format("%04d", (Integer.parseInt(recordId_new.substring(8,12)) + 1) );
-				}
-				
-				expense.setRecordId(recordId_new);
-				
-				if (principal != null){
-					expense.setEnterUserId(principal.getName());
-				}
-			}
-		}
-		
-		if(isConsolidation == null) {
-			isConsolidation = "0";
-		}else {
-			isConsolidation = "1";
-		}
-		
-		expense.setRecordDate(recordDate);
-		//20220409 增加歸屬日期
-		expense.setVestingDate(vestingDate);
-		expense.setIsConsolidation(isConsolidation);
-		
-		if (principal != null){
-			expense.setUpdateUserId(principal.getName());
-		}
-		
-		expenseRepository.save(expense);
-		
-		return "redirect:/m/life/record/expense/index";
-    }
-	
-	@DeleteMapping("/view/{recordId}")
-    public String viewExpenseDelete(
-    		@PathVariable("recordId") String recordId){		
-		expenseRepository.deleteById(recordId);
-		
-		return "redirect:/m/life/record/expense/index";
-    }
-	
-	@GetMapping("/search")
-	public String searchExpenseRecord(
-			Principal principal,
-			Model model){
-		SimpleDateFormat monthFormat = new SimpleDateFormat("yyyyMM");
-
-		String userId, accountUserId, accountId;
-		String month = monthFormat.format(new Date());
-		List<Map<String,Object>> accountList = new ArrayList<>();
-		
-		if (principal != null){
-			userId = principal.getName();
-			accountUserId = "";
-			accountId = "";
-		}else {
-			userId = "mia";
-			accountUserId = "mia";
-			accountId = "001";
-		}
-		
-		//帳戶
-		List<AuthorityEntity> authorityList = authorityRepository.findByUserIdOrderByOrderNumberAsc(userId);
-		authorityList.forEach(authority ->{
-			String authorityAccountUserId = authority.getAccountUserId();
-			String authorityAccountId = authority.getAccountId();
-			
-			Optional<BankAccountEntity> bankAccountOptional = bankAccountRepository.findByUserIdAndId(authorityAccountUserId, authorityAccountId);
-			
-			if(bankAccountOptional.isPresent()) {
-				BankAccountEntity bankAccountEntity = bankAccountOptional.get();
-				
-				String memo = bankAccountEntity.getMemo();
-				String isBankAccount = bankAccountEntity.getIsBankAccount();
-				
-				if(bankAccountEntity.getBank() != null) {
-					BankEntity bank = bankAccountEntity.getBank();
-					memo = bank.getName() + " - " + memo;
-				};
-				
-				Map<String,Object> map = new HashMap<>();
-				
-				map.put("accountUserId", authorityAccountUserId);
-				map.put("accountId", authorityAccountId);
-				map.put("memo", memo);
-				
-				accountList.add(map);
-			}
-		});
-		
-		model.addAttribute("accountUserId", accountUserId);
-		model.addAttribute("accountId", accountId);
-		model.addAttribute("accountList", accountList);
-		model.addAttribute("month", month);
-		
-		return "mobile/life/record/expense/search";
 	}
 }
