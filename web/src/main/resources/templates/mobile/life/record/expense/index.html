@@ -5,8 +5,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>HKMA - 生活開銷</title>
         <link rel="icon" href="/home/icon/favicon.png">
+        
         <!--android-->
         <link rel="shortcut icon" href="/home/icon/favicon.png">
+        
         <!--ios-->
         <link rel="apple-touch-icon" href="/home/icon/asset_ios.png">
         <link rel="apple-touch-icon" href="/home/icon/asset_ios_180.png" sizes="180x180">
@@ -15,6 +17,7 @@
         
         <!-- jQuery -->
 		<script src="http://code.jquery.com/jquery-1.12.4.min.js"></script>
+		
 		<!-- jQuery Mobile --> 
 		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
 		<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
@@ -60,38 +63,37 @@
 	<body>
 		<div data-role="page" class="ui-page-theme-a">
             <div th:replace="mobile/include/header :: header"/>
-            <div>
-                <div class="ui-panel-wrapper">
-                	<div class="ui-nodisc-icon ui-alt-icon action-button">
-						<div style="width: calc(100% - 131px); display: inline-block;"></div>
-						<div style="display: inline-block; text-align:right;">
-							<div style="width: 60px; display: inline-block;">
-								<a href="search" class="ui-btn ui-corner-all ui-icon-search ui-btn-icon-notext ui-btn-inline right-button"></a>
-							</div>
-							<div style="width: 60px; display: inline-block;">
-								<a href="new" class="ui-btn ui-corner-all ui-icon-plus ui-btn-icon-notext ui-btn-inline right-button"></a>
-							</div>
+            <div class="ui-panel-wrapper">
+               	<div class="ui-nodisc-icon ui-alt-icon action-button">
+					<div style="width: calc(100% - 131px); display: inline-block;"></div>
+					<div style="display: inline-block; text-align:right;">
+						<div style="width: 60px; display: inline-block;">
+							<a href="search" data-ajax="false" class="ui-btn ui-corner-all ui-icon-search ui-btn-icon-notext ui-btn-inline right-button"></a>
+						</div>
+						<div style="width: 60px; display: inline-block;">
+							<a href="new" data-ajax="false" class="ui-btn ui-corner-all ui-icon-plus ui-btn-icon-notext ui-btn-inline right-button"></a>
 						</div>
 					</div>
-	                <ul data-role="listview" data-inset="true" data-icon="">
-	                    <li th:each="row : ${list}">
-	                    	<a href="#" th:onclick="view([[${row.recordId}]])">
-	                    		<div><p th:text="${row.transModeStr}"/></div>
-	                    		<div><p th:text="${row.recordDate}"/></div>
-	                    		<div>
-	                    			<div style="width: 220px;">
-				                        <p th:text="${row.memo}"/>
-				                    </div>
-				                    <div th:switch="${row.transMode}" style="width: calc(100% - 225px);">
-				                        <p th:case="'1'" style="text-align: right; color: red;" th:text="${row.amount}"/>
-				                        <p th:case="'2'" style="text-align: right; color: green;" th:text="${row.amount}"/>
-				                        <p th:case="'3'" style="text-align: right;" th:text="${row.amount}"/>
-			                        </div>
+				</div>
+                <ul data-role="listview" data-inset="true" data-icon="">
+                    <li th:each="row : ${list}">
+                    	<a href="#" th:onclick="view([[${row.recordId}]])">
+                    		<div><p th:text="${row.transModeStr}"/></div>
+                    		<div><p th:text="${row.recordDate}"/></div>
+                    		<div>
+                    			<div style="width: 220px;">
+			                        <p th:text="${row.memo}"/>
+			                    </div>
+			                    <div th:switch="${row.transMode}" style="width: calc(100% - 225px);">
+			                        <p th:case="'1'" style="text-align: right; color: red;" th:text="${row.amount}"/>
+			                        <p th:case="'2'" style="text-align: right; color: green;" th:text="${row.amount}"/>
+			                        <p th:case="'3'" style="text-align: right;" th:text="${row.amount}"/>
 		                        </div>
-	                    	</a>
-	                    </li>
-		            </ul>
-                </div>
+	                        </div>
+                    	</a>
+                    </li>
+	            </ul>
+            </div>
             <div th:replace="mobile/include/menu :: menu"/>
         </div>
         
