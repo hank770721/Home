@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import com.hkma.home.life.entity.ExpenseEntity;
 
 public interface ExpenseRepository extends JpaRepository<ExpenseEntity,String>{
-	@Query(value="SELECT MAX(recordId) FROM life_expense WHERE recordDate = :recordDate", nativeQuery=true)
+	@Query(value="SELECT MAX(recordId) FROM life_expense WHERE recordDate = :recordDate FOR UPDATE", nativeQuery=true)
 	Optional<String> getMaxRecordIdByRecordDate(String recordDate);
 	
 	@Query(value="SELECT * FROM life_expense "
