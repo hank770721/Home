@@ -5,7 +5,7 @@
 		<title>Insert title here</title>
 	</head>
 	<body>
-		<div th:fragment="menu" data-role="panel" id="memuPanel" data-position="left" data-display="reveal" data-theme="a">
+		<div th:fragment="menu" class="memu-panel" data-role="panel" id="memuPanel" data-position="left" data-display="reveal" data-theme="a">
 		    <ul data-role="listview">
 		    	<li sec:authorize="!isAuthenticated()"><a th:href="@{'/login'}" data-ajax="false"><h3>登入</h3></a></li>
 	            <li sec:authorize="isAuthenticated()"><a th:href="@{'/logout'}" data-ajax="false"><h3>登出</h3></a></li>
@@ -37,6 +37,7 @@
 		        <li data-role="collapsible" data-inset="false" data-iconpos="right" data-expanded-icon="carat-u" data-collapsed-icon="carat-d">
 		            <h3>股票</h3>
 		            <ul data-role="listview">
+		            	<li><a th:href="@{/m/stock/record/record/index}" data-ajax="false"><div style="margin-left: 20px">股票交易</div></a></li>
 		                <li><a th:href="@{/m/stock/dashboard/income/search}" data-ajax="false"><div style="margin-left: 20px">持股損益儀表板</div></a></li>
 		                <li><a th:href="@{/m/stock/table/income/search}" data-ajax="false"><div style="margin-left: 20px">股票損益表</div></a></li>
 		                <li><a th:href="@{/m/stock/table/draw/search}" data-ajax="false"><div style="margin-left: 20px">抽籤損益表</div></a></li>
