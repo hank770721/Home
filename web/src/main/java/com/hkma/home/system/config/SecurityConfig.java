@@ -29,14 +29,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		httpSecurity
 	        .authorizeRequests()
 	        //.antMatchers(HttpMethod.GET, "/**").authenticated()
+	        .antMatchers("/jquery/**").permitAll()
+	        .antMatchers("/bootstrap/**").permitAll()
+	        .antMatchers("/highcharts/**").permitAll()
 	        .antMatchers("/css/**").permitAll()
 	        .antMatchers("/icon/**").permitAll()
 	        .antMatchers("/js/**").permitAll()
-	        .antMatchers("/**/data").permitAll()
+	        .antMatchers("/**/include/**").permitAll()
 	        .antMatchers("/**/dashboard/**").permitAll()
 	        .antMatchers("/**/table/**").permitAll()
 	        .antMatchers("/**/list/**").permitAll()
 	        .antMatchers("/**/popup/**").permitAll()
+	        .antMatchers("/**/data").permitAll()
 	        .antMatchers("/").permitAll()
 	        .antMatchers("/index").permitAll()
 	        .antMatchers("/login").permitAll()
@@ -60,7 +64,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.logout()
 				.permitAll()
 				.logoutSuccessUrl("/index")
-				//開啟CSRF導致logout使用POST, 強制改用GET
+				//開啟CSRF導致logout POST會需要token, 故強制改用GET
 				.logoutRequestMatcher(new AntPathRequestMatcher("/logout"));
     }
 	
