@@ -1,26 +1,29 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>HKMA - 購買紀錄</title>
-        <link rel="icon" href="/home/icon/favicon.png">
-        <!--android-->
-        <link rel="shortcut icon" href="/home/icon/favicon.png">
-        <!--ios-->
-        <link rel="apple-touch-icon" href="/home/icon/asset_ios.png">
-        <link rel="apple-touch-icon" href="/home/icon/asset_ios_180.png" sizes="180x180">
-        <link rel="apple-touch-icon" href="/home/icon/asset_ios_120.png" sizes="120x120">
-        <link rel="apple-touch-icon" href="/home/icon/asset_ios_114.png" sizes="114x114">
+        <link rel="icon" href="/home/icon/favicon.png" />
+        
+        <!-- android -->
+        <link rel="shortcut icon" href="/home/icon/favicon.png" />
+        
+        <!-- ios -->
+        <link rel="apple-touch-icon" href="/home/icon/asset_ios.png" />
+        <link rel="apple-touch-icon" href="/home/icon/asset_ios_180.png" sizes="180x180" />
+        <link rel="apple-touch-icon" href="/home/icon/asset_ios_120.png" sizes="120x120" />
+        <link rel="apple-touch-icon" href="/home/icon/asset_ios_114.png" sizes="114x114" />
         
         <!-- jQuery -->
-		<script src="http://code.jquery.com/jquery-1.12.4.min.js"></script>
+		<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+		
 		<!-- jQuery Mobile --> 
-		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
-		<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+		<link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+		<script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
 		
 		<!-- HKMA -->
-		<link rel="stylesheet" href="/home/css/hkma.css"></link>
+		<link rel="stylesheet" href="/home/css/hkma.css" />
 		
 		<style>
 			.action-button .ui-btn-icon-notext.ui-corner-all {
@@ -48,41 +51,40 @@
 	<body>
 		<div data-role="page" class="ui-page-theme-a">
             <div th:replace="mobile/include/header :: header"/>
-            <div>
-                <div class="ui-panel-wrapper">
-					<div class="ui-nodisc-icon ui-alt-icon action-button">
-						<a id="back" href="#" class="ui-btn ui-corner-all ui-icon-back ui-btn-icon-notext ui-btn-inline left-button"></a>
-					</div>
-	                <form id="form" th:action="${purchase.recordId}" data-ajax="false" th:object="${purchase}" method="post">
-	                	<input type="hidden" name="_method"/>
-	                	<input type="hidden" th:field="*{recordId}"/>
-	                	<input type="hidden" th:field="*{recordDate}"/>
-	                	<label for="stockroomId">倉庫</label>
-	                	<input type="text" th:field="*{stockroomId}" readonly="true"/>
-	                	<label for="stockroomUserId">帳戶</label>
-				        <input type="text" th:field="*{stockroomUserId}" readonly="true"/>
-	                	<label for="class1">類別一</label>
-		                <input type="text" th:field="*{class1}" readonly="true"/>
-	                	<label for="class2">類別二</label>
-		                <input type="text" th:field="*{class2}" readonly="true"/>
-	                	<label for="brand">品牌</label>
-		                <input type="text" th:field="*{brand}" readonly="true"/>
-	                	<label for="name">名稱</label>
-		                <input type="text" th:field="*{name}" readonly="true"/>
-		                <label for="size">規格</label>
-		                <input type="text" th:field="*{size}" readonly="true"/>
-	                	<label for="quantity">數量</label>
-	                	<input type="number" step="1" name="quantity" th:value="${quantity}" readonly="true"/>
-	                	<label for="purchaseDate">購買日期</label>
-	                	<input type="date" data-clear-btn="true" th:field="*{purchaseDate}" readonly="true"/>
-	                	<label for="manufactureDate">生產日期</label>
-	                	<input type="date" data-clear-btn="true" th:field="*{manufactureDate}" readonly="true"/>
-	                	<label for="expiryDate">有效日期</label>
-	                	<input type="date" data-clear-btn="true" th:field="*{expiryDate}" readonly="true"/>
-	                	<label for="amount">金額</label>
-	                	<input type="number" step="1" name="amount" th:value="${amount}" readonly="true"/>
-	                </form>
-                </div>
+            <div class="ui-panel-wrapper">
+				<div class="ui-nodisc-icon ui-alt-icon action-button">
+					<a id="back" href="#" class="ui-btn ui-corner-all ui-icon-back ui-btn-icon-notext ui-btn-inline left-button"></a>
+				</div>
+                <form id="form" th:action="${purchase.recordId}" data-ajax="false" th:object="${purchase}" method="post">
+                	<input type="hidden" name="_method"/>
+                	<input type="hidden" th:field="*{recordId}"/>
+                	<input type="hidden" th:field="*{recordDate}"/>
+                	<label for="stockroomId">倉庫</label>
+                	<input type="text" th:field="*{stockroomId}" readonly="true"/>
+                	<label for="stockroomUserId">帳戶</label>
+			        <input type="text" th:field="*{stockroomUserId}" readonly="true"/>
+                	<label for="class1">類別一</label>
+	                <input type="text" th:field="*{class1}" readonly="true"/>
+                	<label for="class2">類別二</label>
+	                <input type="text" th:field="*{class2}" readonly="true"/>
+                	<label for="brand">品牌</label>
+	                <input type="text" th:field="*{brand}" readonly="true"/>
+                	<label for="name">名稱</label>
+	                <input type="text" th:field="*{name}" readonly="true"/>
+	                <label for="size">規格</label>
+	                <input type="text" th:field="*{size}" readonly="true"/>
+                	<label for="quantity">數量</label>
+                	<input type="number" step="1" name="quantity" th:value="${quantity}" readonly="true"/>
+                	<label for="purchaseDate">購買日期</label>
+                	<input type="date" data-clear-btn="true" th:field="*{purchaseDate}" readonly="true"/>
+                	<label for="manufactureDate">生產日期</label>
+                	<input type="date" data-clear-btn="true" th:field="*{manufactureDate}" readonly="true"/>
+                	<label for="expiryDate">有效日期</label>
+                	<input type="date" data-clear-btn="true" th:field="*{expiryDate}" readonly="true"/>
+                	<label for="amount">金額</label>
+                	<input type="number" step="1" name="amount" th:value="${amount}" readonly="true"/>
+                </form>
+            </div>
             <div th:replace="mobile/include/menu :: menu"/>
             <div data-role="popup" id="popupDialog" data-overlay-theme="b" data-theme="b" data-dismissible="false" style="max-width:400px;">
             	<div data-role="header" data-theme="a">
