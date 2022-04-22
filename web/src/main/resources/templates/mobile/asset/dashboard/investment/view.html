@@ -5,8 +5,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>HKMA - 投資儀表板</title>
         <link rel="icon" href="/home/icon/favicon.png">
+        
         <!-- android -->
         <link rel="shortcut icon" href="/home/icon/favicon.png">
+        
         <!-- ios -->
         <link rel="apple-touch-icon" href="/home/icon/asset_ios.png">
         <link rel="apple-touch-icon" href="/home/icon/asset_ios_180.png" sizes="180x180">
@@ -15,6 +17,7 @@
         
         <!-- jQuery -->
 		<script src="http://code.jquery.com/jquery-1.12.4.min.js"></script>
+		
 		<!-- jQuery Mobile --> 
 		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
 		<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
@@ -36,7 +39,7 @@
                 margin: 0px;
             }
             .ui-panel-wrapper{
-              padding: 5px;
+              	padding: 5px;
             }
             .ui-panel-wrapper .box{
                 padding: 5px;
@@ -103,10 +106,10 @@
 	</head>
 	<body>
 		<!--Highcharts-->
-        <script src="/home/js/Highcharts-8.0.0/highcharts.js"></script>
+        <script src="/home/highcharts/8.0.0/highcharts.js"></script>
         <!--<script src="../code/modules/exporting.js"></script>-->    <!--選項-->
         <!--<script src="../code/modules/export-data.js"></script>-->  <!--匯出資料-->
-        <script src="/home/js/Highcharts-8.0.0/modules/accessibility.js"></script>
+        <script src="/home/highcharts/8.0.0/modules/accessibility.js"></script>
         
         <div data-role="page" class="ui-page-theme-a">
             <div th:replace="mobile/include/header :: header"/>
