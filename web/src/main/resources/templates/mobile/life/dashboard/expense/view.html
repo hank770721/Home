@@ -5,8 +5,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>HKMA - 消費儀表板</title>
         <link rel="icon" href="/home/icon/favicon.png">
+        
         <!-- android -->
         <link rel="shortcut icon" href="/home/icon/favicon.png">
+        
         <!-- ios -->
         <link rel="apple-touch-icon" href="/home/icon/asset_ios.png">
         <link rel="apple-touch-icon" href="/home/icon/asset_ios_180.png" sizes="180x180">
@@ -15,6 +17,7 @@
         
         <!-- jQuery -->
 		<script src="http://code.jquery.com/jquery-1.12.4.min.js"></script>
+		
 		<!-- jQuery Mobile --> 
 		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
 		<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
@@ -77,7 +80,7 @@
             }
             
             @media (max-width:767px){
-                .ui-panel-wrapper #assetRecord{
+                .ui-panel-wrapper .table-detail{
                      font-size: 13px;
                 }
                 .ui-panel-wrapper .box3 .box-inside{
@@ -162,7 +165,7 @@
                                     <div class="table">
                                         <div class="table-inside">
                                             <div class="table-body">
-                                                <table data-role="table" data-mode="" class="ui-shadow table-stripe" id="thisMonthExpenseTable">
+                                                <table data-role="table" data-mode="" class="ui-shadow table-stripe table-detail" id="thisMonthExpenseTable">
                                                     <thead>
                                                         <tr>
                                                             <th>日期</th>
@@ -188,7 +191,7 @@
                                     <div class="table">
                                         <div class="table-inside">
                                             <div class="table-body">
-                                                <table data-role="table" data-mode="" class="ui-shadow table-stripe" id="lastMonthExpenseTable">
+                                                <table data-role="table" data-mode="" class="ui-shadow table-stripe table-detail" id="lastMonthExpenseTable">
                                                     <thead>
                                                         <tr>
                                                             <th>日期</th>
@@ -214,7 +217,7 @@
                                     <div class="table">
                                         <div class="table-inside">
                                             <div class="table-body">
-                                                <table data-role="table" data-mode="" class="ui-shadow table-stripe" id="lastYearExpenseTable">
+                                                <table data-role="table" data-mode="" class="ui-shadow table-stripe table-detail" id="lastYearExpenseTable">
                                                     <thead>
                                                         <tr>
                                                             <th>日期</th>
