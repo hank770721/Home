@@ -191,17 +191,17 @@
 	        }
 	        
 	        function amountCompute(){
-	        	var quantity = $('#quantity').val();
-	        	var price = $('#price').val();
-	        	var fee = $('#fee').val();
-	        	var tax = $('#tax').val();
+	        	var quantity = Number($('#quantity').val());
+	        	var price = Number($('#price').val());
+	        	var fee = Number($('#fee').val());
+	        	var tax = Number($('#tax').val());
 	        	
 	        	switch($('#transMode').val()){
 	                case '1':
-	                	$('#amount').val(quantity * price + parseInt(fee) + parseInt(tax));
+	                	$('#amount').val(parseInt(quantity * price + fee + tax));
 	                    break;
 	                case '2':
-	                	$('#amount').val(quantity * price - fee - tax);
+	                	$('#amount').val(parseInt(quantity * price - fee - tax));
 	                    break;
 	            };
 	        }
