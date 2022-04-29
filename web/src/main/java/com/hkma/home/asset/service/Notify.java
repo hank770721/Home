@@ -147,7 +147,7 @@ public class Notify {
 					+ 							"\"action\": {"
 					+ 								"\"type\": \"uri\","
 					+ 								"\"label\": \"投資儀錶板\","
-					+ 								"\"uri\": \"http://13.75.40.140:8080/home/m/stock/dashboard/investment/view?accountUserId=mia&accountId=001\""
+					+ 								"\"uri\": \"http://13.75.40.140:8080/home/m/asset/dashboard/investment/view?accountUserId=mia&accountId=001"
 					+ 							"},"
 					+ 							"\"color\": \"#007979\""
 					+ 						"}"
