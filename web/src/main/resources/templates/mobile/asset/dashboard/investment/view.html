@@ -106,10 +106,10 @@
 	</head>
 	<body>
 		<!--Highcharts-->
-        <script src="/home/highcharts/8.0.0/highcharts.js"></script>
-        <!--<script src="../code/modules/exporting.js"></script>-->    <!--選項-->
-        <!--<script src="../code/modules/export-data.js"></script>-->  <!--匯出資料-->
-        <script src="/home/highcharts/8.0.0/modules/accessibility.js"></script>
+        <script src="https://code.highcharts.com/highcharts.js"></script>
+        <!--<script src="https://code.highcharts.com/modules/exporting.js"></script>-->    <!--選項-->
+        <!--<script src="https://code.highcharts.com/modules/export-data.js"></script>-->  <!--匯出資料-->
+        <script src="https://code.highcharts.com/modules/accessibility.js"></script>
         
         <div data-role="page" class="ui-page-theme-a">
             <div th:replace="mobile/include/header :: header"/>
@@ -508,16 +508,29 @@
                             },
                             categories: dates
                         },
-                        yAxis: {
-                            title: {
-                                text: '金額(萬)'   //Y軸標題
-                            },
-                            labels: {
-                                formatter: function () {
-                                    return this.value / 10000;
-                                }
-                            }
-                        },
+                        yAxis: [
+                        	{
+	                            title: {
+	                                text: '金額(萬)'   //Y軸標題
+	                            },
+	                            labels: {
+	                                formatter: function () {
+	                                    return this.value / 10000;
+	                                }
+	                            }
+	                        },
+	                        {
+	                            title: {
+	                                text: '差額(萬)'   //Y軸標題
+	                            },
+	                            labels: {
+	                                formatter: function () {
+	                                    return this.value / 10000;
+	                                }
+	                            },
+	                            opposite: true
+	                        }
+                        ],
                         tooltip: {
                             shared: true    //合併顯示
                         },
@@ -536,6 +549,14 @@
                             {
                                 name: '成本',
                                 data: stockDailys[0].cost
+                            },
+                            {
+                                name: '差額',
+                                yAxis: 1,
+                                data: stockDailys[0].difference,
+                                marker: {
+                                    enabled: false
+                                }
                             }
                         ],
                         responsive: {
@@ -570,16 +591,29 @@
                             },
                             categories: dates
                         },
-                        yAxis: {
-                            title: {
-                                text: '金額(萬)'   //Y軸標題
-                            },
-                            labels: {
-                                formatter: function () {
-                                    return this.value / 10000;
-                                }
-                            }
-                        },
+                        yAxis: [
+                        	{
+	                            title: {
+	                                text: '金額(萬)'   //Y軸標題
+	                            },
+	                            labels: {
+	                                formatter: function () {
+	                                    return this.value / 10000;
+	                                }
+	                            }
+	                        },
+	                        {
+	                            title: {
+	                                text: '差額(萬)'   //Y軸標題
+	                            },
+	                            labels: {
+	                                formatter: function () {
+	                                    return this.value / 10000;
+	                                }
+	                            },
+	                            opposite: true
+	                        }
+	                   	],
                         tooltip: {
                             shared: true    //合併顯示
                         },
@@ -598,6 +632,14 @@
                             {
                                 name: '成本',
                                 data: stockDailys[1].cost
+                            },
+                            {
+                                name: '差額',
+                                yAxis: 1,
+                                data: stockDailys[1].difference,
+                                marker: {
+                                    enabled: false
+                                }
                             }
                         ],
                         responsive: {

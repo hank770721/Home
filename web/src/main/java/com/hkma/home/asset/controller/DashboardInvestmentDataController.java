@@ -3,6 +3,7 @@ package com.hkma.home.asset.controller;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -171,7 +172,7 @@ public class DashboardInvestmentDataController {
             
             rs.close();
             cStmt.close();
-
+            
             //stock, cost, dividend, profit
             cStmt = con.prepareCall("call home.sp_stock_getStockType(?,?,?,?);");
             cStmt.setString(1, accountUserId);
@@ -278,6 +279,7 @@ public class DashboardInvestmentDataController {
                         isFind = true;
                         ((ArrayList)map.get("stock")).add(stock);
                         ((ArrayList)map.get("cost")).add(cost);
+                        ((ArrayList)map.get("difference")).add(stock - cost);
                     }
                 }
 
@@ -293,6 +295,11 @@ public class DashboardInvestmentDataController {
                             put("cost", new ArrayList(){
                                 {
                                     add(cost);
+                                }
+                            });
+                            put("difference", new ArrayList(){
+                                {
+                                    add(stock - cost);
                                 }
                             });
                         }
@@ -589,14 +596,56 @@ public class DashboardInvestmentDataController {
                 }
             }
             
+            //20220307 做空資料
+            if (dates.size() == 0) {
+            	dates.add(dateFormat2.format(endDate));
+            	
+            	stockDailys.add(new HashMap<String,Object>(){
+                    {
+                        put("typeId", "1");
+                        put("stock", new ArrayList(){
+                            {
+                                add(0);
+                            }
+                        });
+                        put("cost", new ArrayList(){
+                            {
+                                add(0);
+                            }
+                        });
+                    }
+                });
+            	
+            	stockDailys.add(new HashMap<String,Object>(){
+                    {
+                        put("typeId", "2");
+                        put("stock", new ArrayList(){
+                            {
+                                add(0);
+                            }
+                        });
+                        put("cost", new ArrayList(){
+                            {
+                                add(0);
+                            }
+                        });
+                    }
+                });
+            }
+            
             rs.close();
             cStmt.close();
             //</editor-fold>
 
             //<editor-fold desc="goal">
             HashMap goalCycleMap = new HashMap();
-            Statement stmt = con.createStatement();
-            rs = stmt.executeQuery("SELECT id, month, day, hour, minute, second, cycleQty, cycleType, amount, memo FROM asset_goalcycle;");
+            //20220307 改用Statement
+            //Statement stmt = con.createStatement();
+            //rs = stmt.executeQuery("SELECT id, month, day, hour, minute, second, cycleQty, cycleType, amount, memo FROM asset_goalcycle;");
+            PreparedStatement ps = null;
+            ps = con.prepareStatement("SELECT id, month, day, hour, minute, second, cycleQty, cycleType, amount, memo FROM asset_goalcycle WHERE accountUserId = ?;");
+            ps.setString(1, accountUserId);
+            rs = ps.executeQuery();
             ResultSetMetaData md = rs.getMetaData();
             int columns = md.getColumnCount();
             while (rs.next()) {
