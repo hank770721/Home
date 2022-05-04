@@ -59,4 +59,31 @@ class AuthorityPk implements Serializable {
 	private String userId;
 	private String accountUserId;
 	private String accountId;
+	
+	@Override
+    public boolean equals(Object obj){
+		if (obj == null){
+            return false ;
+        }
+		
+		if (this == obj){
+            return true;
+        }
+		
+		if (getClass() != obj.getClass()){
+            return false;
+        }
+		
+		final AuthorityPk other = (AuthorityPk)obj;
+		if (this.userId.equals(other.userId) && this.accountUserId.equals(other.accountUserId) && this.accountId.equals(other.accountId)) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	@Override
+    public int hashCode(){
+        return userId.hashCode() + accountUserId.hashCode() + accountId.hashCode();
+    }
 }

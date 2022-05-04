@@ -141,4 +141,31 @@ class GoalCyclePk implements Serializable {
 	private String accountUserId;
 	private String accountId;
 	private String id;
+	
+	@Override
+    public boolean equals(Object obj){
+		if (obj == null){
+            return false ;
+        }
+		
+		if (this == obj){
+            return true;
+        }
+		
+		if (getClass() != obj.getClass()){
+            return false;
+        }
+		
+		final GoalCyclePk other = (GoalCyclePk)obj;
+		if (this.accountUserId.equals(other.accountUserId) && this.accountId.equals(other.accountId) && this.id.equals(other.id)) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	@Override
+    public int hashCode(){
+        return accountUserId.hashCode() + accountId.hashCode() + id.hashCode();
+    }
 }

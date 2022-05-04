@@ -47,4 +47,31 @@ public class AccountGroupEntity implements Serializable {
 class AccountGroupPk implements Serializable {
 	private String userId;
 	private String groupId;
+	
+	@Override
+    public boolean equals(Object obj){
+		if (obj == null){
+            return false ;
+        }
+		
+		if (this == obj){
+            return true;
+        }
+		
+		if (getClass() != obj.getClass()){
+            return false;
+        }
+		
+		final AccountGroupPk other = (AccountGroupPk)obj;
+		if (this.userId.equals(other.userId) && this.groupId.equals(other.groupId)) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	@Override
+    public int hashCode(){
+        return userId.hashCode() + groupId.hashCode();
+    }
 }

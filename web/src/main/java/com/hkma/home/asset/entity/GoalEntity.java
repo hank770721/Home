@@ -62,4 +62,31 @@ public class GoalEntity extends BaseEntity implements Serializable {
 class GoalPk implements Serializable {
 	private String accountUserId;
 	private String accountId;
+	
+	@Override
+    public boolean equals(Object obj){
+		if (obj == null){
+            return false ;
+        }
+		
+		if (this == obj){
+            return true;
+        }
+		
+		if (getClass() != obj.getClass()){
+            return false;
+        }
+		
+		final GoalPk other = (GoalPk)obj;
+		if (this.accountUserId.equals(other.accountUserId) && this.accountId.equals(other.accountId)) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	@Override
+    public int hashCode(){
+        return accountUserId.hashCode() + accountId.hashCode();
+    }
 }

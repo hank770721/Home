@@ -113,4 +113,31 @@ public class BankAccountEntity implements Serializable {
 class BankAccountPk implements Serializable {
 	private String userId;
 	private String id;
+	
+	@Override
+    public boolean equals(Object obj){
+		if (obj == null){
+            return false ;
+        }
+		
+		if (this == obj){
+            return true;
+        }
+		
+		if (getClass() != obj.getClass()){
+            return false;
+        }
+		
+		final BankAccountPk other = (BankAccountPk)obj;
+		if (this.userId.equals(other.userId) && this.id.equals(other.id)) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	@Override
+    public int hashCode(){
+        return userId.hashCode() + id.hashCode();
+    }
 }
