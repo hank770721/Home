@@ -69,7 +69,7 @@ public class RecordController {
 		
 		List<Map<String, Object>> list = new ArrayList<>();
 		
-		List<RecordEntity> recordList = recordRepository.findByUserIdMonthOrderByRecordDateDesc(userId, month);
+		List<RecordEntity> recordList = recordRepository.findByUserIdMonthOrderByRecordDateDescRecordIdDesc(userId, month);
 		
 		recordList.forEach(record -> {
 			double amount;
@@ -151,7 +151,7 @@ public class RecordController {
 			userId = "mia";
 		}
 		
-		List<RecordEntity> recordList = recordRepository.findByUserIdMonthAccountUserIdAccountIdOrderByRecordDateDesc(userId, month, accountUserId, accountId);
+		List<RecordEntity> recordList = recordRepository.findByUserIdMonthAccountUserIdAccountIdOrderByRecordDateDescRecordIdDesc(userId, month, accountUserId, accountId);
 		
 		recordList.forEach(record -> {
 			double amount;
@@ -236,6 +236,7 @@ public class RecordController {
 			accountId = "001";
 		}
 		
+		//帳戶
 		List<AuthorityEntity> authorityList = authorityRepository.findByUserIdOrderByOrderNumberAsc(userId);
 		authorityList.forEach(authority ->{
 			String authorityAccountUserId = authority.getAccountUserId();
@@ -244,12 +245,12 @@ public class RecordController {
 			Optional<BankAccountEntity> bankAccountOptional = bankAccountRepository.findByUserIdAndId(authorityAccountUserId, authorityAccountId);
 			
 			if(bankAccountOptional.isPresent()) {
-				BankAccountEntity bankAccountEntity = bankAccountOptional.get();
+				BankAccountEntity bankAccount = bankAccountOptional.get();
 				
-				String memo = bankAccountEntity.getMemo();
+				String memo = bankAccount.getMemo();
 				
-				if(bankAccountEntity.getBank() != null) {
-					BankEntity bank = bankAccountEntity.getBank();
+				if(bankAccount.getBank() != null) {
+					BankEntity bank = bankAccount.getBank();
 					memo = bank.getName() + " - " + memo;
 				};
 				
@@ -364,6 +365,7 @@ public class RecordController {
 				userId = "mia";
 			}
 			
+			//帳戶
 			List<AuthorityEntity> authorityList = authorityRepository.findByUserIdOrderByOrderNumberAsc(userId);
 			authorityList.forEach(authority ->{
 				String authorityAccountUserId = authority.getAccountUserId();
@@ -372,12 +374,12 @@ public class RecordController {
 				Optional<BankAccountEntity> bankAccountOptional = bankAccountRepository.findByUserIdAndId(authorityAccountUserId, authorityAccountId);
 				
 				if(bankAccountOptional.isPresent()) {
-					BankAccountEntity bankAccountEntity = bankAccountOptional.get();
+					BankAccountEntity bankAccount = bankAccountOptional.get();
 					
-					String memo = bankAccountEntity.getMemo();
+					String memo = bankAccount.getMemo();
 					
-					if(bankAccountEntity.getBank() != null) {
-						BankEntity bank = bankAccountEntity.getBank();
+					if(bankAccount.getBank() != null) {
+						BankEntity bank = bankAccount.getBank();
 						memo = bank.getName() + " - " + memo;
 					};
 					
@@ -462,6 +464,7 @@ public class RecordController {
 				userId = "mia";
 			}
 			
+			//帳戶
 			List<AuthorityEntity> authorityList = authorityRepository.findByUserIdOrderByOrderNumberAsc(userId);
 			authorityList.forEach(authority ->{
 				String authorityAccountUserId = authority.getAccountUserId();
@@ -469,13 +472,14 @@ public class RecordController {
 				
 				Optional<BankAccountEntity> bankAccountOptional = bankAccountRepository.findByUserIdAndId(authorityAccountUserId, authorityAccountId);
 				
+				
 				if(bankAccountOptional.isPresent()) {
-					BankAccountEntity bankAccountEntity = bankAccountOptional.get();
+					BankAccountEntity bankAccount = bankAccountOptional.get();
 					
-					String memo = bankAccountEntity.getMemo();
+					String memo = bankAccount.getMemo();
 					
-					if(bankAccountEntity.getBank() != null) {
-						BankEntity bank = bankAccountEntity.getBank();
+					if(bankAccount.getBank() != null) {
+						BankEntity bank = bankAccount.getBank();
 						memo = bank.getName() + " - " + memo;
 					};
 					
@@ -613,6 +617,7 @@ public class RecordController {
 				model.addAttribute("amount", amount);
 			}
 			
+			//帳戶
 			List<AuthorityEntity> authorityList = authorityRepository.findByUserIdOrderByOrderNumberAsc(userId);
 			authorityList.forEach(authority ->{
 				String authorityAccountUserId = authority.getAccountUserId();
@@ -621,12 +626,12 @@ public class RecordController {
 				Optional<BankAccountEntity> bankAccountOptional = bankAccountRepository.findByUserIdAndId(authorityAccountUserId, authorityAccountId);
 				
 				if(bankAccountOptional.isPresent()) {
-					BankAccountEntity bankAccountEntity = bankAccountOptional.get();
+					BankAccountEntity bankAccount = bankAccountOptional.get();
 					
-					String memo = bankAccountEntity.getMemo();
+					String memo = bankAccount.getMemo();
 					
-					if(bankAccountEntity.getBank() != null) {
-						BankEntity bank = bankAccountEntity.getBank();
+					if(bankAccount.getBank() != null) {
+						BankEntity bank = bankAccount.getBank();
 						memo = bank.getName() + " - " + memo;
 					};
 					
@@ -728,6 +733,7 @@ public class RecordController {
 			accountId = "001";
 		}
 		
+		//帳戶
 		List<AuthorityEntity> authorityList = authorityRepository.findByUserIdOrderByOrderNumberAsc(userId);
 		authorityList.forEach(authority ->{
 			String authorityAccountUserId = authority.getAccountUserId();
@@ -736,12 +742,12 @@ public class RecordController {
 			Optional<BankAccountEntity> bankAccountOptional = bankAccountRepository.findByUserIdAndId(authorityAccountUserId, authorityAccountId);
 			
 			if(bankAccountOptional.isPresent()) {
-				BankAccountEntity bankAccountEntity = bankAccountOptional.get();
+				BankAccountEntity bankAccount = bankAccountOptional.get();
 				
-				String memo = bankAccountEntity.getMemo();
+				String memo = bankAccount.getMemo();
 				
-				if(bankAccountEntity.getBank() != null) {
-					BankEntity bank = bankAccountEntity.getBank();
+				if(bankAccount.getBank() != null) {
+					BankEntity bank = bankAccount.getBank();
 					memo = bank.getName() + " - " + memo;
 				};
 				
