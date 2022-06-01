@@ -41,19 +41,21 @@ BEGIN
     SELECT count(1) INTO i_count FROM stock_treasury WHERE accountUserId = new.accountUserId AND accountId = new.accountId AND assetType = new.assetType AND stockId = new.stockId;
     
     IF(i_count = 0) THEN
-		SET d_quantity = 0;
-        SET d_amount = 0;
-        
-		IF(new.transMode = '1') THEN
-			SET d_quantity = new.quantity;
-            SET d_amount = new.amount;
-		ELSEIF(new.transMode = '2') THEN
-			SET d_quantity = new.quantity * (-1);
-            SET d_amount = new.cost * (-1);
-        END IF;
-        
-		INSERT INTO stock_treasury(accountUserId, accountId, assetType, stockId, quantity, amount)
-			VALUES(new.accountUserId, new.accountId, new.assetType, new.stockId, d_quantity, d_amount);
+		IF (new.quantity <> 0) THEN
+			SET d_quantity = 0;
+			SET d_amount = 0;
+			
+			IF(new.transMode = '1') THEN
+				SET d_quantity = new.quantity;
+				SET d_amount = new.amount;
+			ELSEIF(new.transMode = '2') THEN
+				SET d_quantity = new.quantity * (-1);
+				SET d_amount = new.cost * (-1);
+			END IF;
+			
+			INSERT INTO stock_treasury(accountUserId, accountId, assetType, stockId, quantity, amount)
+				VALUES(new.accountUserId, new.accountId, new.assetType, new.stockId, d_quantity, d_amount);
+		END IF;
 	ELSE
 		SELECT quantity, amount INTO d_quantity_treasury, d_amount_treasury FROM stock_treasury WHERE accountUserId = new.accountUserId AND accountId = new.accountId AND assetType = new.assetType AND stockId = new.stockId;
         
