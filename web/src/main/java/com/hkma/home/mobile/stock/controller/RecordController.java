@@ -41,9 +41,6 @@ public class RecordController {
 	@Autowired
 	private StockProfileRepository stockProfileRepository;
 	
-	@Autowired
-    private MenuService menuService;
-	
 	@GetMapping({"/","/index"})
 	public String indexGet(
 			Principal principal,
@@ -319,11 +316,11 @@ public class RecordController {
 			@PathVariable("recordId") String recordId,
 			Principal principal,
 			Model model){
-		Optional<StockRecordEntity> optional = stockRecordRepository.findByRecordId(recordId);
-		
 		if (principal == null){
 			return "redirect:/m/stock/record/record/index";
 		}else {
+			Optional<StockRecordEntity> optional = stockRecordRepository.findByRecordId(recordId);
+			
 			if(!optional.isPresent()) {
 				return "redirect:/m/stock/record/record/index";
 			}else {
@@ -355,7 +352,12 @@ public class RecordController {
 				model.addAttribute("fee", (int)((double)fee));
 				model.addAttribute("tax", (int)((double)tax));
 				model.addAttribute("amount", (int)((double)amount));
-				model.addAttribute("cost", (int)((double)cost));
+				
+				if (cost == null) {
+					model.addAttribute("cost", cost);
+				}else {
+					model.addAttribute("cost", (int)((double)cost));
+				}
 				
 				return "mobile/stock/record/record/view";
 			}

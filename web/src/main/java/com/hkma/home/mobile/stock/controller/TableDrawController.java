@@ -114,6 +114,7 @@ public class TableDrawController {
 			accountId = "001";
 		}
 		
+		//證券帳戶
 		List<AuthorityEntity> authorityList = authorityRepository.findByUserId(userId);
 		authorityList.forEach(authority ->{
 			String authorityAccountUserId = authority.getAccountUserId();

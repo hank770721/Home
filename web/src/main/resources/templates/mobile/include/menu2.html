@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Insert title here</title>
+	</head>
+	<body>
+		<div th:fragment="menu" class="memu-panel" data-role="panel" id="memuPanel" data-position="left" data-display="reveal" data-theme="a">
+		    <ul data-role="listview">
+		    	<li><a th:href="@{${menuList.loginHref}}" data-ajax="false"><h3 th:text="${menuList.loginText}"/></a></li>
+		    	<li th:each="system : ${menuList.systemList}" data-role="collapsible" data-inset="false" data-iconpos="right" data-expanded-icon="carat-u" data-collapsed-icon="carat-d">
+		            <h3 th:text="${system.systemName}"/>
+		            <ul data-role="listview">
+		            	<li th:each="process : ${system.processList}"><a th:href="@{${process.href}}" data-ajax="false"><div style="margin-left: 20px" th:text="${process.processName}"/></a></li>
+		            </ul>
+		        </li>
+		    </ul>
+		</div>
+	</body>
+</html>

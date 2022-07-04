@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>HKMA - 提存紀錄</title>
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+		<link th:href="@{/css/header.css}" rel="stylesheet">
+        
+        <style>
+			.bi {
+				vertical-align: -.125em;
+			}
+
+			.text-center input {
+				text-align: center!important;
+			}
+			.text-end input {
+				text-align: right!important;
+			}
+			
+			.btn-toggle {
+			    font-weight: 600;
+			}
+			.btn-toggle::before {
+			    width: 1.25em;
+			    line-height: 0;
+			    content: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='rgba%280,0,0,.5%29' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M5 14l6-6-6-6'/%3e%3c/svg%3e");
+			}
+			.btn-toggle[aria-expanded="true"]::before {
+			    transform: rotate(90deg);
+			}
+			.btn-toggle-nav a {
+			    padding: .1875rem .5rem;
+			    margin-top: .125rem;
+			    margin-left: 1.25rem;
+			}
+
+			input[type=number]::-webkit-inner-spin-button {
+				-webkit-appearance: none;
+			}
+        </style>
+	</head>
+	<body>
+		<div class="wrapper">
+            <div th:replace="component/header :: header"/>
+			<div class="main-wrapper" style="padding:5px; background-color:#f9f9f9;">
+				<button type="button" class="btn btn-primary" id="importExcel">
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-excel" viewBox="0 0 16 16">
+						<path d="M5.884 6.68a.5.5 0 1 0-.768.64L7.349 10l-2.233 2.68a.5.5 0 0 0 .768.64L8 10.781l2.116 2.54a.5.5 0 0 0 .768-.641L8.651 10l2.233-2.68a.5.5 0 0 0-.768-.64L8 9.219l-2.116-2.54z"></path>
+						<path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z"></path>
+					</svg>
+					匯入
+				</button>
+				<button type="button" class="btn btn-primary" id="insert">
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+						<path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"></path>
+					</svg>
+					新增
+				</button>
+				<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal">
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+						<path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"></path>
+					</svg>
+					刪除
+				</button>
+				<button type="button" class="btn btn-primary">
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">
+						<path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z"></path>
+					</svg>
+					存檔
+				</button>
+				<button type="button" class="btn btn-primary">
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+						<path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path>
+					</svg>
+					查詢
+				</button>
+
+				<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+					<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">刪除資料</h5>
+							<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+						</div>
+						<div class="modal-body">
+							您確定要刪掉所有選取資料?
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+							<button type="button" class="btn btn-primary" id="delete-confirm" data-bs-dismiss="modal">確認</button>
+						</div>
+					</div>
+					</div>
+				</div>
+					
+				<div class="box" style="padding:5px;">
+					<table id="detail" class="table table-striped table-bordered">
+						<thead>
+							<tr>
+								<th data-fieldid="isChoose" scope="col" class="text-center"><div></div></th>
+								<th data-fieldid="rowNumber" scope="col" class="text-center"><div>#</div></th>
+								<th data-fieldid="recordId" scope="col"><div>單號</div></th>
+								<th data-fieldid="recordDate" scope="col"><div>日期</div></th>
+								<th data-fieldid="transMode" scope="col"><div>類別</div></th>
+								<th data-fieldid="fromAccountUserId" scope="col"><div>轉出帳戶</div></th>
+								<th data-fieldid="fromAccountId" scope="col"><div>轉出帳號</div></th>
+								<th data-fieldid="toAccountUserId" scope="col"><div>轉入帳戶</div></th>
+								<th data-fieldid="toAccountId" scope="col"><div>轉入帳號</div></th>
+								<th data-fieldid="memo" scope="col"><div>備註</div></th>
+								<th data-fieldid="amount" scope="col" class="text-end"><div>金額</div></th>
+								<th data-fieldid="isDividend" scope="col" class="text-center"><div>股利</div></th>
+								<th data-fieldid="stockId" scope="col" class=""><div>股票代號</div></th>
+								<th data-fieldid="fromTable" scope="col" class=""><div>資料來源</div></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="row : ${list}">
+								<td data-fieldid="isChoose" data-type="checkbox" th:attr="data-value='0'" scope="row" class="text-center align-middle" style="width:33px;"><div><input class="form-check-input" type="checkbox"/></div></td>
+								<td data-fieldid="rowNumber" data-type="number" th:attr="data-value=${row.rowNumber}" scope="row" class="text-center" style="width:60px;"><div th:text="${row.rowNumber}"/></td>
+								<td data-fieldid="recordId" data-type="text" th:attr="data-value=${row.recordId}" class="" style="width:153px;"><div th:text="${row.recordId}"/></td>
+								<td data-fieldid="recordDate" data-type="date" th:attr="data-value=${row.recordDate}" class="" style="width:177px"><div th:text="${row.recordDateDisplay}"/></td>
+								<td data-fieldid="transMode" data-type="select" th:attr="data-value=${row.transMode}" class="" style="width:98px"><div th:text="${row.transModeDisplay}"/></td>
+								<td data-fieldid="fromAccountUserId" data-type="text" th:attr="data-value=${row.fromAccountUserId}" class=""><div th:text="${row.fromAccountUserId}"/></td>
+								<td data-fieldid="fromAccountId" data-type="text" th:attr="data-value=${row.fromAccountId}"><div th:text="${row.fromAccountId}"/></td>
+								<td data-fieldid="toAccountUserId" data-type="text" th:attr="data-value=${row.toAccountUserId}"><div th:text="${row.toAccountUserId}"/></td>
+								<td data-fieldid="toAccountId" data-type="text" th:attr="data-value=${row.toAccountId}"><div th:text="${row.toAccountId}"/></td>
+								<td data-fieldid="memo" data-type="text" th:attr="data-value=${row.memo}"><div th:text="${row.memo}"/></td>
+								<td data-fieldid="amount" data-type="number" th:attr="data-value=${row.amount}" class="text-end"><div th:text="${row.amountDisplay}"/></td>
+								<td data-fieldid="isDividend" data-type="checkbox" th:attr="data-value=${row.isDividend}" class="text-center align-middle" style="width:49px"><div><input class="form-check-input" type="checkbox" th:checked="${row.isDividend eq '1'}"/></div></td>
+								<td data-fieldid="stockId" data-type="text" th:attr="data-value=${row.stockId}" class=""><div th:text="${row.stockId}"/></td>
+								<td data-fieldid="fromTable" data-type="text" th:attr="data-value=${row.fromTable}" class=""><div th:text="${row.fromTable}"/></td>
+							</tr>
+						</tbody>
+					</table>
+
+					<!--
+					<div class="input-group">
+						<input type="text" class="form-control">
+						<button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"/>
+						<ul class="dropdown-menu">
+							<table>
+								<thead>
+									<tr>
+										<th>a</th>
+										<th>a</th>
+										<th>a</th>
+										<th>a</th>
+										<th>a</th>
+										<th>a</th>
+										<th>a</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+									</tr>
+									<tr>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+									</tr>
+									<tr>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+									</tr>
+									<tr>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+									</tr>
+									<tr>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+									</tr>
+									<tr>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+									</tr>
+									<tr>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+									</tr>
+									<tr>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+									</tr>
+									<tr>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+									</tr>
+									<tr>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+									</tr>
+									<tr>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+									</tr>
+									<tr>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+									</tr>
+									<tr>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+									</tr>
+									<tr>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+										<td><div><a class="dropdown-item" href="#">Dropdown link</a></div></td>
+									</tr>
+								</tbody>
+							</table>
+						</ul>
+					</div>
+					-->
+				</div>
+			</div>
+		</div>
+		
+		<script lang="javascript" src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+		<script lang="javascript" src="https://cdn.sheetjs.com/xlsx-0.18.8/package/dist/xlsx.full.min.js"></script>
+
+		<script>
+			var fields = [ 
+				{fieldid:"isChoose", protect:"", td:'<td data-fieldid="isChoose" data-type="checkbox" data-value="" scope="row" class="text-center align-middle" style="width:33px;"></td>'},
+				{fieldid:"rowNumber", protect:"", td:'<td data-fieldid="rowNumber" data-type="number" data-value="" scope="row" class="text-center" style="width:60px;"></td>'},
+				{fieldid:"recordId", protect:"insert update", td:'<td data-fieldid="recordId" data-type="text" data-value="" class="" style="width:153px;"></td>'},
+				{fieldid:"recordDate", protect:"update", td:'<td data-fieldid="recordDate" data-type="date" data-value="" class="" style="width:177px"></td>'},
+				{fieldid:"transMode", protect:"", td:'<td data-fieldid="transMode" data-type="select" data-value="" class="" style="width:98px"></td>'},
+				{fieldid:"fromAccountUserId", protect:"", td:'<td data-fieldid="fromAccountUserId" data-type="text" data-value=""></td>'},
+				{fieldid:"fromAccountId", protect:"", td:'<td data-fieldid="fromAccountId" data-type="text" data-value=""></td>'},
+				{fieldid:"toAccountUserId", protect:"", td:'<td data-fieldid="toAccountUserId" data-type="text" data-value=""></td>'},
+				{fieldid:"toAccountId", protect:"", td:'<td data-fieldid="toAccountId" data-type="text" data-value=""></td>'},
+				{fieldid:"memo", protect:"", td:'<td data-fieldid="memo" data-type="text" data-value=""></td>'},
+				{fieldid:"amount", protect:"", td:'<td data-fieldid="amount" data-type="number" data-value="" class="text-end"></td>'},
+				{fieldid:"isDividend", protect:"", td:'<td data-fieldid="isDividend" data-type="checkbox" data-value="" class="text-center align-middle" style="width:49px"></td>'},
+				{fieldid:"stockId", protect:"", td:'<td data-fieldid="stockId" data-type="text" data-value="" class=""></td>'},
+				{fieldid:"fromTable", protect:"insert update", td:'<td data-fieldid="fromTable" data-type="text" data-value="" class=""></td>'}
+			];
+		</script>
+
+		<script>
+			function inputChangeEvent(event) {
+				var input = event.target;
+				var tr = input.closest("tr");
+
+				switch (input.closest("td").getAttribute("data-fieldid")){
+					case "isChoose":
+						if (input.checked) {
+							tr.classList.add("choose");
+						} else {
+							tr.classList.remove("choose");
+						}
+
+						break;
+					default:
+						tr.classList.add("dirty");
+
+						break;
+				}
+			}
+
+			function insertClickEvent() {
+				var tr = document.createElement('tr');
+				tr.setAttribute("data-mode","new");
+
+				fields.forEach(field => {
+					var tr_temp = document.createElement('tr');
+					tr_temp.innerHTML = field.td;
+
+					var td_temp = tr_temp.getElementsByTagName("td")[0];
+					var div_temp = document.createElement('div');
+
+					if (td_temp.getAttribute("data-type") == "checkbox") {
+						div_temp.innerHTML = '<input class="form-check-input" type="checkbox"/>';
+
+						if (field.protect.indexOf("insert") >= 0) {
+							div_temp.getElementsByTagName("input")[0].setAttribute("disabled","");
+						}
+					}
+
+					td_temp.append(div_temp);
+					tr.append(td_temp);
+				});
+				
+				document.getElementById("detail").getElementsByTagName("tbody")[0].prepend(tr);
+				
+				addEvent();
+			}
+
+			function deleteClickEvent() {
+				var indexs = [];
+				var data = [];
+				var trs = document.getElementById("detail").getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+
+				for (var i = trs.length - 1; i >= 0; i--) {
+					var tr = trs[i];
+
+					if (tr.classList.contains("choose")) {
+						if (tr.getAttribute("data-mode") == "new") {
+							indexs.push(tr.rowIndex);
+						} else {
+							var row = {};
+							var tds = tr.getElementsByTagName("td");
+
+							for (var j = 0; j < tds.length; j++){
+								var td = tds[j];
+
+								row[td.getAttribute("data-fieldid")] = td.getAttribute("data-value");
+							}
+
+							indexs.push(tr.rowIndex);
+							data.push(row);
+						}
+					}
+				}
+
+				//api
+
+				indexs.forEach(index => {
+					document.getElementById("detail").deleteRow(index);
+				});
+			}
+
+			function aClickEvent(event) {
+				var a = event.target;
+				
+				a.closest("td").getElementsByTagName("input")[0].value = a.getAttribute("data");
+			}
+
+			function tdClickEvent(event) {
+				var td = event.target;
+				var tr = td.closest("tr");
+
+				if (!tr.classList.contains("edit")) {
+					removeEdit();
+
+					var tds = tr.getElementsByTagName("td");
+
+					for (var i = 0; i < tds.length ; i++) {
+						var td2 = tds[i];
+						var value = td2.getElementsByTagName("div")[0].innerText;
+						var div = document.createElement('div');
+						var inputs = [];
+
+						switch (td2.getAttribute("data-fieldid")) {
+							case "rowNumber":
+
+								break;
+							default:
+								switch (td2.getAttribute("data-type")) {
+									case "text":
+										div.className = "input-group";
+
+										inputs[0] = document.createElement('input');
+										inputs[0].className = "form-control";
+										inputs[0].setAttribute("type","text");
+										inputs[0].value = value;
+
+										break;
+									case "number":
+										div.className = "input-group";
+
+										inputs[0] = document.createElement('input');								
+										inputs[0].className = "form-control";
+										inputs[0].setAttribute("type","number");
+										inputs[0].value = value.replaceAll(",","");
+
+										break;
+									case "date":
+										div.className = "input-group";
+
+										inputs[0] = document.createElement('input');
+										inputs[0].className = "form-control";
+										inputs[0].setAttribute("type","date");
+										inputs[0].value = value.replaceAll("/","-");
+
+										break;
+									case "checkbox":
+										inputs[0] = td2.getElementsByTagName("input")[0];
+
+										break;
+									case "select":
+										div.className = "input-group";
+
+										inputs[0] = document.createElement('select');
+										inputs[0].className = "form-select";
+										inputs[0].innerHTML = '<option value="1">存款</option><option value="2">提款</option>';
+										inputs[0].value = td2.getAttribute("data-value");
+
+										break;
+									case "dropdown":
+										div.className = "input-group";
+
+										inputs[0] = document.createElement('input');
+										inputs[0].className = "form-control";
+										inputs[0].setAttribute("type","text");
+										inputs[0].value = value;
+
+										var div_temp;
+
+										div_temp = document.createElement("div");
+										div_temp.innerHTML = '<button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"/>';
+										inputs[1] = div_temp.getElementsByTagName("button")[0]
+
+										div_temp = document.createElement("div");
+										div_temp.innerHTML = '<ul class="dropdown-menu"><li><a class="dropdown-item" value="1">存款</a></li><li><a class="dropdown-item" value="2">提款</a></li></ul>';
+										inputs[2] = div_temp.getElementsByTagName("ul")[0];
+
+										break;
+								}
+
+								if (td2.classList.contains("protect")) {
+									for (var j = 0; j < inputs.length; j++) {
+										inputs[j].setAttribute("disabled","");
+										div.append(inputs[j]);
+									}
+								} else {
+									var isProtect = false;
+
+									for (var j = 0; j < fields.length; j++) {
+										if (fields[j].fieldid == td2.getAttribute("data-fieldid")) {
+											if (tr.getAttribute("data-mode") == "new") {
+												if (fields[j].protect.indexOf("insert") >= 0) {
+													isProtect = true;
+												}
+											} else {
+												if (fields[j].protect.indexOf("update") >= 0) {
+													isProtect = true;
+												}
+											}
+
+											break;
+										}
+									}
+
+									if (isProtect) {
+										for (var j = 0; j < inputs.length; j++) {
+											inputs[j].setAttribute("disabled","");
+											div.append(inputs[j]);
+										}
+									} else {
+										for (var j = 0; j < inputs.length; j++) {
+											div.append(inputs[j]);
+										}
+									}
+								}
+
+								td2.innerText = "";
+								td2.append(div);
+						}
+						
+						if (td2.getAttribute("data-fieldid") == td.getAttribute("data-fieldid")) {
+							if (inputs[0]) {
+								inputs[0].focus();
+							}
+						}
+					}
+
+					addInputEvent();
+					addAEvent();
+
+					tr.classList.add("edit");
+				}
+			}
+
+			function removeEdit() {
+				if (document.getElementById("detail")) {
+					var trs = document.getElementById("detail").getElementsByClassName("edit");
+
+					for (var i = 0; i < trs.length; i++) {
+						var tds = trs[i].getElementsByTagName("td");
+
+						for (var j = 0; j < tds.length; j++) {
+							var td = tds[j];
+							var div = document.createElement('div');
+
+							switch (td.getAttribute("data-fieldid")) {
+								case "rowNumber":
+
+									break;
+								default:
+									switch (td.getAttribute("data-type")){
+										case "number":
+											var input = td.getElementsByTagName("input")[0];
+
+											div.innerText = input.value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+											break;
+										case "date":
+											var input = td.getElementsByTagName("input")[0];
+
+											div.innerText = input.value.replaceAll("-","/");
+
+											break;
+										case "checkbox":
+											continue;
+
+											break;
+										case "select":
+											var select = td.getElementsByTagName("select")[0];
+											var index = select.selectedIndex;
+
+											if (index >= 0) {
+												div.innerText = select.options[index].text;
+												td.setAttribute("data-value",select.options[index].value);
+											} else {
+												div.innerText = "";
+												td.setAttribute("data-value","");
+											}
+
+											break;
+										default:
+											var input = td.getElementsByTagName("input")[0];
+
+											div.innerText = input.value;
+									}
+
+									td.innerText = "";
+									td.append(div);
+
+									break;
+							}
+						}
+
+						trs[i].classList.remove("edit");
+					}
+				}
+	    	}
+	    	
+	    	function addInputEvent() {
+				var detail = document.getElementById("detail");
+
+				if (detail) {
+					var inputs = detail.getElementsByTagName("tbody")[0].getElementsByTagName("input");
+
+					for (var i = 0; i < inputs.length; i++) {
+						inputs[i].addEventListener("change", inputChangeEvent);
+					}
+				}
+        	}
+
+			function addTdEvent() {
+				var detail = document.getElementById("detail");
+
+				if (detail) {
+					var tds = detail.getElementsByTagName("td");
+
+					for (var i = 0; i < tds.length; i++) {
+						tds[i].addEventListener("click", tdClickEvent);
+					}
+				}
+	    	}
+
+			function addAEvent() {
+				var as = document.getElementById("detail").getElementsByTagName("tbody")[0].getElementsByTagName("a");
+
+				for (var i = 0; i < as.length; i++) {
+					as[i].addEventListener("click", aClickEvent);
+				}
+			}
+			
+			function addEvent() {
+				addTdEvent();
+				addInputEvent();
+				addAEvent()
+			}
+
+			window.onload = function() {
+				document.getElementById("insert").addEventListener("click", insertClickEvent);
+				document.getElementById("delete-confirm").addEventListener("click", deleteClickEvent);
+
+				if (document.getElementById("importExcel")) {
+					var importExcel = document.getElementById("importExcel");
+					var div = document.createElement('div');
+
+					div.innerHTML = '<input type="file" id="excelFile" accept=".xlsx,.xls,.csv" style="display:none;"/>';
+					document.getElementsByTagName('body')[0].append(div);
+
+					importExcel.addEventListener("click", () => {
+						document.getElementById("excelFile").click();
+					});
+
+					document.getElementById("excelFile").addEventListener("change", (event) => {
+						var excelFile = event.target.files[0];
+						var extensionStr = /\.(xlsx|xls|csv)$/;
+
+						if (!extensionStr.test(excelFile.name)) {
+							alert("選擇的檔案格式不對，請選則正確的excel");
+
+							return false;
+						}
+
+						var reader = new FileReader();
+
+						reader.onload = function(event_reader) {
+							document.getElementById("detail").getElementsByTagName('tbody')[0].innerText = '';
+
+							var workbook = XLSX.read(event_reader.target.result, {
+								type: 'binary'
+							});
+
+							workbook.SheetNames.forEach(sheetName => {
+								var rowsObject = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], {header:1, defval:''});
+								
+								for (var i = 0; i < rowsObject.length; i++){
+									if (i > 0 && rowsObject[i][2] != '') {
+										var tr = document.createElement('tr');
+										var columnIndex = 0;
+
+										fields.forEach(field => {
+											var tr_temp = document.createElement('tr');
+											var div_temp = document.createElement('div');
+
+											tr_temp.innerHTML = field.td;
+
+											var td = tr_temp.getElementsByTagName("td")[0];
+
+											switch (td.getAttribute("data-fieldid")) {
+												case 'isChoose':
+													div_temp.innerHTML = '<input class="form-check-input" type="checkbox"/>';
+
+													break;
+												case 'rowNumber':
+													div_temp.innerHTML = i;
+
+													break;
+												default:
+													var value = rowsObject[i][columnIndex];
+
+													td.setAttribute("data-value",value);
+													td.classList.add("protect");
+
+													switch (td.getAttribute("data-type")) {
+														case "checkbox":
+															if (value == "1") {
+																div_temp.innerHTML = '<input class="form-check-input" type="checkbox" checked/>';
+															} else {
+																div_temp.innerHTML = '<input class="form-check-input" type="checkbox"/>';
+															}
+
+															div_temp.getElementsByTagName("input")[0].setAttribute("disabled","");
+
+															break;
+														case "date":
+															div_temp.innerHTML = value.substring(0,4) + "/" + value.substring(4,6) + "/" + value.substring(6,8);
+
+															break;
+														case "select":
+															switch (value) {
+																case "1":
+																	div_temp.innerHTML = "存款";
+
+																	break;
+																case "2":
+																	div_temp.innerHTML = "提款";
+
+																	break;
+															}
+
+															break;
+														default:
+															div_temp.innerHTML = value;
+
+															break;
+													}
+
+													columnIndex++;
+
+													break;
+											}
+
+											td.append(div_temp);
+											tr.append(td);
+										});
+										
+										document.getElementById("detail").getElementsByTagName('tbody')[0].append(tr);
+									}
+								}
+							});
+
+							addEvent();
+
+							document.getElementById("excelFile").value = '';
+						}
+
+						reader.onerror = function(event_reader) {
+							console.error("File could not be read! Code " + event_reader.target.error.code);
+						}
+
+						reader.readAsBinaryString(excelFile);
+					});
+				}
+
+				addEvent();
+			}
+		</script>
+	</body>
+</html>

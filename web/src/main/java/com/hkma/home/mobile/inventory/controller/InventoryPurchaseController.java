@@ -141,26 +141,27 @@ public class InventoryPurchaseController {
 		
 		String recordDate = dateFormat.format(new Date());
 		String userId = "";
-		List<Map<String,Object>> stockroomList = new ArrayList<>();
 		
 		if (principal != null) {
 			userId = principal.getName();
 		}
+		
+		//倉庫
+		List<Map<String,Object>> stockroomList = new ArrayList<>();
 		
 		List<AuthorityEntity> authorityList = inventoryAuthorityRepository.findByUserId(userId);
 		authorityList.forEach(authority ->{
 			String stockroomUserId = authority.getStockroomUserId();
 			String stockroomId = authority.getStockroomId();
 			
-			Optional<StockroomEntity> bankAccountOptional = stockroomRepository.findByUserIdAndId(stockroomUserId, stockroomId);
+			Optional<StockroomEntity> stockroomOptional = stockroomRepository.findByUserIdAndId(stockroomUserId, stockroomId);
 			
-			if(bankAccountOptional.isPresent()) {
-				StockroomEntity stockroomEntity = bankAccountOptional.get();
+			if(stockroomOptional.isPresent()) {
+				StockroomEntity stockroom = stockroomOptional.get();
 				
-				String name = stockroomEntity.getName();
+				String name = stockroom.getName();
 				
 				Map<String,Object> map = new HashMap<>();
-				
 				map.put("stockroomUserId", stockroomUserId);
 				map.put("stockroomId", stockroomId);
 				map.put("name", name);
@@ -223,6 +224,7 @@ public class InventoryPurchaseController {
 				model.addAttribute("amount", amount);
 			}
 			
+			//倉庫
 			List<Map<String,Object>> stockroomList = new ArrayList<>();
 			
 			List<AuthorityEntity> authorityList = inventoryAuthorityRepository.findByUserId(userId);
@@ -230,12 +232,12 @@ public class InventoryPurchaseController {
 				String stockroomUserId_list = authority.getStockroomUserId();
 				String stockroomId_list = authority.getStockroomId();
 				
-				Optional<StockroomEntity> bankAccountOptional = stockroomRepository.findByUserIdAndId(stockroomUserId_list, stockroomId_list);
+				Optional<StockroomEntity> stockroomOptional = stockroomRepository.findByUserIdAndId(stockroomUserId_list, stockroomId_list);
 				
-				if(bankAccountOptional.isPresent()) {
-					StockroomEntity stockroomEntity = bankAccountOptional.get();
+				if(stockroomOptional.isPresent()) {
+					StockroomEntity stockroom = stockroomOptional.get();
 					
-					String name = stockroomEntity.getName();
+					String name = stockroom.getName();
 					
 					Map<String,Object> map = new HashMap<>();
 					
@@ -350,17 +352,18 @@ public class InventoryPurchaseController {
 					userId = principal.getName();
 				}
 				
+				//倉庫
 				List<AuthorityEntity> authorityList = inventoryAuthorityRepository.findByUserId(userId);
 				authorityList.forEach(authority ->{
 					String stockroomUserId = authority.getStockroomUserId();
 					String stockroomId = authority.getStockroomId();
 					
-					Optional<StockroomEntity> bankAccountOptional = stockroomRepository.findByUserIdAndId(stockroomUserId, stockroomId);
+					Optional<StockroomEntity> stockroomOptional = stockroomRepository.findByUserIdAndId(stockroomUserId, stockroomId);
 					
-					if(bankAccountOptional.isPresent()) {
-						StockroomEntity stockroomEntity = bankAccountOptional.get();
+					if(stockroomOptional.isPresent()) {
+						StockroomEntity stockroom = stockroomOptional.get();
 						
-						String name = stockroomEntity.getName();
+						String name = stockroom.getName();
 						
 						Map<String,Object> map = new HashMap<>();
 						
@@ -431,6 +434,7 @@ public class InventoryPurchaseController {
 				model.addAttribute("amount", amount);
 			}
 			
+			//倉庫
 			List<Map<String,Object>> stockroomList = new ArrayList<>();
 			
 			List<AuthorityEntity> authorityList = inventoryAuthorityRepository.findByUserId(userId);
@@ -438,12 +442,12 @@ public class InventoryPurchaseController {
 				String stockroomUserId_list = authority.getStockroomUserId();
 				String stockroomId_list = authority.getStockroomId();
 				
-				Optional<StockroomEntity> bankAccountOptional = stockroomRepository.findByUserIdAndId(stockroomUserId_list, stockroomId_list);
+				Optional<StockroomEntity> stockroomOptional = stockroomRepository.findByUserIdAndId(stockroomUserId_list, stockroomId_list);
 				
-				if(bankAccountOptional.isPresent()) {
-					StockroomEntity stockroomEntity = bankAccountOptional.get();
+				if(stockroomOptional.isPresent()) {
+					StockroomEntity stockroom = stockroomOptional.get();
 					
-					String name = stockroomEntity.getName();
+					String name = stockroom.getName();
 					
 					Map<String,Object> map = new HashMap<>();
 					

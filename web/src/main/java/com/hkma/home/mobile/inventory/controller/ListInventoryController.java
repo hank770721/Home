@@ -1,5 +1,6 @@
 package com.hkma.home.mobile.inventory.controller;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -15,10 +16,14 @@ import com.hkma.home.inventory.entity.InventoryPurchaseEntity;
 import com.hkma.home.inventory.entity.InventoryUseEntity;
 import com.hkma.home.inventory.repository.InventoryPurchaseRepository;
 import com.hkma.home.inventory.repository.InventoryUseRepository;
+import com.hkma.home.system.service.MenuService;
 
 @Controller("MobileInventoryListInventoryView")
 @RequestMapping("/m/inventory/list/inventory")
 public class ListInventoryController {
+	@Autowired
+	private MenuService menuService;
+	
 	@Autowired
 	private InventoryPurchaseRepository inventoryPurchaseRepository;
 	
@@ -26,7 +31,15 @@ public class ListInventoryController {
 	private InventoryUseRepository inventoryUseRepository;
 	
 	@RequestMapping("view")
-	public String view(Model model){
+	public String view(
+		Principal principal,
+		Model model){
+		String userId = null;
+		
+		if (principal != null) {
+			userId = principal.getName();
+		}
+		
 		//Optional<List<String>> class1Optional = inventoryPurchaseRepository.findClass1();
 		//
 		//if (class1Optional.isPresent()) {
@@ -237,7 +250,9 @@ public class ListInventoryController {
 		});
 		
 		model.addAttribute("class1List",class1List);
+		model.addAttribute("menuList",menuService.getMenu(userId));
 		
 		return "mobile/inventory/list/inventory/view";
 	}
 }
+

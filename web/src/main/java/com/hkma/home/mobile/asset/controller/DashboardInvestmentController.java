@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.persistence.PersistenceUnit;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,7 +26,7 @@ import com.hkma.home.bank.repository.BankAccountRepository;
 
 @Controller("MobileAssetDashboardInvestmentView")
 @RequestMapping("/m/asset/dashboard")
-public class DashboardInvestmentController {
+public class DashboardInvestmentController {	
 	@Autowired
 	private AuthorityRepository authorityRepository;
 	
@@ -39,10 +41,6 @@ public class DashboardInvestmentController {
 			@RequestParam(required=false, value="accountUserId") String accountUserId,
 			@RequestParam(required=false, value="accountId") String accountId,
 			Model model){
-		//if(userId == null || userId.equals("")) {
-		//	userId = "mia";
-		//	accountId = "001";
-		//}
 		
 		model.addAttribute("accountUserId", accountUserId);
 		model.addAttribute("accountId", accountId);
@@ -67,6 +65,7 @@ public class DashboardInvestmentController {
 			accountId = "001";
 		}
 		
+		//證券帳戶
 		List<AuthorityEntity> authorityList = authorityRepository.findByUserId(userId);
 		authorityList.forEach(authority ->{
 			String authorityAccountUserId = authority.getAccountUserId();
@@ -146,6 +145,7 @@ public class DashboardInvestmentController {
 			accountId = "001";
 		}
 		
+		//證券帳戶
 		List<AuthorityEntity> authorityList = authorityRepository.findByUserId(userId);
 		authorityList.forEach(authority ->{
 			String authorityAccountUserId = authority.getAccountUserId();

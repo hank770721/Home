@@ -20,6 +20,8 @@ public class ExpenseEntity extends BaseEntity implements Serializable {
 	@Column(name="recordDate")
 	private String recordDate;
 	
+	private String vestingDate;
+	
 	@Column(name="transMode")
 	private String transMode;
 	
@@ -52,6 +54,14 @@ public class ExpenseEntity extends BaseEntity implements Serializable {
 	
 	public String getRecordDate() {
         return recordDate;
+    }
+	
+	public void setVestingDate(String vestingDate) {
+        this.vestingDate = vestingDate;
+    }
+	
+	public String getVestingDate() {
+        return vestingDate;
     }
 	
 	public void setTransMode(String transMode) {

@@ -45,7 +45,6 @@ public class DashboardIncomeController {
 			Principal principal,
 			Model model){
 		String userId, accountUserId, accountId;
-		List<Map<String,Object>> accountList = new ArrayList<>();
 		
 		if (principal != null){
 			userId = principal.getName();
@@ -56,6 +55,9 @@ public class DashboardIncomeController {
 			accountUserId = "mia";
 			accountId = "001";
 		}
+		
+		//證券帳戶
+		List<Map<String,Object>> accountList = new ArrayList<>();
 		
 		List<AuthorityEntity> authorityList = authorityRepository.findByUserIdOrderByOrderNumberAsc(userId);
 		authorityList.forEach(authority ->{

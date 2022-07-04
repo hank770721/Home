@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Insert title here</title>
+	</head>
+	<body>
+		<div th:fragment="menu" data-role="panel" id="memuPanel" data-position="left" data-display="reveal" data-theme="a">
+		    <ul data-role="listview">
+		    	<li th:if="${!isLogin}"><a th:href="@{'/login'}" data-ajax="false"><h3>登入</h3></a></li>
+	            <li th:if="${isLogin}"><a th:href="@{'/logout'}" data-ajax="false"><h3>登出</h3></a></li>
+		    	<li th:each="systemRow : ${menuList}" data-role="collapsible" data-inset="false" data-iconpos="right" data-expanded-icon="carat-u" data-collapsed-icon="carat-d">
+		            <h3 th:text="${systemRow.systemName}"></h3>
+		            <ul data-role="listview">
+		            	<li th:each="processRow : ${systemRow.processList}">
+		            		<a th:href="@{${'/m/' + systemRow.systemId + '/' + processRow.modelId + '/' + processRow.processId + '/' + processRow.action}}" data-ajax="false">
+		            			<div style="margin-left: 20px" th:text="${processRow.processName}"></div>
+		            		</a>
+		            	</li>
+		            </ul>
+		        </li>
+		    </ul>
+		</div>
+	</body>
+</html>

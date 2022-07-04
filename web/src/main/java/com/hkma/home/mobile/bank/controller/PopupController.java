@@ -23,7 +23,7 @@ import com.hkma.home.bank.repository.BankAccountListRepository;
 public class PopupController {
 	@Autowired
 	private BankAccountListRepository bankAccountListRepository;
-	
+
 	@Autowired
 	private AccountGroupRepository accountGroupRepository;
 	

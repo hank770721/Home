@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>HKMA - 提存紀錄</title>
+        <link rel="icon" href="/home/icon/favicon.png" />
+        
+        <!-- android -->
+        <link rel="shortcut icon" href="/home/icon/favicon.png" />
+        
+        <!-- ios -->
+        <link rel="apple-touch-icon" href="/home/icon/asset_ios.png" />
+        <link rel="apple-touch-icon" href="/home/icon/asset_ios_180.png" sizes="180x180" />
+        <link rel="apple-touch-icon" href="/home/icon/asset_ios_120.png" sizes="120x120" />
+        <link rel="apple-touch-icon" href="/home/icon/asset_ios_114.png" sizes="114x114" />
+        
+        <!-- jQuery -->
+		<script src="http://code.jquery.com/jquery-1.12.4.min.js"></script>
+		
+		<!-- jQuery Mobile --> 
+		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+		<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+		
+		<!-- HKMA -->
+		<link rel="stylesheet" href="/home/css/hkma.css" />
+        
+        <style>
+        	.action-button .ui-btn-icon-notext.ui-corner-all {
+				height: 37px;
+				background-color: transparent;
+				border: 0px;
+				margin: 0px;
+			}
+			
+			.action-button .ui-btn-icon-notext:after {
+				top: 0px;
+				margin: 0px;
+			}
+			
+			.action-button .ui-btn-icon-notext.left-button:after {
+				left: 0px;
+			}
+			
+			.action-button .ui-btn-icon-notext.right-button:after {
+				left: unset;
+				right: 0px;
+			}
+			
+        	.ui-panel-wrapper ul li p{
+        		margin: 0px;
+        	}
+        	.ui-panel-wrapper ul li a>div{
+        		padding: 3px;
+        		height: 12px;
+        		line-height: 12px;
+        	}
+        	.ui-panel-wrapper ul li div div{
+        		display: inline-block;
+        	}
+        	
+        	.ui-table th, .ui-table td{
+        		border-width: 1px;
+        		border-style: solid;
+        		border-color: rgb(221,221,221);
+        	}
+        	.ui-table td{
+        		vertical-align: middle;
+        	}
+        	
+        	.ui-table .ui-checkbox{
+        		margin: 0;
+        	}
+        	.ui-table input[type="checkbox"]{
+        		width: 100%;
+        		position: static;
+        		vertical-align: middle;
+        		margin: 0;
+        	}
+        	
+        	.ui-table th.right div, .ui-table td.right div, .ui-table td.right input{
+        		text-align: right;
+        	}
+        	.ui-table th.center div, .ui-table td.center div, .ui-table td.center input{
+        		text-align: center;
+        	}
+        	
+        	.ui-table tbody .action-button .ui-btn-icon-notext.ui-corner-all {
+				height: 24px;
+			}
+        </style>
+	</head>
+	<body>
+		<div data-role="page" class="ui-page-theme-a">
+			<div th:replace="mobile/include/header :: header"/>
+			<div class="ui-panel-wrapper">
+            	<div class="ui-nodisc-icon ui-alt-icon action-button">
+					<div style="width: calc(100% - 258px); display: inline-block;"></div>
+					<div style="display: inline-block; text-align:right;">
+						<div style="width: 60px; display: inline-block;">
+							<a href="#popupSearchDialog" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-icon-search ui-btn-icon-notext ui-btn-inline right-button"></a>
+						</div>
+						<div style="width: 60px; display: inline-block;">
+							<a href="#popupDeleteDialog" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext ui-btn-inline right-button"></a>
+						</div>
+						<div style="width: 60px; display: inline-block;">
+							<a id="plus" href="#" class="ui-btn ui-corner-all ui-icon-plus ui-btn-icon-notext ui-btn-inline right-button"></a>
+						</div>
+						<div style="width: 60px; display: inline-block;">
+							<a id="check" href="#" class="ui-btn ui-corner-all ui-icon-check ui-btn-icon-notext ui-btn-inline right-button"></a>
+						</div>
+					</div>
+				</div>
+				<form id="form" action="index" data-ajax="false" method="post">
+					<table id="table" data-role="table" data-mode="" class="ui-shadow table-stripe">
+	                    <thead>
+	                        <tr>
+	                        	<th class="compute" style="width: 32px;"><div></div></th>
+	                        	<th class="compute protect center" style="width: 32px;"><div>序號</div></th>
+	                        	<th field="recordId" class="protect"><div>單號</div></th>
+	             				<th field="recordDate"><div>日期</div></th>
+	             				<th field="transMode"><div>類別</div></th>
+	             				<th field="fromAccountUserId"><div>轉出帳戶</div></th>
+	             				<th field="fromAccountId"><div>轉出帳號</div></th>
+	             				<th field="toAccountUserId"><div>轉入帳戶</div></th>
+	             				<th field="toAccountId"><div>轉入帳號</div></th>
+	             				<th field="memo"><div>備註</div></th>
+	             				<th field="amount" class="double right"><div>金額</div></th>
+	             				<th field="isDividend"><div>股利</div></th>
+	             				<th field="stockId" class="protect"><div>股票代號</div></th>
+	             				<th field="fromTable" class="protect"><div>資料來源</div></th>
+	                        </tr>
+	                    </thead>
+	                    <tbody>
+		                    <tr th:each="row : ${list}">
+		                    	<td class="chooseBox center"><input type="checkbox"/></td>
+		                    	<td class="center"><div th:text="${row.rowNumber}"/></td>
+		                    	<td><div th:text="${row.recordId}"/></td>
+		                    	<td><div th:text="${row.recordDate}"/></td>
+		                    	<td><div th:text="${row.transMode}"/></td>
+		                    	<td><div th:text="${row.fromAccountUserId}"/></td>
+		                    	<td><div th:text="${row.fromAccountId}"/></td>
+		                    	<td><div th:text="${row.toAccountUserId}"/></td>
+		                    	<td><div th:text="${row.toAccountId}"/></td>
+		                    	<td><div th:text="${row.memo}"/></td>
+		                    	<td class="right"><div th:text="${row.amount}"/></td>
+		                    	<td><div th:text="${row.isDividend}"/></td>
+		                    	<td><div th:text="${row.stockId}"/></td>
+		                    	<td><div th:text="${row.fromTable}"/></td>
+		                    </tr>
+	                    </tbody>
+	       			</table>
+	       			<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+	               	<input type="hidden" name="_method"/>
+	               	<input type="hidden" name="data"/>
+	        	</form>
+            </div>
+            <div th:replace="mobile/include/menu :: menu"/>
+            
+            <div id="popupDeleteDialog" data-role="popup" data-overlay-theme="b" data-theme="b" data-dismissible="false" style="max-width:400px;">
+            	<div data-role="header" data-theme="a">
+            		<h1>刪除資料?</h1>
+            	</div>
+				<div role="main" class="ui-content">
+					<h3 class="ui-title">您確定要刪掉這筆資料</h3>
+					<p>這個動作無法被復原</p>
+					<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">取消</a>
+					<a id="delete" href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b">刪除</a>
+			    </div>
+			</div>
+			
+			<div id="popupSearchDialog" data-role="popup" data-theme="a" style="max-width:400px;">
+				<div role="main" class="ui-content">
+					<form id="formSearch" action="index" data-ajax="false" method="post">
+						<label for="month">月份</label>
+		                <input type="number" name="month" th:value="${month}"/>
+						<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+						<input type="hidden" name="_method"/>
+					</form>
+					<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">取消</a>
+					<a id="search" href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b">查詢</a>
+			    </div>
+			</div>
+		</div>
+		
+        <script>
+        	function removeEdit(){
+        		var ths = $("#table").find("th");
+        		
+        		$.each($("#table .edit"), function(index, tr) {
+        			var tds = $(tr).find("td");
+        			
+        			for (var i = 0; i < tds.length; i++){
+        				if ($(ths[i]).is(".compute")){continue;};
+        				
+       					var inputs = $(tds[i]).find("input");
+           				
+           				if (inputs.length > 0){
+           					var divs = $(tds[i]).find("div");
+           					
+           					$(divs[0]).text($(inputs[0]).val());
+           				}
+        			};
+        			
+        			$(tr).removeClass("edit");
+        		});
+        	};
+        	
+        	function addInputEvent(){
+        		$("#table tbody input").change(function() {
+        			var td = $(this).closest("td");
+        			var ths = $("#table").find("th");
+        			
+        			if ($(ths[$(td).index()]).is(".compute")){return;};
+        			
+        			$(this).closest("tr").addClass("dirty");
+		        });
+        	};
+        	
+        	function addTdEvent(){
+        		$("#table td").click(function() {
+    	        	var tr = $(this).parent("tr");
+    	        	
+    	        	if (!$(tr).is(".edit")){
+    	        		removeEdit();
+    	        		
+    	        		var ths = $("#table").find("th");
+    	        		var tds = $(tr).find("td");
+    	        		
+    	        		for (var i = 0; i < tds.length ; i++){
+    	        			if ($(ths[i]).is(".compute")){continue;};
+    	        			if ($(ths[i]).is(".protect")){continue;};
+    	        			
+    						var divs = $(tds[i]).find("div");
+    		        		
+    		        		var input = document.createElement('input');
+    		        		input.value = $(divs[0]).text();
+    		        		
+    		        		var div = document.createElement('div');
+    		        		div.className = "ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset";
+    		        		div.append(input);
+    		        		
+    		        		$(divs[0]).text("");
+    		        		$(divs[0]).append(div);
+    		        		
+    		        		if ($(tds[i]).index() == $(this).index()){
+    		        			input.focus();
+    		        		}
+    	        		};
+    		        	
+    		        	addInputEvent();
+    		        	
+    		        	tr.addClass("edit");
+    	        	}
+    	        });
+        	};
+        	
+        	function addChooseBoxEvent(){
+        		$("#table tbody .chooseBox input").change(function() {
+        			var tr = $(this).closest("tr");
+        			
+        			if ($(this).is(":checked")){
+        				tr.addClass("choose");
+        			}else{
+        				tr.removeClass("choose");
+        			}
+		        });
+        	}
+	        
+        	$(document).ready(function(){
+        		$("#search").click(function() {
+        			$("#formSearch").submit();
+        		});
+        		
+        		$("#delete").click(function() {
+        			var data = [];
+        			var ths = $("#table").find("th");
+        			
+        			$.each($("#table tbody .choose"), function(index, tr) {
+        				var record = {};
+                        var tds = $(tr).find("td");
+                        
+                        for (var i = 0; i < tds.length; i++){
+                        	var value = $(tds[i]).text();
+                        	
+                        	if ($(ths[i]).is(".compute")){continue;};
+                        	
+                        	if ($(ths[i]).is(".double")){
+                        		value = value.replace(",","");
+                        	}
+                        	
+                        	record[$(ths[i]).attr("field")] = value;
+                        }
+                        
+                        data.push(record);
+        			});
+                    
+                    $("input[name='data']").val(JSON.stringify(data));
+        			$("input[name='_method']").val("delete");
+        			$("#form").submit();
+                });
+        		
+        		$("#plus").click(function() {
+        			var tr = '<tr><td class="chooseBox center"><div class=" ui-checkbox"><input type="checkbox"/></div></td>'
+		                + 	'<td class="center"><div/></td>'
+		                +	'<td><div/></td>'
+		                +	'<td><div/></td>'
+		                +	'<td><div/></td>'
+		                +	'<td><div/></td>'
+		                +	'<td><div/></td>'
+		                +	'<td><div/></td>'
+		                +	'<td><div/></td>'
+		                +	'<td><div/></td>'
+		                +	'<td class="right"><div/></td>'
+		                +	'<td><div/></td>'
+		                +	'<td><div/></td>'
+		                +	'<td><div/></td>'
+		                + '</tr>';
+		                
+		        	$("#table tbody").prepend(tr);
+		        	
+		        	addTdEvent();
+		        	addChooseBoxEvent();
+        		});
+        		
+        		$("#check").click(function() {
+                    removeEdit();
+                    
+        			var data = [];
+        			var ths = $("#table").find("th");
+
+        			$.each($("#table tbody tr.dirty"), function(index, tr) {
+                        var record = {};
+                        var tds = $(tr).find("td");
+                        
+                        for (var i = 0; i < tds.length; i++){
+                        	var value = $(tds[i]).text();
+                        	
+                        	if ($(ths[i]).is(".compute")){continue;};
+                        	
+                        	if ($(ths[i]).is(".double")){
+                        		value = value.replace(",","");
+                        	}
+                        	
+                        	record[$(ths[i]).attr("field")] = value;
+                        }
+                        
+                        data.push(record);
+                    });
+        			
+        			$("input[name='data']").val(JSON.stringify(data));
+        			$("input[name='_method']").val("put");
+                    $("#form").submit();
+                });
+        		
+        		addTdEvent();
+        		addChooseBoxEvent();
+	        });
+        </script>
+	</body>
+</html>

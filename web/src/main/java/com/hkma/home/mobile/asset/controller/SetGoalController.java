@@ -135,6 +135,7 @@ public class SetGoalController {
 			accountId = "001";
 		}
 		
+		//證券帳戶
 		List<AuthorityEntity> authorityList = authorityRepository.findByUserIdOrderByOrderNumberAsc(userId);
 		authorityList.forEach(authority ->{
 			String authorityAccountUserId = authority.getAccountUserId();
@@ -226,6 +227,7 @@ public class SetGoalController {
 				userId = "mia";
 			}
 			
+			//證券帳戶
 			List<AuthorityEntity> authorityList = authorityRepository.findByUserIdOrderByOrderNumberAsc(userId);
 			authorityList.forEach(authority ->{
 				String authorityAccountUserId = authority.getAccountUserId();
@@ -289,6 +291,7 @@ public class SetGoalController {
 				userId = "mia";
 			}
 			
+			//證券帳戶
 			List<AuthorityEntity> authorityList = authorityRepository.findByUserIdOrderByOrderNumberAsc(userId);
 			authorityList.forEach(authority ->{
 				String authorityAccountUserId = authority.getAccountUserId();
@@ -408,6 +411,7 @@ public class SetGoalController {
 			accountId = "001";
 		}
 		
+		//證券帳戶
 		List<AuthorityEntity> authorityList = authorityRepository.findByUserIdOrderByOrderNumberAsc(userId);
 		authorityList.forEach(authority ->{
 			String authorityAccountUserId = authority.getAccountUserId();
